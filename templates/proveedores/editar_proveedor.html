@@ -1,0 +1,422 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Editar Proveedor | Mining Star ERP</title>
+
+    <link rel="stylesheet"
+          href="{% static 'css/dashboard.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'css/proveedores.css' %}">
+
+    <link rel="stylesheet"
+          href="{% static 'css/editar_proveedor.css' %}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+                    SIDEBAR
+========================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo-area">
+
+        <img src="{% static 'logo.png' %}"
+             alt="Mining Star">
+
+        <h2>Mining Star ERP</h2>
+
+        <p>Sistema Integral de Gestión</p>
+
+    </div>
+
+
+    <span class="menu-title">
+        MENÚ PRINCIPAL
+    </span>
+
+
+    <nav>
+
+        <a href="{% url 'dashboard' %}">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+
+
+        <a href="{% url 'empleados' %}">
+            <i class="fa-solid fa-users"></i>
+            <span>Empleados</span>
+        </a>
+
+
+        <a href="{% url 'clientes' %}">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Clientes</span>
+        </a>
+
+
+        <a href="{% url 'productos' %}">
+            <i class="fa-solid fa-box"></i>
+            <span>Productos</span>
+        </a>
+
+
+        <a href="{% url 'proveedores' %}"
+           class="active">
+
+            <i class="fa-solid fa-truck"></i>
+
+            <span>Proveedores</span>
+
+        </a>
+
+
+        <a href="{% url 'ventas' %}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Ventas</span>
+        </a>
+
+    </nav>
+
+
+    <hr>
+
+
+    <div class="sidebar-bottom">
+
+        <a href="{% url 'login' %}"
+           class="logout">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            <span>Cerrar Sesión</span>
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ==========================================
+                 CONTENIDO
+========================================== -->
+
+<main class="contenido">
+
+
+    <!-- ENCABEZADO -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+
+                <i class="fa-solid fa-pen-to-square"></i>
+
+                Editar Proveedor
+
+            </h1>
+
+            <p>
+                Actualice la información del proveedor.
+            </p>
+
+        </div>
+
+
+        <a href="{% url 'proveedores' %}"
+           class="btn-secondary">
+
+            <i class="fa-solid fa-arrow-left"></i>
+
+            Volver a Proveedores
+
+        </a>
+
+    </div>
+
+
+
+    <!-- ==========================================
+                    FORMULARIO
+    =========================================== -->
+
+    <div class="editar-card">
+
+
+        <div class="editar-header">
+
+            <div class="editar-icon">
+
+                <i class="fa-solid fa-truck"></i>
+
+            </div>
+
+
+            <div>
+
+                <h2>
+                    Información del proveedor
+                </h2>
+
+                <p>
+                    Modifique los datos necesarios y guarde los cambios.
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <div class="editar-grid">
+
+
+                <!-- NIT -->
+
+                <div class="campo">
+
+                    <label for="nit">
+
+                        <i class="fa-solid fa-id-card"></i>
+
+                        NIT
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nit"
+                        name="nit"
+                        value="{{ proveedor.nit }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- EMPRESA -->
+
+                <div class="campo">
+
+                    <label for="empresa">
+
+                        <i class="fa-solid fa-building"></i>
+
+                        Empresa
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="empresa"
+                        name="empresa"
+                        value="{{ proveedor.empresa }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- CONTACTO -->
+
+                <div class="campo">
+
+                    <label for="contacto">
+
+                        <i class="fa-solid fa-user"></i>
+
+                        Persona de Contacto
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="contacto"
+                        name="contacto"
+                        value="{{ proveedor.contacto }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- CORREO -->
+
+                <div class="campo">
+
+                    <label for="correo">
+
+                        <i class="fa-solid fa-envelope"></i>
+
+                        Correo Electrónico
+
+                    </label>
+
+                    <input
+                        type="email"
+                        id="correo"
+                        name="correo"
+                        value="{{ proveedor.correo }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- TELÉFONO -->
+
+                <div class="campo">
+
+                    <label for="telefono">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        Teléfono
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="telefono"
+                        name="telefono"
+                        value="{{ proveedor.telefono }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- CIUDAD -->
+
+                <div class="campo">
+
+                    <label for="ciudad">
+
+                        <i class="fa-solid fa-city"></i>
+
+                        Ciudad
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ciudad"
+                        name="ciudad"
+                        value="{{ proveedor.ciudad }}"
+                        required>
+
+                </div>
+
+
+
+                <!-- DIRECCIÓN -->
+
+                <div class="campo campo-completo">
+
+                    <label for="direccion">
+
+                        <i class="fa-solid fa-location-dot"></i>
+
+                        Dirección
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="direccion"
+                        name="direccion"
+                        value="{{ proveedor.direccion }}"
+                        required>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ======================================
+                        BOTONES
+            ======================================= -->
+
+            <div class="editar-footer">
+
+
+                <a href="{% url 'proveedores' %}"
+                   class="btn-cancelar">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Cancelar
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn-guardar">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Guardar Cambios
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+
+            © 2026 Mining Star ERP |
+
+            Sistema Integral de Gestión Minera
+
+        </p>
+
+    </footer>
+
+
+</main>
+
+</body>
+
+</html>

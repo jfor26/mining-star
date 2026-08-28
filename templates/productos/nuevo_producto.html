@@ -1,0 +1,378 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Nuevo Producto | Mining Star ERP</title>
+
+    <link rel="stylesheet"
+      href="{% static 'css/dashboard.css' %}">
+
+<link rel="stylesheet"
+      href="{% static 'css/productos.css' %}">
+
+<link rel="stylesheet"
+      href="{% static 'css/nuevo_producto.css' %}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<!-- ==========================================
+                    SIDEBAR
+========================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo-area">
+
+        <img src="{% static 'img/logo.png' %}"
+     alt="Mining Star">
+
+        <h2>Mining Star ERP</h2>
+
+        <p>Sistema Integral de Gestión</p>
+
+    </div>
+
+    <span class="menu-title">
+        MENÚ PRINCIPAL
+    </span>
+
+    <nav>
+
+        <a href="{% url 'dashboard' %}">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{% url 'empleados' %}">
+            <i class="fa-solid fa-users"></i>
+            <span>Empleados</span>
+        </a>
+
+        <a href="{% url 'clientes' %}">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Clientes</span>
+        </a>
+
+        <a href="{% url 'productos' %}"
+           class="active">
+            <i class="fa-solid fa-box"></i>
+            <span>Productos</span>
+        </a>
+
+        <a href="{% url 'proveedores' %}">
+            <i class="fa-solid fa-truck"></i>
+            <span>Proveedores</span>
+        </a>
+
+        <a href="{% url 'ventas' %}">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Ventas</span>
+        </a>
+
+    </nav>
+
+    <hr>
+
+    <div class="sidebar-bottom">
+
+        <a href="{% url 'login' %}"
+           class="logout">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            <span>Cerrar Sesión</span>
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- ==========================================
+                    CONTENIDO
+========================================== -->
+
+<main class="contenido">
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+
+                <i class="fa-solid fa-box"></i>
+
+                Nuevo Producto
+
+            </h1>
+
+            <p>
+                Registre un nuevo producto en el inventario
+                de Mining Star ERP.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+                    FORMULARIO
+    ========================================== -->
+
+    <div class="form-container">
+
+        <div class="form-card">
+
+            <div class="form-title">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <h2>
+                    Información del Producto
+                </h2>
+
+            </div>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <div class="form-grid">
+
+
+                    <!-- CÓDIGO -->
+
+                    <div class="input-group">
+
+                        <label for="codigo">
+                            Código
+                        </label>
+
+                        <input
+                            type="text"
+                            id="codigo"
+                            name="codigo"
+                            placeholder="Ej: PROD-001"
+                            required>
+
+                    </div>
+
+
+                    <!-- NOMBRE -->
+
+                    <div class="input-group">
+
+                        <label for="nombre">
+                            Nombre del Producto
+                        </label>
+
+                        <input
+                            type="text"
+                            id="nombre"
+                            name="nombre"
+                            placeholder="Nombre del producto"
+                            required>
+
+                    </div>
+
+
+                    <!-- CATEGORÍA -->
+
+                    <div class="input-group">
+
+                        <label for="categoria">
+                            Categoría
+                        </label>
+
+                        <input
+                            type="text"
+                            id="categoria"
+                            name="categoria"
+                            placeholder="Ej: Materiales"
+                            required>
+
+                    </div>
+
+
+                    <!-- PROVEEDOR -->
+
+                    <div class="input-group">
+
+                        <label for="proveedor">
+                            Proveedor
+                        </label>
+
+                        <select
+                            id="proveedor"
+                            name="proveedor"
+                            required>
+
+                            <option value="">
+                                Seleccione un proveedor
+                            </option>
+
+                            {% for proveedor in proveedores %}
+
+                                <option value="{{ proveedor.id }}">
+
+                                    {{ proveedor.empresa }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- PRECIO COMPRA -->
+
+                    <div class="input-group">
+
+                        <label for="precio_compra">
+                            Precio de Compra
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            id="precio_compra"
+                            name="precio_compra"
+                            placeholder="0.00"
+                            required>
+
+                    </div>
+
+
+                    <!-- PRECIO VENTA -->
+
+                    <div class="input-group">
+
+                        <label for="precio_venta">
+                            Precio de Venta
+                        </label>
+
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            id="precio_venta"
+                            name="precio_venta"
+                            placeholder="0.00"
+                            required>
+
+                    </div>
+
+
+                    <!-- STOCK -->
+
+                    <div class="input-group">
+
+                        <label for="stock">
+                            Stock Actual
+                        </label>
+
+                        <input
+                            type="number"
+                            id="stock"
+                            name="stock"
+                            min="0"
+                            placeholder="0"
+                            required>
+
+                    </div>
+
+
+                    <!-- STOCK MÍNIMO -->
+
+                    <div class="input-group">
+
+                        <label for="stock_minimo">
+                            Stock Mínimo
+                        </label>
+
+                        <input
+                            type="number"
+                            id="stock_minimo"
+                            name="stock_minimo"
+                            min="0"
+                            value="5"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==========================================
+                            BOTONES
+                ========================================== -->
+
+                <div class="form-actions">
+
+                    <a href="{% url 'productos' %}"
+                       class="btn-cancelar">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="btn-guardar">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar Producto
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+                    FOOTER
+    ========================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Mining Star ERP |
+            Sistema Integral de Gestión Minera
+        </p>
+
+    </footer>
+
+</main>
+
+</body>
+
+</html>

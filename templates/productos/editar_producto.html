@@ -1,0 +1,509 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Editar Producto | Mining Star ERP</title>
+
+    <!-- CSS PRINCIPAL -->
+    <link rel="stylesheet"
+          href="{% static 'css/dashboard.css' %}">
+
+    <!-- CSS DEL FORMULARIO -->
+    <link rel="stylesheet"
+          href="{% static 'css/editar_producto.css' %}">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+                    SIDEBAR
+========================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo-area">
+
+        <img src="{% static 'img/logo.png' %}"
+             alt="Mining Star">
+
+        <h2>Mining Star ERP</h2>
+
+        <p>Sistema Integral de Gestión</p>
+
+    </div>
+
+
+    <span class="menu-title">
+        MENÚ PRINCIPAL
+    </span>
+
+
+    <nav>
+
+        <!-- DASHBOARD -->
+
+        <a href="{% url 'dashboard' %}">
+
+            <i class="fa-solid fa-house"></i>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <!-- EMPLEADOS -->
+
+        <a href="{% url 'empleados' %}">
+
+            <i class="fa-solid fa-users"></i>
+
+            <span>Empleados</span>
+
+        </a>
+
+
+        <!-- CLIENTES -->
+
+        <a href="{% url 'clientes' %}">
+
+            <i class="fa-solid fa-user-group"></i>
+
+            <span>Clientes</span>
+
+        </a>
+
+
+        <!-- PRODUCTOS -->
+
+        <a href="{% url 'productos' %}"
+           class="active">
+
+            <i class="fa-solid fa-box"></i>
+
+            <span>Productos</span>
+
+        </a>
+
+
+        <!-- PROVEEDORES -->
+
+        <a href="{% url 'proveedores' %}">
+
+            <i class="fa-solid fa-truck"></i>
+
+            <span>Proveedores</span>
+
+        </a>
+
+
+        <!-- VENTAS -->
+
+        <a href="{% url 'ventas' %}">
+
+            <i class="fa-solid fa-cart-shopping"></i>
+
+            <span>Ventas</span>
+
+        </a>
+
+    </nav>
+
+
+    <hr>
+
+
+    <!-- CERRAR SESIÓN -->
+
+    <div class="sidebar-bottom">
+
+        <a href="{% url 'login' %}"
+           class="logout">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            <span>Cerrar Sesión</span>
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ==========================================
+                    CONTENIDO
+========================================== -->
+
+<main class="contenido editar-contenido">
+
+
+    <!-- ======================================
+                    ENCABEZADO
+    ======================================= -->
+
+    <div class="editar-header">
+
+        <div>
+
+            <h1>
+
+                <i class="fa-solid fa-box"></i>
+
+                Editar Producto
+
+            </h1>
+
+            <p>
+
+                Modifique la información del producto.
+
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================
+                TARJETA DEL FORMULARIO
+    ======================================= -->
+
+    <div class="producto-form-card">
+
+
+        <!-- CABECERA -->
+
+        <div class="form-card-header">
+
+            <h2>
+
+                <i class="fa-solid fa-box-open"></i>
+
+                Información del Producto
+
+            </h2>
+
+        </div>
+
+
+
+        <!-- ==================================
+                    FORMULARIO
+        =================================== -->
+
+        <form method="POST"
+              class="producto-form">
+
+            {% csrf_token %}
+
+
+            <div class="form-grid">
+
+
+                <!-- ==========================
+                        CÓDIGO
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="codigo">
+
+                        Código
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="codigo"
+                        name="codigo"
+                        value="{{ producto.codigo }}"
+                        readonly
+                    >
+
+                </div>
+
+
+
+                <!-- ==========================
+                        NOMBRE
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="nombre">
+
+                        Nombre del Producto
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        value="{{ producto.nombre }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ==========================
+                        CATEGORÍA
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="categoria">
+
+                        Categoría
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="categoria"
+                        name="categoria"
+                        value="{{ producto.categoria }}"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ==========================
+                        PROVEEDOR
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="proveedor">
+
+                        Proveedor
+
+                    </label>
+
+                    <select
+                        id="proveedor"
+                        name="proveedor"
+                        required
+                    >
+
+                        <option value="">
+                            Seleccione un proveedor
+                        </option>
+
+
+                        {% for proveedor in proveedores %}
+
+                            <option
+                                value="{{ proveedor.id }}"
+
+                                {% if proveedor.id == producto.proveedor.id %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ proveedor.nombre }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- ==========================
+                    PRECIO DE COMPRA
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="precio_compra">
+
+                        Precio de Compra
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="precio_compra"
+                        name="precio_compra"
+                        value="{{ producto.precio_compra }}"
+                        step="0.01"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ==========================
+                    PRECIO DE VENTA
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="precio_venta">
+
+                        Precio de Venta
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="precio_venta"
+                        name="precio_venta"
+                        value="{{ producto.precio_venta }}"
+                        step="0.01"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ==========================
+                        STOCK ACTUAL
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="stock">
+
+                        Stock Actual
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock"
+                        name="stock"
+                        value="{{ producto.stock }}"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- ==========================
+                        STOCK MÍNIMO
+                =========================== -->
+
+                <div class="form-group">
+
+                    <label for="stock_minimo">
+
+                        Stock Mínimo
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="stock_minimo"
+                        name="stock_minimo"
+                        value="{{ producto.stock_minimo }}"
+                        min="0"
+                        required
+                    >
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ==================================
+                        BOTONES
+            =================================== -->
+
+            <div class="form-actions">
+
+
+                <!-- CANCELAR -->
+
+                <a
+                    href="{% url 'productos' %}"
+                    class="btn-cancelar"
+                >
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Cancelar
+
+                </a>
+
+
+
+                <!-- GUARDAR -->
+
+                <button
+                    type="submit"
+                    class="btn-guardar"
+                >
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Guardar Cambios
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+
+    <!-- ======================================
+                    FOOTER
+    ======================================= -->
+
+    <footer class="editar-footer">
+
+        <p>
+
+            © 2026 Mining Star ERP |
+            Sistema Integral de Gestión Minera
+
+        </p>
+
+    </footer>
+
+
+</main>
+
+
+</body>
+
+</html>

@@ -1,0 +1,673 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Productos | Mining Star ERP</title>
+
+    <!-- CSS PRINCIPAL -->
+    <link rel="stylesheet"
+          href="{% static 'css/dashboard.css' %}">
+
+    <!-- CSS PRODUCTOS -->
+    <link rel="stylesheet"
+          href="{% static 'css/productos.css' %}">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+                    SIDEBAR
+========================================== -->
+
+<aside class="sidebar">
+
+    <div class="logo-area">
+
+        <img src="{% static 'img/logo.png' %}"
+             alt="Mining Star">
+
+        <h2>Mining Star ERP</h2>
+
+        <p>Sistema Integral de Gestión</p>
+
+    </div>
+
+
+    <!-- MENÚ PRINCIPAL -->
+
+    <span class="menu-title">
+        MENÚ PRINCIPAL
+    </span>
+
+
+    <nav>
+
+        <!-- DASHBOARD -->
+
+        <a href="{% url 'dashboard' %}">
+
+            <i class="fa-solid fa-house"></i>
+
+            <span>Dashboard</span>
+
+        </a>
+
+
+        <!-- EMPLEADOS -->
+
+        <a href="{% url 'empleados' %}">
+
+            <i class="fa-solid fa-user-tie"></i>
+
+            <span>Empleados</span>
+
+        </a>
+
+
+        <!-- CLIENTES -->
+
+        <a href="{% url 'clientes' %}">
+
+            <i class="fa-solid fa-users"></i>
+
+            <span>Clientes</span>
+
+        </a>
+
+
+        <!-- PRODUCTOS -->
+
+        <a href="{% url 'productos' %}"
+           class="active">
+
+            <i class="fa-solid fa-box-open"></i>
+
+            <span>Productos</span>
+
+        </a>
+
+
+        <!-- PROVEEDORES -->
+
+        <a href="{% url 'proveedores' %}">
+
+            <i class="fa-solid fa-truck-fast"></i>
+
+            <span>Proveedores</span>
+
+        </a>
+
+
+        <!-- VENTAS -->
+
+        <a href="{% url 'ventas' %}">
+
+            <i class="fa-solid fa-cart-shopping"></i>
+
+            <span>Ventas</span>
+
+        </a>
+
+    </nav>
+
+
+    <hr>
+
+
+    <!-- ANÁLISIS -->
+
+    <span class="menu-title">
+        ANÁLISIS
+    </span>
+
+
+    <nav>
+
+        <!-- REPORTES -->
+
+        <a href="#">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <span>Reportes</span>
+
+        </a>
+
+
+        <!-- CONFIGURACIÓN -->
+
+        <a href="#">
+
+            <i class="fa-solid fa-gear"></i>
+
+            <span>Configuración</span>
+
+        </a>
+
+    </nav>
+
+
+    <!-- CERRAR SESIÓN -->
+
+    <div class="sidebar-bottom">
+
+        <a href="{% url 'login' %}"
+           class="logout">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            <span>Cerrar Sesión</span>
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+
+<!-- ==========================================
+                    CONTENIDO
+========================================== -->
+
+<main class="contenido">
+
+
+    <!-- ======================================
+                    ENCABEZADO
+    ======================================= -->
+
+    <div class="page-header">
+
+        <div>
+
+            <h1>
+
+                <i class="fa-solid fa-box"></i>
+
+                Gestión de Productos
+
+            </h1>
+
+            <p>
+
+                Administre el inventario y la información
+                de los productos de Mining Star ERP.
+
+            </p>
+
+        </div>
+
+
+        <a href="{% url 'nuevo_producto' %}"
+           class="btn-primary">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Nuevo Producto
+
+        </a>
+
+    </div>
+
+
+
+    <!-- ======================================
+                    KPI
+    ======================================= -->
+
+    <div class="kpi-container">
+
+
+        <!-- TOTAL PRODUCTOS -->
+
+        <div class="kpi-card">
+
+            <i class="fa-solid fa-boxes-stacked"></i>
+
+            <h3>
+                Total Productos
+            </h3>
+
+            <span id="totalProductos">
+
+                {{ total_productos }}
+
+            </span>
+
+        </div>
+
+
+
+        <!-- EN INVENTARIO -->
+
+        <div class="kpi-card">
+
+            <i class="fa-solid fa-box-open"></i>
+
+            <h3>
+                En Inventario
+            </h3>
+
+            <span id="productosEnInventario">
+
+                {{ productos_en_inventario|default:total_productos }}
+
+            </span>
+
+        </div>
+
+
+
+        <!-- STOCK BAJO -->
+
+        <div class="kpi-card">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            <h3>
+                Stock Bajo
+            </h3>
+
+            <span id="productosStockBajo">
+
+                {{ productos_stock_bajo }}
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ======================================
+                    HERRAMIENTAS
+    ======================================= -->
+
+    <div class="tools-container">
+
+
+        <!-- BUSCADOR -->
+
+        <div class="search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="buscarProducto"
+                placeholder="Buscar por código, nombre o categoría..."
+            >
+
+        </div>
+
+
+
+        <!-- BOTONES -->
+
+        <div class="right-tools">
+
+
+            <a href="{% url 'exportar_productos_excel' %}"
+               class="btn-tool">
+
+                <i class="fa-solid fa-file-excel"></i>
+
+                Excel
+
+            </a>
+
+
+            <a href="{% url 'exportar_productos_pdf' %}"
+               class="btn-tool">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                PDF
+
+            </a>
+
+
+            <button
+                type="button"
+                id="btnImprimir"
+                class="btn-tool">
+
+                <i class="fa-solid fa-print"></i>
+
+                Imprimir
+
+            </button>
+
+
+            <button
+                type="button"
+                id="btnActualizar"
+                class="btn-tool">
+
+                <i class="fa-solid fa-rotate"></i>
+
+                Actualizar
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================
+                    TABLA
+    ======================================= -->
+
+    <div class="table-card">
+
+
+        <!-- CABECERA TABLA -->
+
+        <div class="table-header">
+
+            <h3>
+
+                <i class="fa-solid fa-boxes-stacked"></i>
+
+                Lista de Productos
+
+            </h3>
+
+
+            <span id="totalRegistros">
+
+                {{ total_productos }} registros
+
+            </span>
+
+        </div>
+
+
+
+        <!-- TABLA -->
+
+        <div class="table-responsive">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Código
+                        </th>
+
+                        <th>
+                            Producto
+                        </th>
+
+                        <th>
+                            Categoría
+                        </th>
+
+                        <th>
+                            Proveedor
+                        </th>
+
+                        <th>
+                            Precio Compra
+                        </th>
+
+                        <th>
+                            Precio Venta
+                        </th>
+
+                        <th>
+                            Stock
+                        </th>
+
+                        <th>
+                            Stock Mínimo
+                        </th>
+
+                        <th>
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tablaProductos">
+
+
+                    {% for producto in productos %}
+
+
+                    <!-- ==================================
+                            FILA PRODUCTO
+                    =================================== -->
+
+                    <tr
+                        class="{% if producto.stock <= producto.stock_minimo %}stock-bajo{% endif %}"
+                    >
+
+
+                        <!-- CÓDIGO -->
+
+                        <td>
+
+                            {{ producto.codigo }}
+
+                        </td>
+
+
+                        <!-- PRODUCTO -->
+
+                        <td>
+
+                            {{ producto.nombre }}
+
+                        </td>
+
+
+                        <!-- CATEGORÍA -->
+
+                        <td>
+
+                            {{ producto.categoria }}
+
+                        </td>
+
+
+                        <!-- PROVEEDOR -->
+
+                        <td>
+
+                            {{ producto.proveedor }}
+
+                        </td>
+
+
+                        <!-- PRECIO COMPRA -->
+
+                        <td>
+
+                            ${{ producto.precio_compra|floatformat:2 }}
+
+                        </td>
+
+
+                        <!-- PRECIO VENTA -->
+
+                        <td>
+
+                            ${{ producto.precio_venta|floatformat:2 }}
+
+                        </td>
+
+
+                        <!-- STOCK -->
+
+                        <td>
+
+                            {% if producto.stock <= producto.stock_minimo %}
+
+                                <span class="stock-alerta">
+
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                    {{ producto.stock }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="stock-normal">
+
+                                    {{ producto.stock }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- STOCK MÍNIMO -->
+
+                        <td>
+
+                            {{ producto.stock_minimo }}
+
+                        </td>
+
+
+                        <!-- ACCIONES -->
+
+                        <td class="acciones">
+
+
+                            <!-- EDITAR -->
+
+                            <a
+                                href="{% url 'editar_producto' producto.id %}"
+                                class="btn-action btn-edit"
+                                title="Editar producto"
+                            >
+
+                                <i class="fa-solid fa-pen-to-square"></i>
+
+                            </a>
+
+
+                            <!-- ELIMINAR -->
+
+                            <a
+                                href="{% url 'eliminar_producto' producto.id %}"
+                                class="btn-action btn-delete"
+                                title="Eliminar producto"
+
+                                onclick="return confirm(
+                                    '¿Está seguro de eliminar este producto?'
+                                );"
+                            >
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% empty %}
+
+
+                    <!-- ==================================
+                            SIN PRODUCTOS
+                    =================================== -->
+
+                    <tr>
+
+                        <td
+                            colspan="9"
+                            class="empty"
+                        >
+
+                            <i class="fa-solid fa-box-open"></i>
+
+                            <p>
+                                No hay productos registrados.
+                            </p>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ======================================
+                    FOOTER
+    ======================================= -->
+
+    <footer>
+
+        <p>
+
+            © 2026 Mining Star ERP |
+
+            Sistema Integral de Gestión Minera
+
+        </p>
+
+    </footer>
+
+
+</main>
+
+
+
+<!-- ==========================================
+                    JAVASCRIPT
+========================================== -->
+
+<script src="{% static 'js/productos.js' %}"></script>
+
+
+</body>
+
+</html>

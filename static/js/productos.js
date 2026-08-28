@@ -1,0 +1,130 @@
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ==========================================
+    // BUSCAR PRODUCTOS
+    // ==========================================
+
+    const buscador = document.getElementById("buscarProducto");
+    const tabla = document.getElementById("tablaProductos");
+    const contador = document.getElementById("totalRegistros");
+
+    if (!buscador || !tabla) {
+        return;
+    }
+
+    buscador.addEventListener("input", function () {
+
+        const texto = this.value.toLowerCase().trim();
+
+        const filas = tabla.querySelectorAll("tr");
+
+        let encontrados = 0;
+
+        filas.forEach(function (fila) {
+
+            // Ignorar fila de "no hay productos"
+            if (fila.querySelector(".empty")) {
+                return;
+            }
+
+            const contenido = fila.textContent.toLowerCase();
+
+            if (contenido.includes(texto)) {
+
+                fila.style.display = "";
+
+                encontrados++;
+
+            } else {
+
+                fila.style.display = "none";
+            }
+        });
+
+
+        // ==========================================
+        // ACTUALIZAR CONTADOR
+        // ==========================================
+
+        if (contador) {
+
+            contador.textContent =
+                encontrados +
+                (encontrados === 1 ? " registro" : " registros");
+        }
+
+
+        // ==========================================
+        // MENSAJE SIN RESULTADOS
+        // ==========================================
+
+        let mensaje = document.getElementById(
+            "mensajeSinResultados"
+        );
+
+        if (encontrados === 0 && texto !== "") {
+
+            if (!mensaje) {
+
+                mensaje = document.createElement("tr");
+
+                mensaje.id = "mensajeSinResultados";
+
+                mensaje.innerHTML = `
+                    <td colspan="9" class="empty">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <p>
+                            No se encontraron productos.
+                        </p>
+                    </td>
+                `;
+
+                tabla.appendChild(mensaje);
+            }
+
+        } else {
+
+            if (mensaje) {
+                mensaje.remove();
+            }
+        }
+
+    });
+
+
+    // ==========================================
+    // BOTÓN ACTUALIZAR
+    // ==========================================
+
+    const btnActualizar =
+        document.getElementById("btnActualizar");
+
+    if (btnActualizar) {
+
+        btnActualizar.addEventListener("click", function () {
+
+            location.reload();
+
+        });
+
+    }
+
+
+    // ==========================================
+    // BOTÓN IMPRIMIR
+    // ==========================================
+
+    const btnImprimir =
+        document.getElementById("btnImprimir");
+
+    if (btnImprimir) {
+
+        btnImprimir.addEventListener("click", function () {
+
+            window.print();
+
+        });
+
+    }
+
+});

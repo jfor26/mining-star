@@ -1,0 +1,656 @@
+{% load static %}
+ 
+<!DOCTYPE html>
+<html lang="es">
+ 
+<head>
+ 
+    <meta charset="UTF-8">
+ 
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+ 
+    <title>Ventas | Mining Star ERP</title>
+ 
+    <!-- CSS PRINCIPAL -->
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+ 
+    <!-- CSS DEL MODAL (reutilizamos el de empleados) -->
+    <link rel="stylesheet" href="{% static 'css/empleados.css' %}">
+ 
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+ 
+</head>
+ 
+<body>
+ 
+ 
+<!-- =========================================================
+                        CONTENEDOR
+========================================================= -->
+ 
+<div class="container">
+ 
+ 
+    <!-- =====================================================
+                            SIDEBAR
+    ===================================================== -->
+ 
+    <aside class="sidebar">
+ 
+        <div class="logo-area">
+            <img src="{% static 'img/logo.png' %}" alt="Mining Star">
+            <h2>Mining Star ERP</h2>
+            <p>Sistema Integral de Gestión</p>
+        </div>
+ 
+        <span class="menu-title">MENÚ PRINCIPAL</span>
+ 
+        <nav>
+ 
+            <a href="{% url 'dashboard' %}">
+                <i class="fa-solid fa-house"></i>
+                <span>Dashboard</span>
+            </a>
+ 
+            <a href="{% url 'empleados' %}">
+                <i class="fa-solid fa-user-tie"></i>
+                <span>Empleados</span>
+            </a>
+ 
+            <a href="{% url 'clientes' %}">
+                <i class="fa-solid fa-users"></i>
+                <span>Clientes</span>
+            </a>
+ 
+            <a href="{% url 'productos' %}">
+                <i class="fa-solid fa-box-open"></i>
+                <span>Productos</span>
+            </a>
+ 
+            <a href="{% url 'proveedores' %}">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span>Proveedores</span>
+            </a>
+ 
+            <a href="{% url 'ventas' %}" class="active">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>Ventas</span>
+            </a>
+ 
+        </nav>
+ 
+        <hr>
+ 
+        <span class="menu-title">ANÁLISIS</span>
+ 
+        <nav>
+            <a href="#">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Reportes</span>
+            </a>
+        </nav>
+ 
+        <div class="sidebar-bottom">
+            <a href="{% url 'login' %}" class="logout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+ 
+    </aside>
+ 
+ 
+    <!-- =====================================================
+                    CONTENIDO PRINCIPAL
+    ===================================================== -->
+ 
+    <main class="contenido">
+ 
+ 
+        <!-- =================================================
+                            TOPBAR
+        ================================================= -->
+ 
+        <header class="topbar">
+ 
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="buscarVenta" placeholder="Buscar venta...">
+            </div>
+ 
+            <div class="topbar-right">
+ 
+                <button type="button" class="icon-btn">
+                    <i class="fa-regular fa-bell"></i>
+                </button>
+ 
+                <div class="perfil">
+                    <img src="{% static 'img/logo.png' %}" alt="Administrador">
+                    <div>
+                        <strong>Administrador</strong>
+                        <small>Administrador General</small>
+                    </div>
+                </div>
+ 
+            </div>
+ 
+        </header>
+ 
+ 
+        <!-- =================================================
+                            ENCABEZADO
+        ================================================= -->
+ 
+        <section class="page-header">
+ 
+            <div>
+                <h1>
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Gestión de Ventas
+                </h1>
+                <p>Registre y consulte las ventas de Mining Star ERP.</p>
+            </div>
+ 
+            <button type="button" class="btn-principal" id="btnNuevaVenta">
+                <i class="fa-solid fa-plus"></i>
+                Nueva Venta
+            </button>
+ 
+        </section>
+ 
+ 
+        <!-- =================================================
+                            MENSAJES DJANGO
+        ================================================= -->
+ 
+        {% if messages %}
+ 
+            {% for message in messages %}
+ 
+                <div class="alert alert-success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    {{ message }}
+                </div>
+ 
+            {% endfor %}
+ 
+        {% endif %}
+ 
+ 
+        <!-- =================================================
+                                KPI
+        ================================================= -->
+ 
+        <section class="dashboard-grid">
+ 
+            <div class="stat-card empleados">
+                <i class="fa-solid fa-receipt"></i>
+                <h3>Total Ventas</h3>
+                <span>{{ ventas|length }}</span>
+                <small>Registradas</small>
+            </div>
+ 
+            <div class="stat-card ventas">
+                <i class="fa-solid fa-sack-dollar"></i>
+                <h3>Total Vendido</h3>
+                <span>${{ total_vendido|default:0|floatformat:0 }}</span>
+                <small>Acumulado</small>
+            </div>
+ 
+        </section>
+ 
+ 
+        <!-- =================================================
+                        HISTORIAL DE VENTAS
+        ================================================= -->
+ 
+        <section class="table-card">
+ 
+            <div class="table-header">
+                <h3>
+                    <i class="fa-solid fa-list"></i>
+                    Historial de ventas
+                </h3>
+                <span>{{ ventas|length }} registros</span>
+            </div>
+ 
+            <div class="table-responsive">
+ 
+                <table>
+ 
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Total</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+ 
+                    <tbody>
+ 
+                        {% for venta in ventas %}
+ 
+                        <tr>
+ 
+                            <td><strong>V-{{ venta.id|stringformat:"04d" }}</strong></td>
+ 
+                            <td>{{ venta.cliente.nombre }}</td>
+ 
+                            <td>
+                                {% for detalle in venta.detalles.all %}
+                                    {{ detalle.producto.nombre }}
+                                {% endfor %}
+                            </td>
+ 
+                            <td>
+                                {% for detalle in venta.detalles.all %}
+                                    {{ detalle.cantidad }}
+                                {% endfor %}
+                            </td>
+ 
+                            <td><strong>${{ venta.total|floatformat:0 }}</strong></td>
+ 
+                            <td>{{ venta.fecha|date:"d/m/Y" }}</td>
+ 
+                            <td>
+                                <span class="estado activo">{{ venta.estado }}</span>
+                            </td>
+ 
+                            <td class="acciones">
+ 
+                                <button
+                                    type="button"
+                                    class="accion editar btn-ver-venta"
+                                    title="Ver venta"
+                                    data-id="V-{{ venta.id|stringformat:'04d' }}"
+                                    data-cliente="{{ venta.cliente.nombre }}"
+                                    data-fecha="{{ venta.fecha|date:'d/m/Y H:i' }}"
+                                    data-total="${{ venta.total|floatformat:0 }}"
+                                    data-estado="{{ venta.estado }}"
+                                    data-detalles='[{% for d in venta.detalles.all %}{"producto":"{{ d.producto.nombre|escapejs }}","cantidad":{{ d.cantidad }},"precio":{{ d.precio_unitario }},"subtotal":{{ d.subtotal }}}{% if not forloop.last %},{% endif %}{% endfor %}]'>
+ 
+                                    <i class="fa-solid fa-eye"></i>
+ 
+                                </button>
+ 
+                                <a
+                                    href="{% url 'eliminar_venta' venta.id %}"
+                                    class="accion eliminar"
+                                    title="Eliminar venta"
+                                    onclick="return confirm('¿Está seguro de eliminar esta venta? Esta acción no se puede deshacer.');">
+ 
+                                    <i class="fa-solid fa-trash"></i>
+ 
+                                </a>
+ 
+                            </td>
+ 
+                        </tr>
+ 
+                        {% empty %}
+ 
+                        <tr class="fila-vacia">
+                            <td colspan="8" class="empty">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                <p>No hay ventas registradas todavía.</p>
+                            </td>
+                        </tr>
+ 
+                        {% endfor %}
+ 
+                    </tbody>
+ 
+                </table>
+ 
+            </div>
+ 
+        </section>
+ 
+ 
+        <!-- =================================================
+                                FOOTER
+        ================================================= -->
+ 
+        <footer class="dashboard-footer">
+            <p>© 2026 Mining Star ERP | Sistema Integral de Gestión Minera</p>
+        </footer>
+ 
+ 
+    </main>
+ 
+</div>
+ 
+ 
+<!-- =========================================================
+                    MODAL NUEVA VENTA
+========================================================= -->
+ 
+<div class="modal" id="modalVenta" style="display:none;">
+ 
+    <div class="modal-content">
+ 
+        <div class="modal-header">
+ 
+            <h2>
+                <i class="fa-solid fa-cart-plus"></i>
+                Registrar Venta
+            </h2>
+ 
+            <button type="button" id="cerrarModalVenta" class="cerrar-modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+ 
+        </div>
+ 
+        <form id="formVenta" method="POST" action="{% url 'ventas' %}">
+ 
+            {% csrf_token %}
+ 
+            <div class="form-grid">
+ 
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <select name="cliente" id="clienteVenta" required>
+                        <option value="">Seleccionar cliente</option>
+                        {% for cliente in clientes %}
+                            <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+ 
+                <div class="form-group">
+                    <label>Producto</label>
+                    <select name="producto" id="productoVenta" required>
+                        <option value="">Seleccionar producto</option>
+                        {% for producto in productos %}
+                            <option value="{{ producto.id }}" data-precio="{{ producto.precio_venta }}">
+                                {{ producto.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+ 
+                <div class="form-group">
+                    <label>Cantidad</label>
+                    <input type="number" name="cantidad" id="cantidadVenta" min="1" value="1" required>
+                </div>
+ 
+                <div class="form-group">
+                    <label>Total</label>
+                    <input type="text" id="totalVentaPreview" value="$0" disabled>
+                </div>
+ 
+            </div>
+ 
+            <div class="modal-footer">
+ 
+                <button type="button" id="cancelarVenta" class="btn gris">
+                    Cancelar
+                </button>
+ 
+                <button type="submit" class="btn verde">
+                    <i class="fa-solid fa-floppy-disk"></i>
+                    Guardar Venta
+                </button>
+ 
+            </div>
+ 
+        </form>
+ 
+    </div>
+ 
+</div>
+ 
+ 
+<!-- =========================================================
+                    MODAL VER VENTA (DETALLE)
+========================================================= -->
+ 
+<div class="modal" id="modalVerVenta" style="display:none;">
+ 
+    <div class="modal-content">
+ 
+        <div class="modal-header">
+ 
+            <h2>
+                <i class="fa-solid fa-receipt"></i>
+                Detalle de la venta <span id="verVentaId"></span>
+            </h2>
+ 
+            <button type="button" id="cerrarModalVerVenta" class="cerrar-modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+ 
+        </div>
+ 
+        <div id="verVentaContenido" style="padding: 25px;">
+ 
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-size:14px;">
+                <div>
+                    <strong>Cliente:</strong>
+                    <span id="verVentaCliente"></span>
+                </div>
+                <div>
+                    <strong>Fecha:</strong>
+                    <span id="verVentaFecha"></span>
+                </div>
+            </div>
+ 
+            <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:15px;">
+ 
+                <thead>
+                    <tr style="background:#f8fafc;">
+                        <th style="text-align:left; padding:10px;">Producto</th>
+                        <th style="text-align:left; padding:10px;">Cantidad</th>
+                        <th style="text-align:left; padding:10px;">Precio Unit.</th>
+                        <th style="text-align:left; padding:10px;">Subtotal</th>
+                    </tr>
+                </thead>
+ 
+                <tbody id="verVentaDetalles"></tbody>
+ 
+            </table>
+ 
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid #e2e8f0; padding-top:15px;">
+                <span>
+                    Estado:
+                    <span id="verVentaEstado" class="estado activo"></span>
+                </span>
+                <strong style="font-size:18px;">
+                    Total: <span id="verVentaTotal"></span>
+                </strong>
+            </div>
+ 
+        </div>
+ 
+        <div class="modal-footer">
+ 
+            <button type="button" id="imprimirVerVenta" class="btn azul">
+                <i class="fa-solid fa-print"></i>
+                Imprimir
+            </button>
+ 
+            <button type="button" id="cerrarModalVerVentaBtn" class="btn gris">
+                Cerrar
+            </button>
+ 
+        </div>
+ 
+    </div>
+ 
+</div>
+ 
+ 
+<!-- =========================================================
+                        JAVASCRIPT
+========================================================= -->
+ 
+<script>
+ 
+    // -------- MODAL NUEVA VENTA: ABRIR / CERRAR --------
+ 
+    const modalVenta = document.getElementById("modalVenta");
+    const btnNuevaVenta = document.getElementById("btnNuevaVenta");
+    const btnCerrarVenta = document.getElementById("cerrarModalVenta");
+    const btnCancelarVenta = document.getElementById("cancelarVenta");
+ 
+    if (btnNuevaVenta) {
+        btnNuevaVenta.addEventListener("click", function () {
+            modalVenta.style.display = "flex";
+        });
+    }
+ 
+    function cerrarModalVenta() {
+        modalVenta.style.display = "none";
+    }
+ 
+    if (btnCerrarVenta) btnCerrarVenta.addEventListener("click", cerrarModalVenta);
+    if (btnCancelarVenta) btnCancelarVenta.addEventListener("click", cerrarModalVenta);
+ 
+ 
+    // -------- CALCULAR TOTAL EN VIVO --------
+ 
+    const productoVenta = document.getElementById("productoVenta");
+    const cantidadVenta = document.getElementById("cantidadVenta");
+    const totalPreview = document.getElementById("totalVentaPreview");
+ 
+    function actualizarTotalPreview() {
+ 
+        const opcion = productoVenta.options[productoVenta.selectedIndex];
+        const precio = parseFloat(opcion.dataset.precio || 0);
+        const cantidad = parseInt(cantidadVenta.value || 0);
+ 
+        const total = precio * cantidad;
+ 
+        totalPreview.value = "$" + total.toLocaleString("es-CO");
+ 
+    }
+ 
+    if (productoVenta) productoVenta.addEventListener("change", actualizarTotalPreview);
+    if (cantidadVenta) cantidadVenta.addEventListener("input", actualizarTotalPreview);
+ 
+ 
+    // -------- MODAL VER VENTA --------
+ 
+    const modalVerVenta = document.getElementById("modalVerVenta");
+    const btnCerrarVerVenta = document.getElementById("cerrarModalVerVenta");
+    const btnCerrarVerVentaFooter = document.getElementById("cerrarModalVerVentaBtn");
+    const btnImprimirVerVenta = document.getElementById("imprimirVerVenta");
+ 
+    function cerrarModalVerVenta() {
+        modalVerVenta.style.display = "none";
+    }
+ 
+    if (btnCerrarVerVenta) btnCerrarVerVenta.addEventListener("click", cerrarModalVerVenta);
+    if (btnCerrarVerVentaFooter) btnCerrarVerVentaFooter.addEventListener("click", cerrarModalVerVenta);
+ 
+    document.querySelectorAll(".btn-ver-venta").forEach(function (boton) {
+ 
+        boton.addEventListener("click", function () {
+ 
+            document.getElementById("verVentaId").textContent = boton.dataset.id;
+            document.getElementById("verVentaCliente").textContent = boton.dataset.cliente;
+            document.getElementById("verVentaFecha").textContent = boton.dataset.fecha;
+            document.getElementById("verVentaTotal").textContent = boton.dataset.total;
+            document.getElementById("verVentaEstado").textContent = boton.dataset.estado;
+ 
+            const detalles = JSON.parse(boton.dataset.detalles || "[]");
+            const cuerpo = document.getElementById("verVentaDetalles");
+ 
+            cuerpo.innerHTML = "";
+ 
+            detalles.forEach(function (d) {
+ 
+                const fila = document.createElement("tr");
+ 
+                fila.innerHTML = `
+                    <td style="padding:10px; border-top:1px solid #eef2f7;">${d.producto}</td>
+                    <td style="padding:10px; border-top:1px solid #eef2f7;">${d.cantidad}</td>
+                    <td style="padding:10px; border-top:1px solid #eef2f7;">$${Number(d.precio).toLocaleString("es-CO")}</td>
+                    <td style="padding:10px; border-top:1px solid #eef2f7;">$${Number(d.subtotal).toLocaleString("es-CO")}</td>
+                `;
+ 
+                cuerpo.appendChild(fila);
+ 
+            });
+ 
+            modalVerVenta.style.display = "flex";
+ 
+        });
+ 
+    });
+ 
+    if (btnImprimirVerVenta) {
+ 
+        btnImprimirVerVenta.addEventListener("click", function () {
+ 
+            const contenido = document.getElementById("verVentaContenido").innerHTML;
+ 
+            const ventana = window.open("", "_blank");
+ 
+            ventana.document.write(`
+                <html>
+                <head>
+                    <title>Venta ${document.getElementById("verVentaId").textContent}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { text-align: left; padding: 8px; }
+                        th { background: #f1f5f9; }
+                    </style>
+                </head>
+                <body>
+                    <h2>Venta ${document.getElementById("verVentaId").textContent}</h2>
+                    ${contenido}
+                </body>
+                </html>
+            `);
+ 
+            ventana.document.close();
+            ventana.focus();
+            ventana.print();
+ 
+        });
+ 
+    }
+ 
+ 
+    // -------- BÚSQUEDA EN EL HISTORIAL --------
+ 
+    const buscador = document.getElementById("buscarVenta");
+ 
+    if (buscador) {
+ 
+        buscador.addEventListener("keydown", function (event) {
+ 
+            if (event.key === "Enter") {
+ 
+                const texto = buscador.value.trim().toLowerCase();
+ 
+                const filas = document.querySelectorAll(".table-responsive tbody tr");
+ 
+                filas.forEach(fila => {
+                    const contenido = fila.textContent.toLowerCase();
+                    fila.style.display = contenido.includes(texto) ? "" : "none";
+                });
+ 
+            }
+ 
+        });
+ 
+    }
+ 
+</script>
+ 
+ 
+</body>
+ 
+</html>

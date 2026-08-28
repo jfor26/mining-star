@@ -1,0 +1,291 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Gestión de Clientes</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/clientes.css' %}">
+
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="mensaje-exito">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+
+        <h2>
+            <i class="fa-solid fa-mountain"></i>
+            Mining Star
+        </h2>
+
+        <a href="/dashboard/">
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+        </a>
+
+        <a href="/empleados/">
+            <i class="fa-solid fa-user-tie"></i>
+            Empleados
+        </a>
+
+        <a href="/clientes/" class="active">
+            <i class="fa-solid fa-users"></i>
+            Clientes
+        </a>
+
+        <a href="/productos/">
+            <i class="fa-solid fa-box-open"></i>
+            Productos
+        </a>
+
+        <a href="/proveedores/">
+            <i class="fa-solid fa-truck-fast"></i>
+            Proveedores
+        </a>
+
+        <a href="/ventas/">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Ventas
+        </a>
+
+        <a href="/reportes/">
+            <i class="fa-solid fa-chart-line"></i>
+            Reportes
+        </a>
+
+        <a href="/logout/" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Cerrar Sesión
+        </a>
+
+    </div>
+
+    <!-- CONTENIDO -->
+
+    <div class="contenido">
+
+        <h1>Gestión de Clientes</h1>
+
+        <div class="topbar">
+
+            <h2>Mining Star - Sistema de Gestión</h2>
+
+            <div class="topbar-info">
+                <i class="fa-solid fa-calendar-days"></i>
+                <span id="fechaActual"></span>
+            </div>
+
+        </div>
+
+        <!-- FORMULARIO -->
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <input type="text"
+                       name="documento"
+                       placeholder="Documento"
+                       required>
+
+                <input type="text"
+                       name="nombre"
+                       placeholder="Nombre completo"
+                       required>
+
+                <input type="email"
+                       name="correo"
+                       placeholder="Correo electrónico"
+                       required>
+
+                <input type="text"
+                       name="telefono"
+                       placeholder="Teléfono"
+                       required>
+
+                <input type="text"
+                       name="empresa"
+                       placeholder="Empresa"
+                       required>
+
+            </div>
+
+            <button type="submit">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Agregar Cliente
+
+            </button>
+
+        </form>
+
+        <br>
+
+        <!-- BUSCADOR -->
+
+        <input
+            type="text"
+            id="buscarCliente"
+            placeholder="Buscar cliente..."
+            onkeyup="filtrarClientes()">
+
+        <br><br>
+
+        <!-- BOTONES -->
+
+        <div class="acciones-superiores">
+
+            <a href="{% url 'exportar_clientes_excel' %}" class="btn-exportar">
+
+                <i class="fa-solid fa-file-excel"></i>
+
+                Exportar a Excel
+
+            </a>
+
+            <a href="{% url 'exportar_clientes_pdf' %}" class="btn-pdf">
+
+    <i class="fa-solid fa-file-pdf"></i>
+
+    Exportar PDF
+
+</a>
+
+        </div>
+
+        <br>
+
+        <!-- TABLA -->
+
+        <table id="tablaClientes">
+
+            <thead>
+
+                <tr>
+
+                    <th>Documento</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Teléfono</th>
+                    <th>Empresa</th>
+                    <th>Acciones</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for cliente in clientes %}
+
+                <tr>
+
+                    <td>{{ cliente.documento }}</td>
+
+                    <td>{{ cliente.nombre }}</td>
+
+                    <td>{{ cliente.correo }}</td>
+
+                    <td>{{ cliente.telefono }}</td>
+
+                    <td>{{ cliente.empresa }}</td>
+
+                    <td class="acciones">
+
+                        <a href="{% url 'editar_cliente' cliente.id %}" class="btn-editar">
+
+                            <i class="fa-solid fa-pen"></i>
+
+                        </a>
+
+                        <a href="{% url 'eliminar_cliente' cliente.id %}"
+
+                           class="btn-eliminar"
+
+                           onclick="return confirm('¿Desea eliminar este cliente?')">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6" style="text-align:center">
+
+                        No hay clientes registrados.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<script>
+
+function filtrarClientes(){
+
+    let input = document.getElementById("buscarCliente");
+
+    let filtro = input.value.toUpperCase();
+
+    let tabla = document.getElementById("tablaClientes");
+
+    let filas = tabla.getElementsByTagName("tr");
+
+    for(let i=1;i<filas.length;i++){
+
+        let texto = filas[i].textContent || filas[i].innerText;
+
+        filas[i].style.display =
+
+        texto.toUpperCase().includes(filtro)
+
+        ? ""
+
+        : "none";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

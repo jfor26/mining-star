@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Cliente</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/clientes.css' %}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <h2>
+            <i class="fa-solid fa-mountain"></i>
+            Mining Star
+        </h2>
+
+        <a href="/dashboard/">
+            <i class="fa-solid fa-house"></i>
+            Dashboard
+        </a>
+
+        <a href="/empleados/">
+            <i class="fa-solid fa-user-tie"></i>
+            Empleados
+        </a>
+
+        <a href="/clientes/" class="active">
+            <i class="fa-solid fa-users"></i>
+            Clientes
+        </a>
+
+        <a href="/productos/">
+            <i class="fa-solid fa-box-open"></i>
+            Productos
+        </a>
+
+        <a href="/proveedores/">
+            <i class="fa-solid fa-truck-fast"></i>
+            Proveedores
+        </a>
+
+        <a href="/ventas/">
+            <i class="fa-solid fa-cart-shopping"></i>
+            Ventas
+        </a>
+
+        <a href="/reportes/">
+            <i class="fa-solid fa-chart-line"></i>
+            Reportes
+        </a>
+
+        <a href="/logout/" class="logout">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            Cerrar Sesión
+        </a>
+
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="contenido">
+
+        <h1>
+            <i class="fa-solid fa-pen-to-square"></i>
+            Editar Cliente
+        </h1>
+
+        <p>Actualiza la información del cliente.</p>
+
+        <div class="form-card">
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <input
+                        type="text"
+                        name="documento"
+                        value="{{ cliente.documento }}"
+                        placeholder="Documento">
+
+                    <input
+                        type="text"
+                        name="nombre"
+                        value="{{ cliente.nombre }}"
+                        placeholder="Nombre">
+
+                    <input
+                        type="email"
+                        name="correo"
+                        value="{{ cliente.correo }}"
+                        placeholder="Correo">
+
+                    <input
+                        type="text"
+                        name="telefono"
+                        value="{{ cliente.telefono }}"
+                        placeholder="Teléfono">
+
+                    <input
+                        type="text"
+                        name="empresa"
+                        value="{{ cliente.empresa }}"
+                        placeholder="Empresa">
+
+                </div>
+
+                 <div class="acciones-form">
+
+    <button type="submit" class="btn-guardar">
+        <i class="fa-solid fa-floppy-disk"></i>
+        Guardar Cambios
+    </button>
+
+    <a href="{% url 'clientes' %}" class="btn-cancelar">
+        <i class="fa-solid fa-arrow-left"></i>
+        Cancelar
+    </a>
+
+</div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

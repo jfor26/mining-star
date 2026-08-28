@@ -1,0 +1,55 @@
+# ==========================================
+# Python
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# ==========================================
+# Entornos virtuales
+# ==========================================
+venv/
+.venv/
+env/
+ENV/
+
+# ==========================================
+# Django
+# ==========================================
+*.log
+db.sqlite3
+db.sqlite3-journal
+/media/
+/staticfiles/
+
+# ==========================================
+# Secretos  -  NUNCA subir a Git
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# Editores / Sistema operativo
+# ==========================================
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Herramientas
+# ==========================================
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/

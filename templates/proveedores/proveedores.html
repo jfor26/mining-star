@@ -1,0 +1,1006 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Proveedores | Mining Star ERP</title>
+
+
+    <!-- ==========================================
+         CSS PRINCIPAL
+    =========================================== -->
+
+    <link rel="stylesheet"
+          href="{% static 'css/dashboard.css' %}">
+
+
+    <!-- ==========================================
+         CSS PROVEEDORES
+    =========================================== -->
+
+    <link rel="stylesheet"
+          href="{% static 'css/proveedores.css' %}">
+
+
+    <!-- ==========================================
+         FONT AWESOME
+    =========================================== -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+                         SIDEBAR
+===================================================== -->
+
+<aside class="sidebar">
+
+
+    <!-- LOGO -->
+
+    <div class="logo-area">
+
+        <img
+            src="{% static 'img/logo.png' %}"
+            alt="Mining Star">
+
+        <h2>
+            Mining Star ERP
+        </h2>
+
+        <p>
+            Sistema Integral de Gestión
+        </p>
+
+    </div>
+
+
+    <!-- MENÚ PRINCIPAL -->
+
+    <span class="menu-title">
+        MENÚ PRINCIPAL
+    </span>
+
+
+    <nav>
+
+
+        <!-- DASHBOARD -->
+
+        <a href="{% url 'dashboard' %}">
+
+            <i class="fa-solid fa-house"></i>
+
+            <span>
+                Dashboard
+            </span>
+
+        </a>
+
+
+        <!-- EMPLEADOS -->
+
+        <a href="{% url 'empleados' %}">
+
+            <i class="fa-solid fa-user-tie"></i>
+
+            <span>
+                Empleados
+            </span>
+
+        </a>
+
+
+        <!-- CLIENTES -->
+
+        <a href="{% url 'clientes' %}">
+
+            <i class="fa-solid fa-users"></i>
+
+            <span>
+                Clientes
+            </span>
+
+        </a>
+
+
+        <!-- PRODUCTOS -->
+
+        <a href="{% url 'productos' %}">
+
+            <i class="fa-solid fa-box-open"></i>
+
+            <span>
+                Productos
+            </span>
+
+        </a>
+
+
+        <!-- PROVEEDORES -->
+
+        <a href="{% url 'proveedores' %}"
+           class="active">
+
+            <i class="fa-solid fa-truck-fast"></i>
+
+            <span>
+                Proveedores
+            </span>
+
+        </a>
+
+
+        <!-- VENTAS -->
+
+        <a href="{% url 'ventas' %}">
+
+            <i class="fa-solid fa-cart-shopping"></i>
+
+            <span>
+                Ventas
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <hr>
+
+
+    <!-- ANÁLISIS -->
+
+    <span class="menu-title">
+        ANÁLISIS
+    </span>
+
+
+    <nav>
+
+
+        <!-- REPORTES -->
+
+        <a href="#">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <span>
+                Reportes
+            </span>
+
+        </a>
+
+
+        <!-- CONFIGURACIÓN -->
+
+        <a href="#">
+
+            <i class="fa-solid fa-gear"></i>
+
+            <span>
+                Configuración
+            </span>
+
+        </a>
+
+
+    </nav>
+
+
+    <!-- CERRAR SESIÓN -->
+
+    <div class="sidebar-bottom">
+
+        <a
+            href="{% url 'login' %}"
+            class="logout">
+
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            <span>
+                Cerrar Sesión
+            </span>
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- =====================================================
+                    CONTENIDO PRINCIPAL
+===================================================== -->
+
+<main class="contenido">
+
+
+    <!-- =================================================
+                        ENCABEZADO
+    ================================================== -->
+
+    <div class="page-header">
+
+
+        <div>
+
+            <h1>
+
+                <i class="fa-solid fa-truck"></i>
+
+                Gestión de Proveedores
+
+            </h1>
+
+
+            <p>
+
+                Administre la información de los proveedores
+                de Mining Star ERP.
+
+            </p>
+
+        </div>
+
+
+        <!-- NUEVO PROVEEDOR -->
+
+        <button
+            type="button"
+            id="btnNuevoProveedor"
+            class="btn-primary">
+
+            <i class="fa-solid fa-plus"></i>
+
+            Nuevo Proveedor
+
+        </button>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+                         MENSAJES DJANGO
+    ================================================== -->
+
+    {% if messages %}
+
+        <div class="mensajes">
+
+            {% for message in messages %}
+
+                <div class="mensaje mensaje-success">
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!-- =================================================
+                            KPI
+    ================================================== -->
+
+    <div class="kpi-container">
+
+
+        <!-- TOTAL -->
+
+        <div class="kpi-card">
+
+            <i class="fa-solid fa-truck-field"></i>
+
+            <h3>
+                Total Proveedores
+            </h3>
+
+            <span id="totalProveedores">
+
+                {{ total_proveedores }}
+
+            </span>
+
+        </div>
+
+
+        <!-- CONTACTOS -->
+
+        <div class="kpi-card">
+
+            <i class="fa-solid fa-address-book"></i>
+
+            <h3>
+                Contactos Registrados
+            </h3>
+
+            <span>
+
+                {{ total_proveedores }}
+
+            </span>
+
+        </div>
+
+
+        <!-- PROVEEDORES -->
+
+        <div class="kpi-card">
+
+            <i class="fa-solid fa-building"></i>
+
+            <h3>
+                Proveedores
+            </h3>
+
+            <span>
+
+                {{ total_proveedores }}
+
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+                         HERRAMIENTAS
+    ================================================== -->
+
+    <div class="tools-container">
+
+
+        <!-- BUSCADOR -->
+
+        <div class="search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="buscarProveedor"
+                placeholder="Buscar por NIT, empresa, contacto o ciudad..."
+            >
+
+        </div>
+
+
+
+        <!-- BOTONES -->
+
+        <div class="right-tools">
+
+
+            <!-- EXCEL -->
+
+            <a
+                href="{% url 'exportar_proveedores_excel' %}"
+                class="btn-tool">
+
+                <i class="fa-solid fa-file-excel"></i>
+
+                Excel
+
+            </a>
+
+
+            <!-- PDF -->
+
+            <a
+                href="{% url 'exportar_proveedores_pdf' %}"
+                class="btn-tool">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                PDF
+
+            </a>
+
+
+            <!-- IMPRIMIR -->
+
+            <button
+                type="button"
+                id="btnImprimir"
+                class="btn-tool">
+
+                <i class="fa-solid fa-print"></i>
+
+                Imprimir
+
+            </button>
+
+
+            <!-- ACTUALIZAR -->
+
+            <button
+                type="button"
+                id="btnActualizar"
+                class="btn-tool">
+
+                <i class="fa-solid fa-rotate"></i>
+
+                Actualizar
+
+            </button>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+                         TABLA
+    ================================================== -->
+
+    <div class="table-card">
+
+
+        <!-- CABECERA TABLA -->
+
+        <div class="table-header">
+
+
+            <h3>
+
+                <i class="fa-solid fa-truck-field"></i>
+
+                Lista de Proveedores
+
+            </h3>
+
+
+            <span id="totalRegistros">
+
+                {{ total_proveedores }}
+
+                {% if total_proveedores == 1 %}
+                    registro
+                {% else %}
+                    registros
+                {% endif %}
+
+            </span>
+
+
+        </div>
+
+
+
+        <!-- CONTENEDOR RESPONSIVO -->
+
+        <div class="table-responsive">
+
+
+            <table>
+
+
+                <!-- ======================================
+                              ENCABEZADOS
+                ======================================= -->
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            NIT
+                        </th>
+
+                        <th>
+                            Empresa
+                        </th>
+
+                        <th>
+                            Contacto
+                        </th>
+
+                        <th>
+                            Correo
+                        </th>
+
+                        <th>
+                            Teléfono
+                        </th>
+
+                        <th>
+                            Ciudad
+                        </th>
+
+                        <th>
+                            Dirección
+                        </th>
+
+                        <th>
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+
+                <!-- ======================================
+                                DATOS
+                ======================================= -->
+
+                <tbody id="tablaProveedores">
+
+
+                    {% for proveedor in proveedores %}
+
+
+                    <tr>
+
+
+                        <!-- NIT -->
+
+                        <td>
+
+                            {{ proveedor.nit }}
+
+                        </td>
+
+
+                        <!-- EMPRESA -->
+
+                        <td>
+
+                            <strong>
+                                {{ proveedor.empresa }}
+                            </strong>
+
+                        </td>
+
+
+                        <!-- CONTACTO -->
+
+                        <td>
+
+                            {{ proveedor.contacto }}
+
+                        </td>
+
+
+                        <!-- CORREO -->
+
+                        <td>
+
+                            {{ proveedor.correo }}
+
+                        </td>
+
+
+                        <!-- TELÉFONO -->
+
+                        <td>
+
+                            {{ proveedor.telefono }}
+
+                        </td>
+
+
+                        <!-- CIUDAD -->
+
+                        <td>
+
+                            {{ proveedor.ciudad }}
+
+                        </td>
+
+
+                        <!-- DIRECCIÓN -->
+
+                        <td>
+
+                            {{ proveedor.direccion }}
+
+                        </td>
+
+
+                        <!-- =================================
+                                  ACCIONES
+                        ================================== -->
+
+                        <td class="acciones">
+
+
+                            <!-- EDITAR -->
+
+                            <a
+                                href="{% url 'editar_proveedor' proveedor.id %}"
+                                class="btn-action btn-edit"
+                                title="Editar proveedor">
+
+                                <i class="fa-solid fa-pen-to-square"></i>
+
+                            </a>
+
+
+                            <!-- ELIMINAR -->
+
+                            <a
+                                href="{% url 'eliminar_proveedor' proveedor.id %}"
+                                class="btn-action btn-delete"
+                                title="Eliminar proveedor"
+                                onclick="return confirm('¿Está seguro de eliminar este proveedor?');">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </a>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% empty %}
+
+
+                    <!-- =================================
+                              SIN PROVEEDORES
+                    ================================== -->
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="empty">
+
+
+                            <i class="fa-solid fa-truck"></i>
+
+
+                            <p>
+
+                                No hay proveedores registrados.
+
+                            </p>
+
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =================================================
+                            FOOTER
+    ================================================== -->
+
+    <footer>
+
+        <p>
+
+            © 2026 Mining Star ERP |
+
+            Sistema Integral de Gestión Minera
+
+        </p>
+
+    </footer>
+
+
+</main>
+
+
+
+<!-- =====================================================
+                         MODAL
+              NUEVO PROVEEDOR
+===================================================== -->
+
+<div
+    id="modalProveedor"
+    class="modal-overlay"
+    style="display: none;">
+
+
+    <div class="modal">
+
+
+        <!-- CABECERA -->
+
+        <div class="modal-header">
+
+
+            <div>
+
+                <h2>
+
+                    <i class="fa-solid fa-truck"></i>
+
+                    Nuevo Proveedor
+
+                </h2>
+
+
+                <p>
+
+                    Registre la información del nuevo proveedor.
+
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="cerrarModalProveedor"
+                class="modal-close">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+
+        </div>
+
+
+
+        <!-- ==========================================
+                            FORMULARIO
+        =========================================== -->
+
+        <form method="POST"
+              action="{% url 'proveedores' %}">
+
+            {% csrf_token %}
+
+
+            <div class="form-grid">
+
+
+                <!-- NIT -->
+
+                <div class="form-group">
+
+                    <label for="nit">
+
+                        NIT
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nit"
+                        name="nit"
+                        placeholder="Ej: 900123456-7"
+                        required>
+
+                </div>
+
+
+
+                <!-- EMPRESA -->
+
+                <div class="form-group">
+
+                    <label for="empresa">
+
+                        Empresa
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="empresa"
+                        name="empresa"
+                        placeholder="Nombre de la empresa"
+                        required>
+
+                </div>
+
+
+
+                <!-- CONTACTO -->
+
+                <div class="form-group">
+
+                    <label for="contacto">
+
+                        Persona de Contacto
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="contacto"
+                        name="contacto"
+                        placeholder="Nombre del contacto"
+                        required>
+
+                </div>
+
+
+
+                <!-- CORREO -->
+
+                <div class="form-group">
+
+                    <label for="correo">
+
+                        Correo Electrónico
+
+                    </label>
+
+                    <input
+                        type="email"
+                        id="correo"
+                        name="correo"
+                        placeholder="correo@empresa.com"
+                        required>
+
+                </div>
+
+
+
+                <!-- TELÉFONO -->
+
+                <div class="form-group">
+
+                    <label for="telefono">
+
+                        Teléfono
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="telefono"
+                        name="telefono"
+                        placeholder="Número de teléfono"
+                        required>
+
+                </div>
+
+
+
+                <!-- CIUDAD -->
+
+                <div class="form-group">
+
+                    <label for="ciudad">
+
+                        Ciudad
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="ciudad"
+                        name="ciudad"
+                        placeholder="Ej: Barranquilla"
+                        required>
+
+                </div>
+
+
+
+                <!-- DIRECCIÓN -->
+
+                <div class="form-group form-full">
+
+                    <label for="direccion">
+
+                        Dirección
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="direccion"
+                        name="direccion"
+                        placeholder="Dirección del proveedor"
+                        required>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- ======================================
+                         BOTONES FORMULARIO
+            ======================================= -->
+
+            <div class="modal-footer">
+
+
+                <button
+                    type="button"
+                    id="cancelarProveedor"
+                    class="btn-secondary">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Cancelar
+
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="btn-primary">
+
+                    <i class="fa-solid fa-floppy-disk"></i>
+
+                    Guardar Proveedor
+
+                </button>
+
+
+            </div>
+
+
+        </form>
+
+
+    </div>
+
+
+</div>
+
+
+
+<!-- =====================================================
+                         JAVASCRIPT
+===================================================== -->
+
+<script src="{% static 'js/proveedores.js' %}"></script>
+
+
+</body>
+
+</html>

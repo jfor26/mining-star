@@ -1,0 +1,361 @@
+/* =========================================================
+   NUEVO PRODUCTO - MINING STAR ERP
+   ========================================================= */
+
+/* CONTENIDO PRINCIPAL */
+.contenido {
+    min-height: 100vh;
+    padding: 35px 40px;
+    background: #f4f7fb;
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   ENCABEZADO
+   ========================================================= */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 35px;
+}
+
+.page-header h1 {
+    margin: 0 0 8px 0;
+    color: #0b2d52;
+    font-size: 34px;
+    font-weight: 700;
+}
+
+.page-header h1 i {
+    color: #0066e6;
+    margin-right: 10px;
+}
+
+.page-header p {
+    margin: 0;
+    color: #52708f;
+    font-size: 16px;
+}
+
+
+/* =========================================================
+   CONTENEDOR DEL FORMULARIO
+   ========================================================= */
+
+.form-card {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(20, 50, 80, 0.08);
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   CABECERA DEL FORMULARIO
+   ========================================================= */
+
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 22px 30px;
+    border-bottom: 1px solid #e5eaf0;
+    background: #ffffff;
+}
+
+.form-header i {
+    color: #0066e6;
+    font-size: 22px;
+}
+
+.form-header h2 {
+    margin: 0;
+    color: #0b2d52;
+    font-size: 21px;
+}
+
+
+/* =========================================================
+   FORMULARIO
+   ========================================================= */
+
+.form-producto {
+    padding: 30px;
+}
+
+
+/* =========================================================
+   GRID DE CAMPOS
+   ========================================================= */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px 25px;
+}
+
+
+/* =========================================================
+   GRUPO DE INPUT
+   ========================================================= */
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group.full {
+    grid-column: 1 / -1;
+}
+
+.input-group label {
+    margin-bottom: 7px;
+    color: #193b5d;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.input-group label span {
+    color: #e11d48;
+}
+
+
+/* =========================================================
+   INPUTS Y SELECT
+   ========================================================= */
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    height: 45px;
+    padding: 0 13px;
+    box-sizing: border-box;
+
+    border: 1px solid #d6dee8;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #193b5d;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.input-group input::placeholder {
+    color: #9aaabd;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #0066e6;
+    box-shadow: 0 0 0 3px rgba(0, 102, 230, 0.12);
+}
+
+
+/* =========================================================
+   CAMPOS NUMÉRICOS
+   ========================================================= */
+
+.input-group input[type="number"] {
+    text-align: left;
+}
+
+
+/* =========================================================
+   BOTONES
+   ========================================================= */
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 30px;
+    padding-top: 25px;
+
+    border-top: 1px solid #e5eaf0;
+}
+
+
+/* BOTÓN CANCELAR */
+
+.btn-cancelar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    height: 45px;
+    padding: 0 22px;
+
+    border: 1px solid #d5dce5;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #53687d;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.btn-cancelar:hover {
+    background: #f1f4f7;
+    border-color: #b9c4d0;
+}
+
+
+/* BOTÓN GUARDAR */
+
+.btn-guardar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    height: 45px;
+    padding: 0 25px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #0066e6;
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    box-shadow: 0 4px 10px rgba(0, 102, 230, 0.20);
+
+    transition: all 0.2s ease;
+}
+
+.btn-guardar:hover {
+    background: #0054c2;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(0, 102, 230, 0.25);
+}
+
+.btn-guardar i {
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   MENSAJES DE DJANGO
+   ========================================================= */
+
+.messages {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto 20px auto;
+}
+
+.alert {
+    padding: 13px 18px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.alert-success {
+    background: #e9f8ef;
+    color: #16733c;
+    border: 1px solid #bde8cb;
+}
+
+.alert-error {
+    background: #fdecec;
+    color: #b42318;
+    border: 1px solid #f5c2c0;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+footer {
+    text-align: center;
+    margin-top: 35px;
+    padding: 20px 0;
+
+    color: #66809b;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .contenido {
+        padding: 25px;
+    }
+
+    .page-header h1 {
+        font-size: 28px;
+    }
+
+    .form-card {
+        max-width: 100%;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .contenido {
+        padding: 20px;
+    }
+
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .page-header h1 {
+        font-size: 25px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .input-group.full {
+        grid-column: auto;
+    }
+
+    .form-producto {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-cancelar,
+    .btn-guardar {
+        width: 100%;
+    }
+
+}

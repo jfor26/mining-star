@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Mining Star ERP</title>
+
+    <!-- ESTILOS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <!-- PANEL IZQUIERDO -->
+
+    <div class="banner">
+
+        <img src="{% static 'img/banner.png' %}"
+             class="banner-img"
+             alt="Mining Star ERP">
+
+    </div>
+
+    <!-- PANEL DERECHO -->
+
+    <div class="login-box">
+
+        <h2>Mining Star ERP</h2>
+
+        <p>Sistema Integral de Gestión Minera</p>
+
+        <!-- USUARIO -->
+
+        <div class="input-group">
+
+            <input
+                type="text"
+                id="usuario"
+                placeholder="Usuario"
+                autocomplete="username">
+
+        </div>
+
+        <!-- CONTRASEÑA -->
+
+        <div class="password-container">
+
+            <input
+                type="password"
+                id="clave"
+                placeholder="Contraseña"
+                autocomplete="current-password">
+
+            <i class="fa-solid fa-eye"
+               onclick="mostrarClave()">
+            </i>
+
+        </div>
+
+        <!-- BOTÓN INGRESAR -->
+
+        <button onclick="iniciarSesion()">
+
+            <i class="fa-solid fa-right-to-bracket"></i>
+
+            Ingresar
+
+        </button>
+
+        <!-- SEPARADOR -->
+
+        <div class="separator">
+
+            <span>o</span>
+
+        </div>
+
+        <!-- BOTÓN REGISTRO -->
+
+        <button class="btn-registro"
+                onclick="registrarse()">
+
+            <i class="fa-solid fa-user-plus"></i>
+
+            Registrarse
+
+        </button>
+
+        <!-- ENLACES -->
+
+        <div class="links">
+
+            <a href="#">
+
+                ¿Olvidaste tu contraseña?
+
+            </a>
+
+        </div>
+
+        <!-- VERSIÓN -->
+
+        <p class="version">
+
+            Mining Star ERP v1.0
+
+        </p>
+
+    </div>
+
+</div>
+
+<script src="{% static 'js/script.js' %}"></script>
+
+</body>
+
+</html>
+

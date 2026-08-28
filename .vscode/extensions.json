@@ -1,0 +1,18 @@
+{
+    "recommendations": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "usernamehw.errorlens",
+        "SonarSource.sonarlint-vscode",
+        "eamodio.gitlens",
+        "batisteo.vscode-django",
+        "monosans.djlint",
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint",
+        "editorconfig.editorconfig",
+        "streetsidesoftware.code-spell-checker",
+        "streetsidesoftware.code-spell-checker-spanish",
+        "qwtel.sqlite-viewer"
+    ]
+}

@@ -1,149 +1,35 @@
-// =========================================
-// MOSTRAR / OCULTAR CONTRASEÑA
-// =========================================
+// =========================================================
+// Pantalla de inicio de sesión
+//
+// IMPORTANTE: aquí ya no hay ninguna lógica de autenticación.
+//
+// La versión anterior de este archivo contenía:
+//
+//     if (usuario === "admin" && clave === "1234") { ... }
+//
+// es decir, el usuario y la contraseña estaban escritos en un archivo
+// que el navegador descarga y que cualquiera puede leer con Ctrl+U.
+// Además guardaba las cuentas en localStorage en texto plano y se
+// limitaba a redirigir a /dashboard/, una página que no estaba
+// protegida: escribir la URL a mano bastaba para entrar.
+//
+// Ahora las credenciales las verifica el servidor con
+// django.contrib.auth.authenticate(), que compara contra un hash y
+// nunca expone la contraseña. Este archivo solo tiene ayudas visuales.
+// =========================================================
 
 function mostrarClave() {
 
     const input = document.getElementById("clave");
+    const icono = document.querySelector(".password-container i");
 
-    const icono = document.querySelector(
-        ".password-container i"
-    );
-
-    if (input.type === "password") {
-
-        input.type = "text";
-
-        icono.classList.remove(
-            "fa-eye"
-        );
-
-        icono.classList.add(
-            "fa-eye-slash"
-        );
-
-    } else {
-
-        input.type = "password";
-
-        icono.classList.remove(
-            "fa-eye-slash"
-        );
-
-        icono.classList.add(
-            "fa-eye"
-        );
-
-    }
-
-}
-
-
-// =========================================
-// NOTIFICACIÓN
-// =========================================
-
-function mostrarNotificacion(
-    mensaje,
-    tipo
-) {
-
-    alert(mensaje);
-
-}
-
-
-// =========================================
-// INICIAR SESIÓN
-// =========================================
-
-function iniciarSesion() {
-
-    const usuario =
-        document.getElementById(
-            "usuario"
-        ).value.trim();
-
-    const clave =
-        document.getElementById(
-            "clave"
-        ).value.trim();
-
-
-    // ADMINISTRADOR
-
-    if (
-        usuario === "admin" &&
-        clave === "1234"
-    ) {
-
-        window.location.href =
-            "/dashboard/";
-
+    if (!input || !icono) {
         return;
-
     }
 
+    const oculta = input.type === "password";
 
-    // USUARIOS LOCALES
-
-    const usuarios = JSON.parse(
-        localStorage.getItem("usuarios")
-    ) || [];
-
-
-    const encontrado =
-        usuarios.find(u =>
-
-            u.usuario === usuario &&
-            u.clave === clave
-
-        );
-
-
-    if (encontrado) {
-
-        window.location.href =
-            "/dashboard/";
-
-    } else {
-
-        mostrarNotificacion(
-            "Usuario o contraseña incorrectos.",
-            "error"
-        );
-
-    }
-
+    input.type = oculta ? "text" : "password";
+    icono.classList.toggle("fa-eye", !oculta);
+    icono.classList.toggle("fa-eye-slash", oculta);
 }
-
-
-// =========================================
-// REGISTRARSE
-// =========================================
-
-function registrarse() {
-
-    alert(
-        "El módulo de registro aún no está disponible."
-    );
-
-}
-
-
-// =========================================
-// ENTER PARA INICIAR SESIÓN
-// =========================================
-
-document.addEventListener(
-    "keydown",
-    function (e) {
-
-        if (e.key === "Enter") {
-
-            iniciarSesion();
-
-        }
-
-    }
-);

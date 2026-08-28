@@ -1,251 +1,241 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
+{% block titulo %}Editar Cliente | Mining Star ERP{% endblock %}
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Editar Cliente | Mining Star ERP</title>
-
+{% block css %}
     <link rel="stylesheet"
           href="{% static 'css/clientes.css' %}">
+{% endblock %}
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-</head>
-
-<body>
-
-    <aside class="sidebar">
-
-        <div class="logo-area">
-
-            <img src="{% static 'logo.png' %}"
-                 alt="Mining Star">
-
-            <h2>Mining Star ERP</h2>
-
-            <p>Sistema Integral de Gestión</p>
-
-        </div>
-
-        <span class="menu-title">
-            MENÚ PRINCIPAL
-        </span>
-
-        <nav>
-
-            <a href="{% url 'dashboard' %}">
-                <i class="fa-solid fa-house"></i>
-                <span>Dashboard</span>
-            </a>
-
-            <a href="{% url 'empleados' %}">
-                <i class="fa-solid fa-users"></i>
-                <span>Empleados</span>
-            </a>
-
-            <a href="{% url 'clientes' %}" class="active">
-                <i class="fa-solid fa-user-group"></i>
-                <span>Clientes</span>
-            </a>
-
-            <a href="{% url 'productos' %}">
-                <i class="fa-solid fa-box"></i>
-                <span>Productos</span>
-            </a>
-
-            <a href="{% url 'proveedores' %}">
-                <i class="fa-solid fa-truck"></i>
-                <span>Proveedores</span>
-            </a>
-
-            <a href="{% url 'ventas' %}">
-                <i class="fa-solid fa-cart-shopping"></i>
-                <span>Ventas</span>
-            </a>
-
-        </nav>
-
-        <hr>
-
-        <div class="sidebar-bottom">
-
-            <a href="{% url 'login' %}" class="logout">
-
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-                <span>Cerrar Sesión</span>
-
-            </a>
-
-        </div>
-
-    </aside>
+{% block contenido %}
+    {% include "_mensajes.html" %}
 
 
-    <main class="contenido">
+        <aside class="sidebar">
 
-        <div class="page-header">
+            <div class="logo-area">
 
-            <div>
+                <img src="{% static 'logo.png' %}"
+                     alt="Mining Star">
 
-                <h1>
+                <h2>Mining Star ERP</h2>
 
-                    <i class="fa-solid fa-user-pen"></i>
-
-                    Editar Cliente
-
-                </h1>
-
-                <p>
-                    Modifique la información del cliente.
-                </p>
+                <p>Sistema Integral de Gestión</p>
 
             </div>
 
-        </div>
+            <span class="menu-title">
+                MENÚ PRINCIPAL
+            </span>
 
+            <nav>
 
-        <div class="form-card">
+                <a href="{% url 'dashboard' %}">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
 
-            <div class="form-card-header">
+                <a href="{% url 'empleados' %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Empleados</span>
+                </a>
 
-                <h2>
+                <a href="{% url 'clientes' %}" class="active">
+                    <i class="fa-solid fa-user-group"></i>
+                    <span>Clientes</span>
+                </a>
 
-                    <i class="fa-solid fa-user"></i>
+                <a href="{% url 'productos' %}">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Productos</span>
+                </a>
 
-                    Información del Cliente
+                <a href="{% url 'proveedores' %}">
+                    <i class="fa-solid fa-truck"></i>
+                    <span>Proveedores</span>
+                </a>
 
-                </h2>
+                <a href="{% url 'ventas' %}">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Ventas</span>
+                </a>
 
-            </div>
+            </nav>
 
+            <hr>
 
-            <form method="POST">
+            <div class="sidebar-bottom">
 
+                <form method="post" action="{% url 'logout' %}" class="form-logout">
                 {% csrf_token %}
+                <button type="submit" class="logout">
 
-                <div class="form-grid">
+                    <i class="fa-solid fa-right-from-bracket"></i>
 
+                    <span>Cerrar Sesión</span>
 
-                    <div class="input-group">
-
-                        <label for="documento">
-                            Documento / NIT
-                        </label>
-
-                        <input
-                            type="text"
-                            id="documento"
-                            name="documento"
-                            value="{{ cliente.documento }}"
-                            required>
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label for="nombre">
-                            Nombre
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nombre"
-                            name="nombre"
-                            value="{{ cliente.nombre }}"
-                            required>
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label for="correo">
-                            Correo
-                        </label>
-
-                        <input
-                            type="email"
-                            id="correo"
-                            name="correo"
-                            value="{{ cliente.correo }}"
-                            required>
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label for="telefono">
-                            Teléfono
-                        </label>
-
-                        <input
-                            type="text"
-                            id="telefono"
-                            name="telefono"
-                            value="{{ cliente.telefono }}"
-                            required>
-
-                    </div>
-
-
-                    <div class="input-group">
-
-                        <label for="empresa">
-                            Empresa
-                        </label>
-
-                        <input
-                            type="text"
-                            id="empresa"
-                            name="empresa"
-                            value="{{ cliente.empresa }}"
-                        >
-
-                    </div>
-
-                </div>
-
-
-                <div class="form-actions">
-
-                    <a href="{% url 'clientes' %}"
-                       class="btn-cancelar">
-
-                        <i class="fa-solid fa-arrow-left"></i>
-
-                        Cancelar
-
-                    </a>
-
-
-                    <button type="submit"
-                            class="btn-guardar">
-
-                        <i class="fa-solid fa-floppy-disk"></i>
-
-                        Guardar Cambios
-
-                    </button>
-
-                </div>
-
+                </button>
             </form>
 
-        </div>
+            </div>
 
-    </main>
+        </aside>
 
-</body>
 
-</html>
+        <main class="contenido">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>
+
+                        <i class="fa-solid fa-user-pen"></i>
+
+                        Editar Cliente
+
+                    </h1>
+
+                    <p>
+                        Modifique la información del cliente.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-card">
+
+                <div class="form-card-header">
+
+                    <h2>
+
+                        <i class="fa-solid fa-user"></i>
+
+                        Información del Cliente
+
+                    </h2>
+
+                </div>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+                    <div class="form-grid">
+
+
+                        <div class="input-group">
+
+                            <label for="documento">
+                                Documento / NIT
+                            </label>
+
+                            <input
+                                type="text"
+                                id="documento"
+                                name="documento"
+                                value="{{ cliente.documento }}"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label for="nombre">
+                                Nombre
+                            </label>
+
+                            <input
+                                type="text"
+                                id="nombre"
+                                name="nombre"
+                                value="{{ cliente.nombre }}"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label for="correo">
+                                Correo
+                            </label>
+
+                            <input
+                                type="email"
+                                id="correo"
+                                name="correo"
+                                value="{{ cliente.correo }}"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label for="telefono">
+                                Teléfono
+                            </label>
+
+                            <input
+                                type="text"
+                                id="telefono"
+                                name="telefono"
+                                value="{{ cliente.telefono }}"
+                                required>
+
+                        </div>
+
+
+                        <div class="input-group">
+
+                            <label for="empresa">
+                                Empresa
+                            </label>
+
+                            <input
+                                type="text"
+                                id="empresa"
+                                name="empresa"
+                                value="{{ cliente.empresa }}"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <a href="{% url 'clientes' %}"
+                           class="btn-cancelar">
+
+                            <i class="fa-solid fa-arrow-left"></i>
+
+                            Cancelar
+
+                        </a>
+
+
+                        <button type="submit"
+                                class="btn-guardar">
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar Cambios
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </main>
+{% endblock %}

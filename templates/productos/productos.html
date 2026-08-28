@@ -1,673 +1,653 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
+{% block titulo %}Productos | Mining Star ERP{% endblock %}
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Productos | Mining Star ERP</title>
-
-    <!-- CSS PRINCIPAL -->
-    <link rel="stylesheet"
-          href="{% static 'css/dashboard.css' %}">
-
-    <!-- CSS PRODUCTOS -->
+{% block css %}
     <link rel="stylesheet"
           href="{% static 'css/productos.css' %}">
+{% endblock %}
 
-    <!-- FONT AWESOME -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+{% block contenido %}
+    {% include "_mensajes.html" %}
 
-</head>
 
 
-<body>
+    <!-- ==========================================
+                        SIDEBAR
+    ========================================== -->
 
+    <aside class="sidebar">
 
-<!-- ==========================================
-                    SIDEBAR
-========================================== -->
+        <div class="logo-area">
 
-<aside class="sidebar">
+            <img src="{% static 'img/logo.png' %}"
+                 alt="Mining Star">
 
-    <div class="logo-area">
+            <h2>Mining Star ERP</h2>
 
-        <img src="{% static 'img/logo.png' %}"
-             alt="Mining Star">
-
-        <h2>Mining Star ERP</h2>
-
-        <p>Sistema Integral de Gestión</p>
-
-    </div>
-
-
-    <!-- MENÚ PRINCIPAL -->
-
-    <span class="menu-title">
-        MENÚ PRINCIPAL
-    </span>
-
-
-    <nav>
-
-        <!-- DASHBOARD -->
-
-        <a href="{% url 'dashboard' %}">
-
-            <i class="fa-solid fa-house"></i>
-
-            <span>Dashboard</span>
-
-        </a>
-
-
-        <!-- EMPLEADOS -->
-
-        <a href="{% url 'empleados' %}">
-
-            <i class="fa-solid fa-user-tie"></i>
-
-            <span>Empleados</span>
-
-        </a>
-
-
-        <!-- CLIENTES -->
-
-        <a href="{% url 'clientes' %}">
-
-            <i class="fa-solid fa-users"></i>
-
-            <span>Clientes</span>
-
-        </a>
-
-
-        <!-- PRODUCTOS -->
-
-        <a href="{% url 'productos' %}"
-           class="active">
-
-            <i class="fa-solid fa-box-open"></i>
-
-            <span>Productos</span>
-
-        </a>
-
-
-        <!-- PROVEEDORES -->
-
-        <a href="{% url 'proveedores' %}">
-
-            <i class="fa-solid fa-truck-fast"></i>
-
-            <span>Proveedores</span>
-
-        </a>
-
-
-        <!-- VENTAS -->
-
-        <a href="{% url 'ventas' %}">
-
-            <i class="fa-solid fa-cart-shopping"></i>
-
-            <span>Ventas</span>
-
-        </a>
-
-    </nav>
-
-
-    <hr>
-
-
-    <!-- ANÁLISIS -->
-
-    <span class="menu-title">
-        ANÁLISIS
-    </span>
-
-
-    <nav>
-
-        <!-- REPORTES -->
-
-        <a href="#">
-
-            <i class="fa-solid fa-chart-line"></i>
-
-            <span>Reportes</span>
-
-        </a>
-
-
-        <!-- CONFIGURACIÓN -->
-
-        <a href="#">
-
-            <i class="fa-solid fa-gear"></i>
-
-            <span>Configuración</span>
-
-        </a>
-
-    </nav>
-
-
-    <!-- CERRAR SESIÓN -->
-
-    <div class="sidebar-bottom">
-
-        <a href="{% url 'login' %}"
-           class="logout">
-
-            <i class="fa-solid fa-right-from-bracket"></i>
-
-            <span>Cerrar Sesión</span>
-
-        </a>
-
-    </div>
-
-</aside>
-
-
-
-<!-- ==========================================
-                    CONTENIDO
-========================================== -->
-
-<main class="contenido">
-
-
-    <!-- ======================================
-                    ENCABEZADO
-    ======================================= -->
-
-    <div class="page-header">
-
-        <div>
-
-            <h1>
-
-                <i class="fa-solid fa-box"></i>
-
-                Gestión de Productos
-
-            </h1>
-
-            <p>
-
-                Administre el inventario y la información
-                de los productos de Mining Star ERP.
-
-            </p>
+            <p>Sistema Integral de Gestión</p>
 
         </div>
 
 
-        <a href="{% url 'nuevo_producto' %}"
-           class="btn-primary">
+        <!-- MENÚ PRINCIPAL -->
 
-            <i class="fa-solid fa-plus"></i>
-
-            Nuevo Producto
-
-        </a>
-
-    </div>
+        <span class="menu-title">
+            MENÚ PRINCIPAL
+        </span>
 
 
+        <nav>
 
-    <!-- ======================================
-                    KPI
-    ======================================= -->
+            <!-- DASHBOARD -->
 
-    <div class="kpi-container">
+            <a href="{% url 'dashboard' %}">
 
+                <i class="fa-solid fa-house"></i>
 
-        <!-- TOTAL PRODUCTOS -->
-
-        <div class="kpi-card">
-
-            <i class="fa-solid fa-boxes-stacked"></i>
-
-            <h3>
-                Total Productos
-            </h3>
-
-            <span id="totalProductos">
-
-                {{ total_productos }}
-
-            </span>
-
-        </div>
-
-
-
-        <!-- EN INVENTARIO -->
-
-        <div class="kpi-card">
-
-            <i class="fa-solid fa-box-open"></i>
-
-            <h3>
-                En Inventario
-            </h3>
-
-            <span id="productosEnInventario">
-
-                {{ productos_en_inventario|default:total_productos }}
-
-            </span>
-
-        </div>
-
-
-
-        <!-- STOCK BAJO -->
-
-        <div class="kpi-card">
-
-            <i class="fa-solid fa-triangle-exclamation"></i>
-
-            <h3>
-                Stock Bajo
-            </h3>
-
-            <span id="productosStockBajo">
-
-                {{ productos_stock_bajo }}
-
-            </span>
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- ======================================
-                    HERRAMIENTAS
-    ======================================= -->
-
-    <div class="tools-container">
-
-
-        <!-- BUSCADOR -->
-
-        <div class="search-box">
-
-            <i class="fa-solid fa-magnifying-glass"></i>
-
-            <input
-                type="text"
-                id="buscarProducto"
-                placeholder="Buscar por código, nombre o categoría..."
-            >
-
-        </div>
-
-
-
-        <!-- BOTONES -->
-
-        <div class="right-tools">
-
-
-            <a href="{% url 'exportar_productos_excel' %}"
-               class="btn-tool">
-
-                <i class="fa-solid fa-file-excel"></i>
-
-                Excel
+                <span>Dashboard</span>
 
             </a>
 
 
-            <a href="{% url 'exportar_productos_pdf' %}"
-               class="btn-tool">
+            <!-- EMPLEADOS -->
 
-                <i class="fa-solid fa-file-pdf"></i>
+            <a href="{% url 'empleados' %}">
 
-                PDF
+                <i class="fa-solid fa-user-tie"></i>
+
+                <span>Empleados</span>
 
             </a>
 
 
-            <button
-                type="button"
-                id="btnImprimir"
-                class="btn-tool">
+            <!-- CLIENTES -->
 
-                <i class="fa-solid fa-print"></i>
+            <a href="{% url 'clientes' %}">
 
-                Imprimir
+                <i class="fa-solid fa-users"></i>
+
+                <span>Clientes</span>
+
+            </a>
+
+
+            <!-- PRODUCTOS -->
+
+            <a href="{% url 'productos' %}"
+               class="active">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <span>Productos</span>
+
+            </a>
+
+
+            <!-- PROVEEDORES -->
+
+            <a href="{% url 'proveedores' %}">
+
+                <i class="fa-solid fa-truck-fast"></i>
+
+                <span>Proveedores</span>
+
+            </a>
+
+
+            <!-- VENTAS -->
+
+            <a href="{% url 'ventas' %}">
+
+                <i class="fa-solid fa-cart-shopping"></i>
+
+                <span>Ventas</span>
+
+            </a>
+
+        </nav>
+
+
+        <hr>
+
+
+        <!-- ANÁLISIS -->
+
+        <span class="menu-title">
+            ANÁLISIS
+        </span>
+
+
+        <nav>
+
+            <!-- REPORTES -->
+
+            <a href="#">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>Reportes</span>
+
+            </a>
+
+
+            <!-- CONFIGURACIÓN -->
+
+            <a href="#">
+
+                <i class="fa-solid fa-gear"></i>
+
+                <span>Configuración</span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- CERRAR SESIÓN -->
+
+        <div class="sidebar-bottom">
+
+            <form method="post" action="{% url 'logout' %}" class="form-logout">
+                {% csrf_token %}
+                <button type="submit" class="logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>Cerrar Sesión</span>
 
             </button>
-
-
-            <button
-                type="button"
-                id="btnActualizar"
-                class="btn-tool">
-
-                <i class="fa-solid fa-rotate"></i>
-
-                Actualizar
-
-            </button>
-
+            </form>
 
         </div>
 
-    </div>
+    </aside>
 
 
 
-    <!-- ======================================
-                    TABLA
-    ======================================= -->
+    <!-- ==========================================
+                        CONTENIDO
+    ========================================== -->
 
-    <div class="table-card">
+    <main class="contenido">
 
 
-        <!-- CABECERA TABLA -->
+        <!-- ======================================
+                        ENCABEZADO
+        ======================================= -->
 
-        <div class="table-header">
+        <div class="page-header">
 
-            <h3>
+            <div>
+
+                <h1>
+
+                    <i class="fa-solid fa-box"></i>
+
+                    Gestión de Productos
+
+                </h1>
+
+                <p>
+
+                    Administre el inventario y la información
+                    de los productos de Mining Star ERP.
+
+                </p>
+
+            </div>
+
+
+            <a href="{% url 'nuevo_producto' %}"
+               class="btn-primary">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Nuevo Producto
+
+            </a>
+
+        </div>
+
+
+
+        <!-- ======================================
+                        KPI
+        ======================================= -->
+
+        <div class="kpi-container">
+
+
+            <!-- TOTAL PRODUCTOS -->
+
+            <div class="kpi-card">
 
                 <i class="fa-solid fa-boxes-stacked"></i>
 
-                Lista de Productos
+                <h3>
+                    Total Productos
+                </h3>
 
-            </h3>
+                <span id="totalProductos">
+
+                    {{ total_productos }}
+
+                </span>
+
+            </div>
 
 
-            <span id="totalRegistros">
 
-                {{ total_productos }} registros
+            <!-- EN INVENTARIO -->
 
-            </span>
+            <div class="kpi-card">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <h3>
+                    En Inventario
+                </h3>
+
+                <span id="productosEnInventario">
+
+                    {{ productos_en_inventario|default:total_productos }}
+
+                </span>
+
+            </div>
+
+
+
+            <!-- STOCK BAJO -->
+
+            <div class="kpi-card">
+
+                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                <h3>
+                    Stock Bajo
+                </h3>
+
+                <span id="productosStockBajo">
+
+                    {{ productos_stock_bajo }}
+
+                </span>
+
+            </div>
+
 
         </div>
 
 
 
-        <!-- TABLA -->
+        <!-- ======================================
+                        HERRAMIENTAS
+        ======================================= -->
 
-        <div class="table-responsive">
+        <div class="tools-container">
 
-            <table>
 
-                <thead>
+            <!-- BUSCADOR -->
 
-                    <tr>
+            <div class="search-box">
 
-                        <th>
-                            Código
-                        </th>
+                <i class="fa-solid fa-magnifying-glass"></i>
 
-                        <th>
-                            Producto
-                        </th>
+                <input
+                    type="text"
+                    id="buscarProducto"
+                    placeholder="Buscar por código, nombre o categoría..."
+                >
 
-                        <th>
-                            Categoría
-                        </th>
+            </div>
 
-                        <th>
-                            Proveedor
-                        </th>
 
-                        <th>
-                            Precio Compra
-                        </th>
 
-                        <th>
-                            Precio Venta
-                        </th>
+            <!-- BOTONES -->
 
-                        <th>
-                            Stock
-                        </th>
+            <div class="right-tools">
 
-                        <th>
-                            Stock Mínimo
-                        </th>
 
-                        <th>
-                            Acciones
-                        </th>
+                <a href="{% url 'exportar_productos_excel' %}"
+                   class="btn-tool">
 
-                    </tr>
+                    <i class="fa-solid fa-file-excel"></i>
 
-                </thead>
+                    Excel
 
+                </a>
 
-                <tbody id="tablaProductos">
 
+                <a href="{% url 'exportar_productos_pdf' %}"
+                   class="btn-tool">
 
-                    {% for producto in productos %}
+                    <i class="fa-solid fa-file-pdf"></i>
 
+                    PDF
 
-                    <!-- ==================================
-                            FILA PRODUCTO
-                    =================================== -->
+                </a>
 
-                    <tr
-                        class="{% if producto.stock <= producto.stock_minimo %}stock-bajo{% endif %}"
-                    >
 
+                <button
+                    type="button"
+                    id="btnImprimir"
+                    class="btn-tool">
 
-                        <!-- CÓDIGO -->
+                    <i class="fa-solid fa-print"></i>
 
-                        <td>
+                    Imprimir
 
-                            {{ producto.codigo }}
+                </button>
 
-                        </td>
 
+                <button
+                    type="button"
+                    id="btnActualizar"
+                    class="btn-tool">
 
-                        <!-- PRODUCTO -->
+                    <i class="fa-solid fa-rotate"></i>
 
-                        <td>
+                    Actualizar
 
-                            {{ producto.nombre }}
+                </button>
 
-                        </td>
 
+            </div>
 
-                        <!-- CATEGORÍA -->
+        </div>
 
-                        <td>
 
-                            {{ producto.categoria }}
 
-                        </td>
+        <!-- ======================================
+                        TABLA
+        ======================================= -->
 
+        <div class="table-card">
 
-                        <!-- PROVEEDOR -->
 
-                        <td>
+            <!-- CABECERA TABLA -->
 
-                            {{ producto.proveedor }}
+            <div class="table-header">
 
-                        </td>
+                <h3>
 
+                    <i class="fa-solid fa-boxes-stacked"></i>
 
-                        <!-- PRECIO COMPRA -->
+                    Lista de Productos
 
-                        <td>
+                </h3>
 
-                            ${{ producto.precio_compra|floatformat:2 }}
 
-                        </td>
+                <span id="totalRegistros">
 
+                    {{ total_productos }} registros
 
-                        <!-- PRECIO VENTA -->
+                </span>
 
-                        <td>
+            </div>
 
-                            ${{ producto.precio_venta|floatformat:2 }}
 
-                        </td>
 
+            <!-- TABLA -->
 
-                        <!-- STOCK -->
+            <div class="table-responsive">
 
-                        <td>
+                <table>
 
-                            {% if producto.stock <= producto.stock_minimo %}
+                    <thead>
 
-                                <span class="stock-alerta">
+                        <tr>
 
-                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                            <th>
+                                Código
+                            </th>
 
-                                    {{ producto.stock }}
+                            <th>
+                                Producto
+                            </th>
 
-                                </span>
+                            <th>
+                                Categoría
+                            </th>
 
-                            {% else %}
+                            <th>
+                                Proveedor
+                            </th>
 
-                                <span class="stock-normal">
+                            <th>
+                                Precio Compra
+                            </th>
 
-                                    {{ producto.stock }}
+                            <th>
+                                Precio Venta
+                            </th>
 
-                                </span>
+                            <th>
+                                Stock
+                            </th>
 
-                            {% endif %}
+                            <th>
+                                Stock Mínimo
+                            </th>
 
-                        </td>
+                            <th>
+                                Acciones
+                            </th>
 
+                        </tr>
 
-                        <!-- STOCK MÍNIMO -->
+                    </thead>
 
-                        <td>
 
-                            {{ producto.stock_minimo }}
+                    <tbody id="tablaProductos">
 
-                        </td>
 
+                        {% for producto in productos %}
 
-                        <!-- ACCIONES -->
 
-                        <td class="acciones">
+                        <!-- ==================================
+                                FILA PRODUCTO
+                        =================================== -->
 
-
-                            <!-- EDITAR -->
-
-                            <a
-                                href="{% url 'editar_producto' producto.id %}"
-                                class="btn-action btn-edit"
-                                title="Editar producto"
-                            >
-
-                                <i class="fa-solid fa-pen-to-square"></i>
-
-                            </a>
-
-
-                            <!-- ELIMINAR -->
-
-                            <a
-                                href="{% url 'eliminar_producto' producto.id %}"
-                                class="btn-action btn-delete"
-                                title="Eliminar producto"
-
-                                onclick="return confirm(
-                                    '¿Está seguro de eliminar este producto?'
-                                );"
-                            >
-
-                                <i class="fa-solid fa-trash"></i>
-
-                            </a>
-
-
-                        </td>
-
-
-                    </tr>
-
-
-                    {% empty %}
-
-
-                    <!-- ==================================
-                            SIN PRODUCTOS
-                    =================================== -->
-
-                    <tr>
-
-                        <td
-                            colspan="9"
-                            class="empty"
+                        <tr
+                            class="{% if producto.stock <= producto.stock_minimo %}stock-bajo{% endif %}"
                         >
 
-                            <i class="fa-solid fa-box-open"></i>
 
-                            <p>
-                                No hay productos registrados.
-                            </p>
+                            <!-- CÓDIGO -->
 
-                        </td>
+                            <td>
 
-                    </tr>
+                                {{ producto.codigo }}
 
-
-                    {% endfor %}
+                            </td>
 
 
-                </tbody>
+                            <!-- PRODUCTO -->
 
-            </table>
+                            <td>
+
+                                {{ producto.nombre }}
+
+                            </td>
+
+
+                            <!-- CATEGORÍA -->
+
+                            <td>
+
+                                {{ producto.categoria }}
+
+                            </td>
+
+
+                            <!-- PROVEEDOR -->
+
+                            <td>
+
+                                {{ producto.proveedor }}
+
+                            </td>
+
+
+                            <!-- PRECIO COMPRA -->
+
+                            <td>
+
+                                ${{ producto.precio_compra|floatformat:2 }}
+
+                            </td>
+
+
+                            <!-- PRECIO VENTA -->
+
+                            <td>
+
+                                ${{ producto.precio_venta|floatformat:2 }}
+
+                            </td>
+
+
+                            <!-- STOCK -->
+
+                            <td>
+
+                                {% if producto.stock <= producto.stock_minimo %}
+
+                                    <span class="stock-alerta">
+
+                                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                        {{ producto.stock }}
+
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="stock-normal">
+
+                                        {{ producto.stock }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- STOCK MÍNIMO -->
+
+                            <td>
+
+                                {{ producto.stock_minimo }}
+
+                            </td>
+
+
+                            <!-- ACCIONES -->
+
+                            <td class="acciones">
+
+
+                                <!-- EDITAR -->
+
+                                <a
+                                    href="{% url 'editar_producto' producto.id %}"
+                                    class="btn-action btn-edit"
+                                    title="Editar producto"
+                                >
+
+                                    <i class="fa-solid fa-pen-to-square"></i>
+
+                                </a>
+
+
+                                <!-- ELIMINAR -->
+
+                                <form method="post" action="{% url 'eliminar_producto' producto.id %}"
+                                      class="form-eliminar"
+                                      onsubmit="return confirm('¿Está seguro de eliminar este producto?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-delete" title="Eliminar producto">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+                                </form>
+
+
+                            </td>
+
+
+                        </tr>
+
+
+                        {% empty %}
+
+
+                        <!-- ==================================
+                                SIN PRODUCTOS
+                        =================================== -->
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="empty"
+                            >
+
+                                <i class="fa-solid fa-box-open"></i>
+
+                                <p>
+                                    No hay productos registrados.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
 
         </div>
 
-    </div>
+
+
+        <!-- ======================================
+                        FOOTER
+        ======================================= -->
+
+        <footer>
+
+            <p>
+
+                © 2026 Mining Star ERP |
+
+                Sistema Integral de Gestión Minera
+
+            </p>
+
+        </footer>
+
+
+    </main>
 
 
 
-    <!-- ======================================
-                    FOOTER
-    ======================================= -->
+    <!-- ==========================================
+                        JAVASCRIPT
+    ========================================== -->
+{% endblock %}
 
-    <footer>
-
-        <p>
-
-            © 2026 Mining Star ERP |
-
-            Sistema Integral de Gestión Minera
-
-        </p>
-
-    </footer>
-
-
-</main>
-
-
-
-<!-- ==========================================
-                    JAVASCRIPT
-========================================== -->
-
-<script src="{% static 'js/productos.js' %}"></script>
-
-
-</body>
-
-</html>
+{% block js %}
+    <script src="{% static 'js/productos.js' %}"></script>
+{% endblock %}

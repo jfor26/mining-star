@@ -1,404 +1,390 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
+{% block titulo %}Editar Empleado | Mining Star ERP{% endblock %}
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Editar Empleado | Mining Star ERP</title>
-
-    <link rel="stylesheet"
-          href="{% static 'css/dashboard.css' %}">
-
+{% block css %}
     <link rel="stylesheet"
           href="{% static 'css/empleados.css' %}?v=5">
+{% endblock %}
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+{% block contenido %}
+    {% include "_mensajes.html" %}
 
-</head>
 
-<body>
+    <div class="container">
 
-<div class="container">
+        <!-- =====================================================
+                                SIDEBAR
+        ====================================================== -->
 
-    <!-- =====================================================
-                            SIDEBAR
-    ====================================================== -->
+        <aside class="sidebar">
 
-    <aside class="sidebar">
+            <div class="logo-area">
 
-        <div class="logo-area">
+                <img
+                    src="{% static 'img/logo.png' %}"
+                    alt="Mining Star">
 
-            <img
-                src="{% static 'img/logo.png' %}"
-                alt="Mining Star">
-
-            <h2>
-                Mining Star ERP
-            </h2>
-
-            <p>
-                Sistema Integral de Gestión
-            </p>
-
-        </div>
-
-
-        <span class="menu-title">
-            MENÚ PRINCIPAL
-        </span>
-
-
-        <nav>
-
-            <a href="{% url 'dashboard' %}">
-
-                <i class="fa-solid fa-house"></i>
-
-                <span>Dashboard</span>
-
-            </a>
-
-
-            <a href="{% url 'empleados' %}"
-               class="active">
-
-                <i class="fa-solid fa-user-tie"></i>
-
-                <span>Empleados</span>
-
-            </a>
-
-
-            <a href="{% url 'clientes' %}">
-
-                <i class="fa-solid fa-users"></i>
-
-                <span>Clientes</span>
-
-            </a>
-
-
-            <a href="{% url 'productos' %}">
-
-                <i class="fa-solid fa-box-open"></i>
-
-                <span>Productos</span>
-
-            </a>
-
-
-            <a href="{% url 'proveedores' %}">
-
-                <i class="fa-solid fa-truck-fast"></i>
-
-                <span>Proveedores</span>
-
-            </a>
-
-
-            <a href="{% url 'ventas' %}">
-
-                <i class="fa-solid fa-cart-shopping"></i>
-
-                <span>Ventas</span>
-
-            </a>
-
-        </nav>
-
-
-        <hr>
-
-
-        <span class="menu-title">
-            ANÁLISIS
-        </span>
-
-
-        <nav>
-
-            <a href="#">
-
-                <i class="fa-solid fa-chart-line"></i>
-
-                <span>Reportes</span>
-
-            </a>
-
-        </nav>
-
-
-        <div class="sidebar-bottom">
-
-            <a href="{% url 'login' %}"
-               class="logout">
-
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-                <span>Cerrar Sesión</span>
-
-            </a>
-
-        </div>
-
-    </aside>
-
-
-    <!-- =====================================================
-                            CONTENIDO
-    ====================================================== -->
-
-    <main class="contenido">
-
-
-        <!-- ENCABEZADO -->
-
-        <section class="page-header">
-
-            <div>
-
-                <h1>
-
-                    <i class="fa-solid fa-user-pen"></i>
-
-                    Editar Empleado
-
-                </h1>
+                <h2>
+                    Mining Star ERP
+                </h2>
 
                 <p>
-
-                    Modifique la información del empleado
-                    seleccionado.
-
+                    Sistema Integral de Gestión
                 </p>
 
             </div>
 
 
-            <a href="{% url 'empleados' %}"
-               class="btn gris">
-
-                <i class="fa-solid fa-arrow-left"></i>
-
-                Volver
-
-            </a>
-
-        </section>
+            <span class="menu-title">
+                MENÚ PRINCIPAL
+            </span>
 
 
-        <!-- =================================================
-                            FORMULARIO
-        ================================================== -->
+            <nav>
 
-        <section class="table-card">
+                <a href="{% url 'dashboard' %}">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    <span>Dashboard</span>
+
+                </a>
 
 
-            <div class="table-header">
-
-                <h3>
+                <a href="{% url 'empleados' %}"
+                   class="active">
 
                     <i class="fa-solid fa-user-tie"></i>
 
-                    Información del empleado
+                    <span>Empleados</span>
 
-                </h3>
+                </a>
+
+
+                <a href="{% url 'clientes' %}">
+
+                    <i class="fa-solid fa-users"></i>
+
+                    <span>Clientes</span>
+
+                </a>
+
+
+                <a href="{% url 'productos' %}">
+
+                    <i class="fa-solid fa-box-open"></i>
+
+                    <span>Productos</span>
+
+                </a>
+
+
+                <a href="{% url 'proveedores' %}">
+
+                    <i class="fa-solid fa-truck-fast"></i>
+
+                    <span>Proveedores</span>
+
+                </a>
+
+
+                <a href="{% url 'ventas' %}">
+
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                    <span>Ventas</span>
+
+                </a>
+
+            </nav>
+
+
+            <hr>
+
+
+            <span class="menu-title">
+                ANÁLISIS
+            </span>
+
+
+            <nav>
+
+                <a href="#">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    <span>Reportes</span>
+
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <form method="post" action="{% url 'logout' %}" class="form-logout">
+                {% csrf_token %}
+                <button type="submit" class="logout">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    <span>Cerrar Sesión</span>
+
+                </button>
+            </form>
 
             </div>
 
-
-            <form
-                method="POST"
-                action="{% url 'editar_empleado' empleado.id %}"
-                autocomplete="off">
-
-                {% csrf_token %}
+        </aside>
 
 
-                <div class="form-grid">
+        <!-- =====================================================
+                                CONTENIDO
+        ====================================================== -->
+
+        <main class="contenido">
 
 
-                    <!-- DOCUMENTO -->
+            <!-- ENCABEZADO -->
 
-                    <div class="form-group">
+            <section class="page-header">
 
-                        <label>
-                            Documento
-                        </label>
+                <div>
 
-                        {{ form.documento }}
+                    <h1>
 
-                    </div>
+                        <i class="fa-solid fa-user-pen"></i>
 
+                        Editar Empleado
 
-                    <!-- NOMBRES -->
+                    </h1>
 
-                    <div class="form-group">
+                    <p>
 
-                        <label>
-                            Nombres
-                        </label>
+                        Modifique la información del empleado
+                        seleccionado.
 
-                        {{ form.nombres }}
-
-                    </div>
-
-
-                    <!-- APELLIDOS -->
-
-                    <div class="form-group">
-
-                        <label>
-                            Apellidos
-                        </label>
-
-                        {{ form.apellidos }}
-
-                    </div>
-
-
-                    <!-- CORREO -->
-
-                    <div class="form-group">
-
-                        <label>
-                            Correo Electrónico
-                        </label>
-
-                        {{ form.correo }}
-
-                    </div>
-
-
-                    <!-- TELÉFONO -->
-
-                    <div class="form-group">
-
-                        <label>
-                            Teléfono
-                        </label>
-
-                        {{ form.telefono }}
-
-                    </div>
-
-
-                    <!-- CARGO -->
-
-                    <div class="form-group">
-
-                        <label>
-                            Cargo
-                        </label>
-
-                        {{ form.cargo }}
-
-                    </div>
-
-
-                    <!-- ÁREA -->
-
-                    <div class="form-group">
-
-                        <label>
-                            Área
-                        </label>
-
-                        {{ form.area }}
-
-                    </div>
-
-
-                    <!-- ESTADO -->
-
-                    <div class="form-group">
-
-                        <label>
-                            Estado
-                        </label>
-
-                        {{ form.estado }}
-
-                    </div>
-
+                    </p>
 
                 </div>
 
 
-                <!-- =================================================
-                            BOTONES
-                ================================================== -->
+                <a href="{% url 'empleados' %}"
+                   class="btn gris">
 
-                <div class="modal-footer">
+                    <i class="fa-solid fa-arrow-left"></i>
 
+                    Volver
 
-                    <a
-                        href="{% url 'empleados' %}"
-                        class="btn gris">
+                </a>
 
-                        <i class="fa-solid fa-ban"></i>
-
-                        Cancelar
-
-                    </a>
+            </section>
 
 
-                    <button
-                        type="reset"
-                        class="btn azul">
+            <!-- =================================================
+                                FORMULARIO
+            ================================================== -->
 
-                        <i class="fa-solid fa-rotate-left"></i>
-
-                        Restablecer
-
-                    </button>
+            <section class="table-card">
 
 
-                    <button
-                        type="submit"
-                        class="btn verde">
+                <div class="table-header">
 
-                        <i class="fa-solid fa-floppy-disk"></i>
+                    <h3>
 
-                        Guardar Cambios
+                        <i class="fa-solid fa-user-tie"></i>
 
-                    </button>
+                        Información del empleado
 
+                    </h3>
 
                 </div>
 
 
-            </form>
+                <form
+                    method="POST"
+                    action="{% url 'editar_empleado' empleado.id %}"
+                    autocomplete="off">
+
+                    {% csrf_token %}
 
 
-        </section>
+                    <div class="form-grid">
 
 
-        <!-- FOOTER -->
+                        <!-- DOCUMENTO -->
 
-        <footer class="dashboard-footer">
+                        <div class="form-group">
 
-            <p>
+                            <label>
+                                Documento
+                            </label>
 
-                © 2026 Mining Star ERP |
-                Sistema Integral de Gestión Minera
+                            {{ form.documento }}
 
-            </p>
-
-        </footer>
+                        </div>
 
 
-    </main>
+                        <!-- NOMBRES -->
 
-</div>
+                        <div class="form-group">
 
-</body>
+                            <label>
+                                Nombres
+                            </label>
 
-</html>
+                            {{ form.nombres }}
+
+                        </div>
+
+
+                        <!-- APELLIDOS -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Apellidos
+                            </label>
+
+                            {{ form.apellidos }}
+
+                        </div>
+
+
+                        <!-- CORREO -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Correo Electrónico
+                            </label>
+
+                            {{ form.correo }}
+
+                        </div>
+
+
+                        <!-- TELÉFONO -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Teléfono
+                            </label>
+
+                            {{ form.telefono }}
+
+                        </div>
+
+
+                        <!-- CARGO -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Cargo
+                            </label>
+
+                            {{ form.cargo }}
+
+                        </div>
+
+
+                        <!-- ÁREA -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Área
+                            </label>
+
+                            {{ form.area }}
+
+                        </div>
+
+
+                        <!-- ESTADO -->
+
+                        <div class="form-group">
+
+                            <label>
+                                Estado
+                            </label>
+
+                            {{ form.estado }}
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- =================================================
+                                BOTONES
+                    ================================================== -->
+
+                    <div class="modal-footer">
+
+
+                        <a
+                            href="{% url 'empleados' %}"
+                            class="btn gris">
+
+                            <i class="fa-solid fa-ban"></i>
+
+                            Cancelar
+
+                        </a>
+
+
+                        <button
+                            type="reset"
+                            class="btn azul">
+
+                            <i class="fa-solid fa-rotate-left"></i>
+
+                            Restablecer
+
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            class="btn verde">
+
+                            <i class="fa-solid fa-floppy-disk"></i>
+
+                            Guardar Cambios
+
+                        </button>
+
+
+                    </div>
+
+
+                </form>
+
+
+            </section>
+
+
+            <!-- FOOTER -->
+
+            <footer class="dashboard-footer">
+
+                <p>
+
+                    © 2026 Mining Star ERP |
+                    Sistema Integral de Gestión Minera
+
+                </p>
+
+            </footer>
+
+
+        </main>
+
+    </div>
+{% endblock %}

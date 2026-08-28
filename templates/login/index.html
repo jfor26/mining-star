@@ -1,20 +1,15 @@
 {% load static %}
 <!DOCTYPE html>
-
 <html lang="es">
 
 <head>
 
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Mining Star ERP</title>
+    <title>Mining Star ERP · Iniciar sesión</title>
 
-    <!-- ESTILOS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-
-    <!-- FONT AWESOME -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
@@ -25,99 +20,74 @@
 <div class="login-container">
 
     <!-- PANEL IZQUIERDO -->
-
     <div class="banner">
-
         <img src="{% static 'img/banner.png' %}"
              class="banner-img"
              alt="Mining Star ERP">
-
     </div>
 
     <!-- PANEL DERECHO -->
-
     <div class="login-box">
 
         <h2>Mining Star ERP</h2>
-
         <p>Sistema Integral de Gestión Minera</p>
 
-        <!-- USUARIO -->
+        {% if messages %}
+            <div class="mensajes">
+                {% for message in messages %}
+                    <p class="mensaje mensaje-{{ message.tags }}">
+                        <i class="fa-solid fa-circle-exclamation"></i>
+                        {{ message }}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
 
-        <div class="input-group">
+        <!--
+            Este es un formulario HTML real que envía por POST al servidor.
+            Antes los datos no salían del navegador: un script comparaba
+            el usuario contra "admin"/"1234" escrito en el propio JavaScript
+            y redirigía a /dashboard/. Cualquiera podía leer esa contraseña
+            con "Ver código fuente".
+        -->
+        <form method="post" action="{% url 'login' %}" autocomplete="on">
 
-            <input
-                type="text"
-                id="usuario"
-                placeholder="Usuario"
-                autocomplete="username">
+            {% csrf_token %}
 
-        </div>
+            <div class="input-group">
+                <input
+                    type="text"
+                    id="usuario"
+                    name="usuario"
+                    placeholder="Usuario"
+                    autocomplete="username"
+                    required
+                    autofocus>
+            </div>
 
-        <!-- CONTRASEÑA -->
+            <div class="password-container">
+                <input
+                    type="password"
+                    id="clave"
+                    name="contrasena"
+                    placeholder="Contraseña"
+                    autocomplete="current-password"
+                    required>
 
-        <div class="password-container">
+                <i class="fa-solid fa-eye"
+                   onclick="mostrarClave()"
+                   role="button"
+                   aria-label="Mostrar u ocultar la contraseña"></i>
+            </div>
 
-            <input
-                type="password"
-                id="clave"
-                placeholder="Contraseña"
-                autocomplete="current-password">
+            <button type="submit">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Ingresar
+            </button>
 
-            <i class="fa-solid fa-eye"
-               onclick="mostrarClave()">
-            </i>
+        </form>
 
-        </div>
-
-        <!-- BOTÓN INGRESAR -->
-
-        <button onclick="iniciarSesion()">
-
-            <i class="fa-solid fa-right-to-bracket"></i>
-
-            Ingresar
-
-        </button>
-
-        <!-- SEPARADOR -->
-
-        <div class="separator">
-
-            <span>o</span>
-
-        </div>
-
-        <!-- BOTÓN REGISTRO -->
-
-        <button class="btn-registro"
-                onclick="registrarse()">
-
-            <i class="fa-solid fa-user-plus"></i>
-
-            Registrarse
-
-        </button>
-
-        <!-- ENLACES -->
-
-        <div class="links">
-
-            <a href="#">
-
-                ¿Olvidaste tu contraseña?
-
-            </a>
-
-        </div>
-
-        <!-- VERSIÓN -->
-
-        <p class="version">
-
-            Mining Star ERP v1.0
-
-        </p>
+        <p class="version">Mining Star ERP v1.0</p>
 
     </div>
 
@@ -126,6 +96,4 @@
 <script src="{% static 'js/script.js' %}"></script>
 
 </body>
-
 </html>
-

@@ -1,1053 +1,1040 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
 
-<head>
+{% block titulo %}Dashboard | Mining Star ERP{% endblock %}
 
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Dashboard | Mining Star ERP</title>
-
-    <!-- CSS -->
-
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% block css %}
     <link rel="stylesheet" href="{% static 'css/empleados.css' %}">
+{% endblock %}
 
-    <!-- FontAwesome -->
+{% block contenido %}
+    {% include "_mensajes.html" %}
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <div class="container">
 
-</head>
+        <!--=================================
+                    SIDEBAR
+        =================================-->
 
-<body>
-<div class="container">
+        <aside class="sidebar">
 
-    <!--=================================
-                SIDEBAR
-    =================================-->
+            <div class="logo-area">
 
-    <aside class="sidebar">
+                <img src="{% static 'img/logo.png' %}">
 
-        <div class="logo-area">
+                <h2>Mining Star ERP</h2>
 
-            <img src="{% static 'img/logo.png' %}">
+                <p>Sistema Integral de Gestión</p>
 
-            <h2>Mining Star ERP</h2>
+            </div>
 
-            <p>Sistema Integral de Gestión</p>
+            <!--==============================
+                    MENÚ PRINCIPAL
+            ==============================-->
+
+            <span class="menu-title">
+
+                MENÚ PRINCIPAL
+
+            </span>
+
+           <nav>
+
+        <a href="{% url 'dashboard' %}" class="active">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <a href="{% url 'empleados' %}">
+        <i class="fa-solid fa-user-tie"></i>
+        <span>Empleados</span>
+    </a>
+
+        <a href="#">
+            <i class="fa-solid fa-users"></i>
+            <span>Clientes</span>
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-box-open"></i>
+            <span>Productos</span>
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-truck-fast"></i>
+            <span>Proveedores</span>
+        </a>
+
+        <a href="#">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Ventas</span>
+        </a>
+
+    </nav>
+            <hr>
+
+            <!--==============================
+                    ANÁLISIS
+            ==============================-->
+
+            <span class="menu-title">
+
+                ANÁLISIS
+
+            </span>
+
+            <nav>
+
+               <a href="#">
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    <span>Reportes</span>
+
+                </a>
+
+                <a href="#">
+
+                    <i class="fa-solid fa-gear"></i>
+
+                    <span>Configuración</span>
+
+                </a>
+
+            </nav>
+
+            <!--==============================
+                CERRAR SESIÓN
+            ==============================-->
+
+            <div class="sidebar-bottom">
+
+                <form method="post" action="{% url 'logout' %}" class="form-logout">
+                {% csrf_token %}
+                <button type="submit" class="logout">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    <span>Cerrar Sesión</span>
+
+                </button>
+            </form>
+
+            </div>
+
+        </aside>
+
+        <!--=================================
+                CONTENIDO PRINCIPAL
+        =================================-->
+
+        <main class="contenido">
+            <!--=================================
+                TOPBAR
+    ==================================-->
+
+    <header class="topbar">
+
+        <div class="search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                placeholder="Buscar empleados, clientes, productos...">
 
         </div>
 
-        <!--==============================
-                MENÚ PRINCIPAL
-        ==============================-->
+        <div class="topbar-right">
 
-        <span class="menu-title">
+            <button class="icon-btn">
 
-            MENÚ PRINCIPAL
+                <i class="fa-regular fa-bell"></i>
 
-        </span>
+                <span class="badge">3</span>
 
-       <nav>
+            </button>
 
-    <a href="{% url 'dashboard' %}" class="active">
-        <i class="fa-solid fa-house"></i>
-        <span>Dashboard</span>
-    </a>
+            <button class="icon-btn">
 
-    <a href="{% url 'empleados' %}">
-    <i class="fa-solid fa-user-tie"></i>
-    <span>Empleados</span>
-</a>
+                <i class="fa-regular fa-envelope"></i>
 
-    <a href="#">
-        <i class="fa-solid fa-users"></i>
-        <span>Clientes</span>
-    </a>
+                <span class="badge">5</span>
 
-    <a href="#">
-        <i class="fa-solid fa-box-open"></i>
-        <span>Productos</span>
-    </a>
+            </button>
 
-    <a href="#">
-        <i class="fa-solid fa-truck-fast"></i>
-        <span>Proveedores</span>
-    </a>
-
-    <a href="#">
-        <i class="fa-solid fa-cart-shopping"></i>
-        <span>Ventas</span>
-    </a>
-
-</nav>
-        <hr>
-
-        <!--==============================
-                ANÁLISIS
-        ==============================-->
-
-        <span class="menu-title">
-
-            ANÁLISIS
-
-        </span>
-
-        <nav>
-
-           <a href="#">
-
-                <i class="fa-solid fa-chart-line"></i>
-
-                <span>Reportes</span>
-
-            </a>
-
-            <a href="#">
+            <button class="icon-btn">
 
                 <i class="fa-solid fa-gear"></i>
 
-                <span>Configuración</span>
+            </button>
 
-            </a>
+            <div class="perfil">
 
-        </nav>
+                <img
+        src="{% static 'img/logo.png' %}"
+        alt="Administrador">
 
-        <!--==============================
-            CERRAR SESIÓN
-        ==============================-->
+                <div>
 
-        <div class="sidebar-bottom">
+                    <strong>Administrador</strong>
 
-            <a href="{% url 'login' %}" class="logout">
+                    <small>Administrador General</small>
 
-                <i class="fa-solid fa-right-from-bracket"></i>
-
-                <span>Cerrar Sesión</span>
-
-            </a>
-
-        </div>
-
-    </aside>
-
-    <!--=================================
-            CONTENIDO PRINCIPAL
-    =================================-->
-
-    <main class="contenido">
-        <!--=================================
-            TOPBAR
-==================================-->
-
-<header class="topbar">
-
-    <div class="search-box">
-
-        <i class="fa-solid fa-magnifying-glass"></i>
-
-        <input
-            type="text"
-            placeholder="Buscar empleados, clientes, productos...">
-
-    </div>
-
-    <div class="topbar-right">
-
-        <button class="icon-btn">
-
-            <i class="fa-regular fa-bell"></i>
-
-            <span class="badge">3</span>
-
-        </button>
-
-        <button class="icon-btn">
-
-            <i class="fa-regular fa-envelope"></i>
-
-            <span class="badge">5</span>
-
-        </button>
-
-        <button class="icon-btn">
-
-            <i class="fa-solid fa-gear"></i>
-
-        </button>
-
-        <div class="perfil">
-
-            <img
-    src="{% static 'img/logo.png' %}"
-    alt="Administrador">
-
-            <div>
-
-                <strong>Administrador</strong>
-
-                <small>Administrador General</small>
+                </div>
 
             </div>
 
         </div>
 
-    </div>
+    </header>
 
-</header>
 
-
-<!--=================================
-            BIENVENIDA
-==================================-->
-
-<section class="welcome-card">
-
-    <div class="welcome-info">
-
-        <h1>
-
-            ¡Bienvenido nuevamente!
-
-        </h1>
-
-        <p>
-
-            Administre empleados, clientes, inventario,
-            proveedores y ventas desde un único panel
-            inteligente.
-
-        </p>
-
-        <div class="welcome-badges">
-
-            <span>
-
-                <i class="fa-solid fa-shield-halved"></i>
-
-                Seguridad
-
-            </span>
-
-            <span>
-
-                <i class="fa-solid fa-chart-line"></i>
-
-                Rendimiento
-
-            </span>
-
-            <span>
-
-                <i class="fa-solid fa-database"></i>
-
-                Información Centralizada
-
-            </span>
-
-        </div>
-
-    </div>
-
-    <div class="welcome-status">
-
-        <div class="status-online">
-
-            <i class="fa-solid fa-circle"></i>
-
-            Sistema Operativo
-
-        </div>
-
-        <div class="fecha-box">
-
-            <i class="fa-solid fa-calendar-days"></i>
-
-            <span id="fechaActual"></span>
-
-        </div>
-
-    </div>
-
-</section>
-<!--=================================
-            KPIs
-==================================-->
-
-<section class="dashboard-grid">
-
-    <div class="stat-card empleados">
-
-        <div class="card-icon">
-
-            <i class="fa-solid fa-user-tie"></i>
-
-        </div>
-
-        <div class="card-info">
-
-            <h3>Empleados</h3>
-
-            <span id="totalEmpleados">128</span>
-
-            <small>▲ +12 este mes</small>
-
-        </div>
-
-    </div>
-
-
-    <div class="stat-card clientes">
-
-        <div class="card-icon">
-
-            <i class="fa-solid fa-users"></i>
-
-        </div>
-
-        <div class="card-info">
-
-            <h3>Clientes</h3>
-
-            <span id="totalClientes">580</span>
-
-            <small>▲ +25 nuevos</small>
-
-        </div>
-
-    </div>
-
-
-    <div class="stat-card productos">
-
-        <div class="card-icon">
-
-            <i class="fa-solid fa-box-open"></i>
-
-        </div>
-
-        <div class="card-info">
-
-            <h3>Productos</h3>
-
-            <span id="totalProductos">94</span>
-
-            <small>Stock actualizado</small>
-
-        </div>
-
-    </div>
-
-
-    <div class="stat-card proveedores">
-
-        <div class="card-icon">
-
-            <i class="fa-solid fa-truck-fast"></i>
-
-        </div>
-
-        <div class="card-info">
-
-            <h3>Proveedores</h3>
-
-            <span id="totalProveedores">21</span>
-
-            <small>Todos activos</small>
-
-        </div>
-
-    </div>
-
-
-    <div class="stat-card ventas">
-
-        <div class="card-icon">
-
-            <i class="fa-solid fa-cart-shopping"></i>
-
-        </div>
-
-        <div class="card-info">
-
-            <h3>Ventas</h3>
-
-            <span id="totalVentas">$28 M</span>
-
-            <small>▲ +18% este mes</small>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!--=================================
-        CONTENIDO PRINCIPAL
-==================================-->
-
-<section class="dashboard-main">
     <!--=================================
-            GRÁFICO
-==================================-->
+                BIENVENIDA
+    ==================================-->
 
-<div class="grafico-card">
+    <section class="welcome-card">
 
-    <div class="card-header">
+        <div class="welcome-info">
 
-        <h3>
+            <h1>
 
-            <i class="fa-solid fa-chart-column"></i>
+                ¡Bienvenido nuevamente!
 
-            Ventas Mensuales
+            </h1>
 
-        </h3>
+            <p>
 
-        <button id="btnReporteVentas">
+                Administre empleados, clientes, inventario,
+                proveedores y ventas desde un único panel
+                inteligente.
 
-            Ver Reporte
+            </p>
 
-        </button>
+            <div class="welcome-badges">
 
-    </div>
+                <span>
 
-    <canvas id="graficoVentas"></canvas>
+                    <i class="fa-solid fa-shield-halved"></i>
 
-</div>
+                    Seguridad
+
+                </span>
+
+                <span>
+
+                    <i class="fa-solid fa-chart-line"></i>
+
+                    Rendimiento
+
+                </span>
+
+                <span>
+
+                    <i class="fa-solid fa-database"></i>
+
+                    Información Centralizada
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="welcome-status">
+
+            <div class="status-online">
+
+                <i class="fa-solid fa-circle"></i>
+
+                Sistema Operativo
+
+            </div>
+
+            <div class="fecha-box">
+
+                <i class="fa-solid fa-calendar-days"></i>
+
+                <span id="fechaActual"></span>
+
+            </div>
+
+        </div>
+
+    </section>
+    <!--=================================
+                KPIs
+    ==================================-->
+
+    <section class="dashboard-grid">
+
+        <div class="stat-card empleados">
+
+            <div class="card-icon">
+
+                <i class="fa-solid fa-user-tie"></i>
+
+            </div>
+
+            <div class="card-info">
+
+                <h3>Empleados</h3>
+
+                <span id="totalEmpleados">128</span>
+
+                <small>▲ +12 este mes</small>
+
+            </div>
+
+        </div>
 
 
-<!--=================================
-        ACCIONES RÁPIDAS
-==================================-->
+        <div class="stat-card clientes">
 
-<div class="quick-actions">
+            <div class="card-icon">
 
-    <h3>
+                <i class="fa-solid fa-users"></i>
 
-        <i class="fa-solid fa-bolt"></i>
+            </div>
 
-        Acciones Rápidas
+            <div class="card-info">
 
-    </h3>
+                <h3>Clientes</h3>
 
-    <button id="btnNuevoEmpleado">
+                <span id="totalClientes">580</span>
 
-        <i class="fa-solid fa-user-plus"></i>
+                <small>▲ +25 nuevos</small>
 
-        Nuevo Empleado
+            </div>
 
-    </button>
+        </div>
 
-    <button id="btnNuevoCliente">
-    <i class="fa-solid fa-users"></i>
-    Nuevo Cliente
-</button>
 
-<button id="btnNuevoProducto" data-url="{% url 'nuevo_producto' %}">
-    <i class="fa-solid fa-box"></i>
-    Nuevo Producto
-</button>
+        <div class="stat-card productos">
 
-<button id="btnNuevoProveedor" data-url="{% url 'proveedores' %}">
-    <i class="fa-solid fa-truck-fast"></i>
-    Nuevo Proveedor
-</button>
+            <div class="card-icon">
 
-<button id="btnNuevaVenta" data-url="{% url 'ventas' %}">
-    <i class="fa-solid fa-cart-plus"></i>
-    Nueva Venta
-</button>
+                <i class="fa-solid fa-box-open"></i>
 
-    <button id="btnReportes">
+            </div>
 
-        <i class="fa-solid fa-file-lines"></i>
+            <div class="card-info">
 
-        Reportes
+                <h3>Productos</h3>
 
-    </button>
+                <span id="totalProductos">94</span>
 
-</div>
+                <small>Stock actualizado</small>
 
-</section>
-<!--=================================
-        INFORMACIÓN
-==================================-->
+            </div>
 
-<section class="dashboard-bottom">
+        </div>
 
-    <!--=========================
-            ACTIVIDAD RECIENTE
-    ==========================-->
 
-    <div class="activity-card">
+        <div class="stat-card proveedores">
 
-        <h3>
+            <div class="card-icon">
 
-            <i class="fa-solid fa-clock-rotate-left"></i>
+                <i class="fa-solid fa-truck-fast"></i>
 
-            Actividad Reciente
+            </div>
 
-        </h3>
+            <div class="card-info">
 
-        <ul>
+                <h3>Proveedores</h3>
 
-            <li>
+                <span id="totalProveedores">21</span>
 
-                <i class="fa-solid fa-circle-check"></i>
+                <small>Todos activos</small>
 
-                Cliente registrado correctamente
+            </div>
 
-                <span>Hace 5 minutos</span>
+        </div>
 
-            </li>
 
-            <li>
+        <div class="stat-card ventas">
+
+            <div class="card-icon">
 
                 <i class="fa-solid fa-cart-shopping"></i>
 
-                Venta #2054 realizada
+            </div>
 
-                <span>Hace 12 minutos</span>
+            <div class="card-info">
 
-            </li>
+                <h3>Ventas</h3>
 
-            <li>
+                <span id="totalVentas">$28 M</span>
 
-                <i class="fa-solid fa-box"></i>
+                <small>▲ +18% este mes</small>
 
-                Producto actualizado
+            </div>
 
-                <span>Hace 30 minutos</span>
+        </div>
 
-            </li>
+    </section>
 
-            <li>
 
-                <i class="fa-solid fa-user"></i>
+    <!--=================================
+            CONTENIDO PRINCIPAL
+    ==================================-->
 
-                Nuevo empleado agregado
+    <section class="dashboard-main">
+        <!--=================================
+                GRÁFICO
+    ==================================-->
 
-                <span>Hace 1 hora</span>
+    <div class="grafico-card">
 
-            </li>
+        <div class="card-header">
 
-        </ul>
+            <h3>
+
+                <i class="fa-solid fa-chart-column"></i>
+
+                Ventas Mensuales
+
+            </h3>
+
+            <button id="btnReporteVentas">
+
+                Ver Reporte
+
+            </button>
+
+        </div>
+
+        <canvas id="graficoVentas"></canvas>
 
     </div>
 
-    <!--=========================
-            ESTADO DEL SISTEMA
-    ==========================-->
 
-    <div class="system-card">
+    <!--=================================
+            ACCIONES RÁPIDAS
+    ==================================-->
+
+    <div class="quick-actions">
 
         <h3>
 
-            <i class="fa-solid fa-server"></i>
+            <i class="fa-solid fa-bolt"></i>
 
-            Estado del Sistema
+            Acciones Rápidas
 
         </h3>
 
-        <div class="status-item">
+        <button id="btnNuevoEmpleado">
 
-            <span>Servidor</span>
+            <i class="fa-solid fa-user-plus"></i>
 
-            <strong class="online">
+            Nuevo Empleado
 
-                🟢 En línea
+        </button>
 
-            </strong>
+        <button id="btnNuevoCliente">
+        <i class="fa-solid fa-users"></i>
+        Nuevo Cliente
+    </button>
+
+    <button id="btnNuevoProducto" data-url="{% url 'nuevo_producto' %}">
+        <i class="fa-solid fa-box"></i>
+        Nuevo Producto
+    </button>
+
+    <button id="btnNuevoProveedor" data-url="{% url 'proveedores' %}">
+        <i class="fa-solid fa-truck-fast"></i>
+        Nuevo Proveedor
+    </button>
+
+    <button id="btnNuevaVenta" data-url="{% url 'ventas' %}">
+        <i class="fa-solid fa-cart-plus"></i>
+        Nueva Venta
+    </button>
+
+        <button id="btnReportes">
+
+            <i class="fa-solid fa-file-lines"></i>
+
+            Reportes
+
+        </button>
+
+    </div>
+
+    </section>
+    <!--=================================
+            INFORMACIÓN
+    ==================================-->
+
+    <section class="dashboard-bottom">
+
+        <!--=========================
+                ACTIVIDAD RECIENTE
+        ==========================-->
+
+        <div class="activity-card">
+
+            <h3>
+
+                <i class="fa-solid fa-clock-rotate-left"></i>
+
+                Actividad Reciente
+
+            </h3>
+
+            <ul>
+
+                <li>
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                    Cliente registrado correctamente
+
+                    <span>Hace 5 minutos</span>
+
+                </li>
+
+                <li>
+
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                    Venta #2054 realizada
+
+                    <span>Hace 12 minutos</span>
+
+                </li>
+
+                <li>
+
+                    <i class="fa-solid fa-box"></i>
+
+                    Producto actualizado
+
+                    <span>Hace 30 minutos</span>
+
+                </li>
+
+                <li>
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Nuevo empleado agregado
+
+                    <span>Hace 1 hora</span>
+
+                </li>
+
+            </ul>
 
         </div>
 
-        <div class="status-item">
+        <!--=========================
+                ESTADO DEL SISTEMA
+        ==========================-->
 
-            <span>Base de Datos</span>
+        <div class="system-card">
 
-            <strong class="online">
+            <h3>
 
-                🟢 Conectada
+                <i class="fa-solid fa-server"></i>
 
-            </strong>
+                Estado del Sistema
+
+            </h3>
+
+            <div class="status-item">
+
+                <span>Servidor</span>
+
+                <strong class="online">
+
+                    🟢 En línea
+
+                </strong>
+
+            </div>
+
+            <div class="status-item">
+
+                <span>Base de Datos</span>
+
+                <strong class="online">
+
+                    🟢 Conectada
+
+                </strong>
+
+            </div>
+
+            <div class="status-item">
+
+                <span>Usuarios Activos</span>
+
+                <strong>18</strong>
+
+            </div>
+
+            <div class="status-item">
+
+                <span>CPU</span>
+
+                <strong>34%</strong>
+
+            </div>
+
+            <div class="status-item">
+
+                <span>Memoria</span>
+
+                <strong>62%</strong>
+
+            </div>
 
         </div>
 
-        <div class="status-item">
+    </section>
 
-            <span>Usuarios Activos</span>
+    <!--=================================
+                FOOTER
+    ==================================-->
 
-            <strong>18</strong>
+    <footer class="dashboard-footer">
 
-        </div>
+        <p>
 
-        <div class="status-item">
+            © 2026 Mining Star ERP | Sistema Integral de Gestión Minera
 
-            <span>CPU</span>
+        </p>
 
-            <strong>34%</strong>
+    </footer>
 
-        </div>
+    <!-- =========================================================
+                    MODAL NUEVO EMPLEADO (Dashboard)
+    ========================================================= -->
 
-        <div class="status-item">
+    <div class="modal" id="modalEmpleadoDash" style="display:none;">
 
-            <span>Memoria</span>
+        <div class="modal-content">
 
-            <strong>62%</strong>
+            <div class="modal-header">
+
+                <h2>
+                    <i class="fa-solid fa-user-plus"></i>
+                    Registrar Empleado
+                </h2>
+
+                <button type="button" id="cerrarModalDash" class="cerrar-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <form id="formEmpleadoDash" method="POST" action="{% url 'empleados' %}" autocomplete="off">
+
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Documento</label>
+                        {{ form.documento }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nombres</label>
+                        {{ form.nombres }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Apellidos</label>
+                        {{ form.apellidos }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        {{ form.correo }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        {{ form.telefono }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cargo</label>
+                        {{ form.cargo }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Área</label>
+                        {{ form.area }}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Estado</label>
+                        {{ form.estado }}
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" id="cancelarEmpleadoDash" class="btn gris">
+                        <i class="fa-solid fa-ban"></i>
+                        Cancelar
+                    </button>
+
+                    <button type="reset" class="btn azul">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        Limpiar
+                    </button>
+
+                    <button type="submit" class="btn verde">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Empleado
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
     </div>
 
-</section>
+    <!-- =========================================================
+                    MODAL NUEVO CLIENTE (Dashboard)
+    ========================================================= -->
 
-<!--=================================
-            FOOTER
-==================================-->
+    <div class="modal" id="modalClienteDash" style="display:none;">
 
-<footer class="dashboard-footer">
+        <div class="modal-content">
 
-    <p>
+            <div class="modal-header">
 
-        © 2026 Mining Star ERP | Sistema Integral de Gestión Minera
+                <h2>
+                    <i class="fa-solid fa-user-plus"></i>
+                    Registrar Cliente
+                </h2>
 
-    </p>
+                <button type="button" id="cerrarModalClienteDash" class="cerrar-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
 
-</footer>
+            </div>
 
-<!-- =========================================================
-                MODAL NUEVO EMPLEADO (Dashboard)
-========================================================= -->
+            <form id="formClienteDash" method="POST" action="{% url 'clientes' %}">
 
-<div class="modal" id="modalEmpleadoDash" style="display:none;">
+                {% csrf_token %}
 
-    <div class="modal-content">
+                <div class="form-grid">
 
-        <div class="modal-header">
+                    <div class="form-group">
+                        <label>Documento / NIT</label>
+                        <input type="text" name="documento" required>
+                    </div>
 
-            <h2>
-                <i class="fa-solid fa-user-plus"></i>
-                Registrar Empleado
-            </h2>
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" name="nombre" required>
+                    </div>
 
-            <button type="button" id="cerrarModalDash" class="cerrar-modal">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+                    <div class="form-group">
+                        <label>Empresa</label>
+                        <input type="text" name="empresa">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo</label>
+                        <input type="email" name="correo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" id="cancelarClienteDash" class="btn gris">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn verde">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Cliente
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
-        <form id="formEmpleadoDash" method="POST" action="{% url 'empleados' %}" autocomplete="off">
-
-            {% csrf_token %}
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Documento</label>
-                    {{ form.documento }}
-                </div>
-
-                <div class="form-group">
-                    <label>Nombres</label>
-                    {{ form.nombres }}
-                </div>
-
-                <div class="form-group">
-                    <label>Apellidos</label>
-                    {{ form.apellidos }}
-                </div>
-
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    {{ form.correo }}
-                </div>
-
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    {{ form.telefono }}
-                </div>
-
-                <div class="form-group">
-                    <label>Cargo</label>
-                    {{ form.cargo }}
-                </div>
-
-                <div class="form-group">
-                    <label>Área</label>
-                    {{ form.area }}
-                </div>
-
-                <div class="form-group">
-                    <label>Estado</label>
-                    {{ form.estado }}
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button" id="cancelarEmpleadoDash" class="btn gris">
-                    <i class="fa-solid fa-ban"></i>
-                    Cancelar
-                </button>
-
-                <button type="reset" class="btn azul">
-                    <i class="fa-solid fa-rotate-left"></i>
-                    Limpiar
-                </button>
-
-                <button type="submit" class="btn verde">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Guardar Empleado
-                </button>
-
-            </div>
-
-        </form>
-
     </div>
+    <!-- =========================================================
+                    MODAL NUEVO PRODUCTO (Dashboard)
+    ========================================================= -->
 
-</div>
+    <div class="modal" id="modalProductoDash" style="display:none;">
 
-<!-- =========================================================
-                MODAL NUEVO CLIENTE (Dashboard)
-========================================================= -->
+        <div class="modal-content">
 
-<div class="modal" id="modalClienteDash" style="display:none;">
+            <div class="modal-header">
 
-    <div class="modal-content">
+                <h2>
+                    <i class="fa-solid fa-box-open"></i>
+                    Registrar Producto
+                </h2>
 
-        <div class="modal-header">
+                <button type="button" id="cerrarModalProductoDash" class="cerrar-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
 
-            <h2>
-                <i class="fa-solid fa-user-plus"></i>
-                Registrar Cliente
-            </h2>
+            </div>
 
-            <button type="button" id="cerrarModalClienteDash" class="cerrar-modal">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+            <form id="formProductoDash" method="POST" action="{% url 'nuevo_producto' %}">
+
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Código</label>
+                        <input type="text" name="codigo" placeholder="Ej: PROD-001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nombre del Producto</label>
+                        <input type="text" name="nombre" placeholder="Nombre del producto" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Categoría</label>
+                        <input type="text" name="categoria" placeholder="Ej: Materiales" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Proveedor</label>
+                        <select name="proveedor" required>
+                            <option value="">Seleccione un proveedor</option>
+                            {% for proveedor in proveedores %}
+                                <option value="{{ proveedor.id }}">{{ proveedor.empresa }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio de Compra</label>
+                        <input type="number" step="0.01" min="0" name="precio_compra" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Precio de Venta</label>
+                        <input type="number" step="0.01" min="0" name="precio_venta" placeholder="0.00" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stock Actual</label>
+                        <input type="number" min="0" name="stock" placeholder="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Stock Mínimo</label>
+                        <input type="number" min="0" name="stock_minimo" value="5" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" id="cancelarProductoDash" class="btn gris">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn verde">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Producto
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
-        <form id="formClienteDash" method="POST" action="{% url 'clientes' %}">
-
-            {% csrf_token %}
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Documento / NIT</label>
-                    <input type="text" name="documento" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Nombre completo</label>
-                    <input type="text" name="nombre" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Empresa</label>
-                    <input type="text" name="empresa">
-                </div>
-
-                <div class="form-group">
-                    <label>Correo</label>
-                    <input type="email" name="correo" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" name="telefono" required>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button" id="cancelarClienteDash" class="btn gris">
-                    Cancelar
-                </button>
-
-                <button type="submit" class="btn verde">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Guardar Cliente
-                </button>
-
-            </div>
-
-        </form>
-
     </div>
+    <!-- =========================================================
+                    MODAL NUEVO PROVEEDOR (Dashboard)
+    ========================================================= -->
 
-</div>
-<!-- =========================================================
-                MODAL NUEVO PRODUCTO (Dashboard)
-========================================================= -->
+    <div class="modal" id="modalProveedorDash" style="display:none;">
 
-<div class="modal" id="modalProductoDash" style="display:none;">
+        <div class="modal-content">
 
-    <div class="modal-content">
+            <div class="modal-header">
 
-        <div class="modal-header">
+                <h2>
+                    <i class="fa-solid fa-truck"></i>
+                    Registrar Proveedor
+                </h2>
 
-            <h2>
-                <i class="fa-solid fa-box-open"></i>
-                Registrar Producto
-            </h2>
+                <button type="button" id="cerrarModalProveedorDash" class="cerrar-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
 
-            <button type="button" id="cerrarModalProductoDash" class="cerrar-modal">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+            </div>
+
+            <form id="formProveedorDash" method="POST" action="{% url 'proveedores' %}">
+
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>NIT</label>
+                        <input type="text" name="nit" placeholder="Ej: 900123456-7" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Empresa</label>
+                        <input type="text" name="empresa" placeholder="Nombre de la empresa" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Persona de Contacto</label>
+                        <input type="text" name="contacto" placeholder="Nombre del contacto" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" name="correo" placeholder="correo@empresa.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono" placeholder="Número de teléfono" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ciudad</label>
+                        <input type="text" name="ciudad" placeholder="Ej: Barranquilla" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dirección</label>
+                        <input type="text" name="direccion" placeholder="Dirección del proveedor" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" id="cancelarProveedorDash" class="btn gris">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn verde">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Proveedor
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
-        <form id="formProductoDash" method="POST" action="{% url 'nuevo_producto' %}">
-
-            {% csrf_token %}
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Código</label>
-                    <input type="text" name="codigo" placeholder="Ej: PROD-001" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Nombre del Producto</label>
-                    <input type="text" name="nombre" placeholder="Nombre del producto" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Categoría</label>
-                    <input type="text" name="categoria" placeholder="Ej: Materiales" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Proveedor</label>
-                    <select name="proveedor" required>
-                        <option value="">Seleccione un proveedor</option>
-                        {% for proveedor in proveedores %}
-                            <option value="{{ proveedor.id }}">{{ proveedor.empresa }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Precio de Compra</label>
-                    <input type="number" step="0.01" min="0" name="precio_compra" placeholder="0.00" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Precio de Venta</label>
-                    <input type="number" step="0.01" min="0" name="precio_venta" placeholder="0.00" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Stock Actual</label>
-                    <input type="number" min="0" name="stock" placeholder="0" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Stock Mínimo</label>
-                    <input type="number" min="0" name="stock_minimo" value="5" required>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button" id="cancelarProductoDash" class="btn gris">
-                    Cancelar
-                </button>
-
-                <button type="submit" class="btn verde">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Guardar Producto
-                </button>
-
-            </div>
-
-        </form>
-
     </div>
+    <!-- =========================================================
+                    MODAL NUEVA VENTA (Dashboard)
+    ========================================================= -->
 
-</div>
-<!-- =========================================================
-                MODAL NUEVO PROVEEDOR (Dashboard)
-========================================================= -->
+    <div class="modal" id="modalVentaDash" style="display:none;">
 
-<div class="modal" id="modalProveedorDash" style="display:none;">
+        <div class="modal-content">
 
-    <div class="modal-content">
+            <div class="modal-header">
 
-        <div class="modal-header">
+                <h2>
+                    <i class="fa-solid fa-cart-plus"></i>
+                    Registrar Venta
+                </h2>
 
-            <h2>
-                <i class="fa-solid fa-truck"></i>
-                Registrar Proveedor
-            </h2>
+                <button type="button" id="cerrarModalVentaDash" class="cerrar-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
 
-            <button type="button" id="cerrarModalProveedorDash" class="cerrar-modal">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+            </div>
+
+            <form id="formVentaDash" method="POST" action="{% url 'ventas' %}">
+
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Cliente</label>
+                        <select name="cliente" id="clienteVentaDash" required>
+                            <option value="">Seleccionar cliente</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Producto</label>
+                        <select name="producto" id="productoVentaDash" required>
+                            <option value="">Seleccionar producto</option>
+                            {% for producto in productos %}
+                                <option value="{{ producto.id }}" data-precio="{{ producto.precio_venta }}">
+                                    {{ producto.nombre }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Cantidad</label>
+                        <input type="number" name="cantidad" id="cantidadVentaDash" min="1" value="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Total</label>
+                        <input type="text" id="totalVentaDashPreview" value="$0" disabled>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" id="cancelarVentaDash" class="btn gris">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn verde">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Venta
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
-        <form id="formProveedorDash" method="POST" action="{% url 'proveedores' %}">
-
-            {% csrf_token %}
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>NIT</label>
-                    <input type="text" name="nit" placeholder="Ej: 900123456-7" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Empresa</label>
-                    <input type="text" name="empresa" placeholder="Nombre de la empresa" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Persona de Contacto</label>
-                    <input type="text" name="contacto" placeholder="Nombre del contacto" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Correo Electrónico</label>
-                    <input type="email" name="correo" placeholder="correo@empresa.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" name="telefono" placeholder="Número de teléfono" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Ciudad</label>
-                    <input type="text" name="ciudad" placeholder="Ej: Barranquilla" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Dirección</label>
-                    <input type="text" name="direccion" placeholder="Dirección del proveedor" required>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button" id="cancelarProveedorDash" class="btn gris">
-                    Cancelar
-                </button>
-
-                <button type="submit" class="btn verde">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Guardar Proveedor
-                </button>
-
-            </div>
-
-        </form>
-
     </div>
 
-</div>
-<!-- =========================================================
-                MODAL NUEVA VENTA (Dashboard)
-========================================================= -->
-
-<div class="modal" id="modalVentaDash" style="display:none;">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2>
-                <i class="fa-solid fa-cart-plus"></i>
-                Registrar Venta
-            </h2>
-
-            <button type="button" id="cerrarModalVentaDash" class="cerrar-modal">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-        </div>
-
-        <form id="formVentaDash" method="POST" action="{% url 'ventas' %}">
-
-            {% csrf_token %}
-
-            <div class="form-grid">
-
-                <div class="form-group">
-                    <label>Cliente</label>
-                    <select name="cliente" id="clienteVentaDash" required>
-                        <option value="">Seleccionar cliente</option>
-                        {% for cliente in clientes %}
-                            <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Producto</label>
-                    <select name="producto" id="productoVentaDash" required>
-                        <option value="">Seleccionar producto</option>
-                        {% for producto in productos %}
-                            <option value="{{ producto.id }}" data-precio="{{ producto.precio_venta }}">
-                                {{ producto.nombre }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Cantidad</label>
-                    <input type="number" name="cantidad" id="cantidadVentaDash" min="1" value="1" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Total</label>
-                    <input type="text" id="totalVentaDashPreview" value="$0" disabled>
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button" id="cancelarVentaDash" class="btn gris">
-                    Cancelar
-                </button>
-
-                <button type="submit" class="btn verde">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Guardar Venta
-                </button>
-
-            </div>
-
-        </form>
+    </main>
 
     </div>
+{% endblock %}
 
-</div>
-
-</main>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="{% static 'js/dashboard.js' %}?v=5"></script>
-
-</body>
-
-</html>
+{% block js %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/dashboard.js' %}?v=5"></script>
+{% endblock %}

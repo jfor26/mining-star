@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block titulo %}Mining Star ERP{% endblock %}</title>
+
+    {# Hoja compartida por todas las pantallas internas #}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+    {# Hoja propia de cada pantalla #}
+    {% block css %}{% endblock %}
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    {% block head_extra %}{% endblock %}
+
+</head>
+
+<body>
+
+{% block contenido %}{% endblock %}
+
+{% block js %}{% endblock %}
+
+</body>
+</html>

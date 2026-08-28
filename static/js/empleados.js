@@ -294,38 +294,9 @@ if (btnNuevoEmpleado && modalEmpleado) {
     // =========================================================
     // ELIMINAR EMPLEADO
     // =========================================================
+    // El borrado ahora se hace con un <form method="post"> y token
+    // CSRF desde la plantilla. Ya no hace falta JavaScript aqui.
 
-    document.addEventListener("click", function (event) {
-
-        const boton =
-            event.target.closest(".btn-delete");
-
-        if (!boton) {
-            return;
-        }
-
-        const url =
-            boton.getAttribute("href");
-
-        if (!url) {
-            return;
-        }
-
-        event.preventDefault();
-
-        const confirmar =
-            window.confirm(
-                "¿Está seguro de eliminar este empleado?\n\n" +
-                "Esta acción no se puede deshacer."
-            );
-
-        if (confirmar) {
-
-            window.location.href = url;
-
-        }
-
-    });
 
 
     // =========================================================

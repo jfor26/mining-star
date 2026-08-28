@@ -1,0 +1,25 @@
+{% comment %}
+    Bloque unico de mensajes del sistema.
+
+    Antes cada plantilla repetia este HTML y todas usaban la clase
+    "alert-success" de forma fija, asi que un error de validacion se
+    mostraba en verde como si todo hubiera salido bien. Ahora la clase
+    sale de message.tags (success, error, warning, info).
+{% endcomment %}
+
+{% if messages %}
+    <div class="mensajes-sistema">
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">
+                {% if message.tags == 'success' %}
+                    <i class="fa-solid fa-circle-check"></i>
+                {% elif message.tags == 'error' %}
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                {% else %}
+                    <i class="fa-solid fa-circle-info"></i>
+                {% endif %}
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

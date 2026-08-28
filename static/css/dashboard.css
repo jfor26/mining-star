@@ -2867,3 +2867,32 @@ body{
     border-color:var(--primary);
 
 }
+/* =========================================================
+   Formularios de accion (borrado y cierre de sesion)
+
+   Los botones de borrar y de salir pasaron de ser enlaces <a>
+   a formularios POST con token CSRF. Estas reglas hacen que el
+   formulario no ocupe su propia linea y que el boton se siga
+   viendo igual que el enlace que reemplaza.
+   ========================================================= */
+
+.form-eliminar,
+.form-logout {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+.form-eliminar button,
+.form-logout button {
+    background: none;
+    border: none;
+    padding: inherit;
+    margin: inherit;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+}

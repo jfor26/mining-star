@@ -1,742 +1,709 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
+{% block titulo %}Clientes | Mining Star ERP{% endblock %}
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Clientes | Mining Star ERP</title>
-    <!-- CSS -->
-
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-
+{% block css %}
     <link rel="stylesheet"
           href="{% static 'css/clientes.css' %}">
+{% endblock %}
 
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+{% block contenido %}
+    <!-- =========================================================
+                             SIDEBAR
+    ========================================================= -->
 
-</head>
+    <aside class="sidebar">
 
-<body>
+        <div class="logo-area">
 
+            <img
+                src="{% static 'img/logo.png' %}"
+                alt="Mining Star">
 
-<!-- =========================================================
-                         SIDEBAR
-========================================================= -->
+            <h2>Mining Star ERP</h2>
 
-<aside class="sidebar">
+            <p>Sistema Integral de Gestión</p>
 
-    <div class="logo-area">
+        </div>
 
-        <img
-            src="{% static 'img/logo.png' %}"
-            alt="Mining Star">
 
-        <h2>Mining Star ERP</h2>
+        <!-- MENÚ PRINCIPAL -->
 
-        <p>Sistema Integral de Gestión</p>
+        <span class="menu-title">
+            MENÚ PRINCIPAL
+        </span>
 
-    </div>
 
+        <nav>
 
-    <!-- MENÚ PRINCIPAL -->
+            <!-- DASHBOARD -->
 
-    <span class="menu-title">
-        MENÚ PRINCIPAL
-    </span>
+            <a href="{% url 'dashboard' %}">
 
+                <i class="fa-solid fa-house"></i>
 
-    <nav>
+                <span>Dashboard</span>
 
-        <!-- DASHBOARD -->
+            </a>
 
-        <a href="{% url 'dashboard' %}">
 
-            <i class="fa-solid fa-house"></i>
+            <!-- EMPLEADOS -->
 
-            <span>Dashboard</span>
+            <a href="{% url 'empleados' %}">
 
-        </a>
+                <i class="fa-solid fa-user-tie"></i>
 
+                <span>Empleados</span>
 
-        <!-- EMPLEADOS -->
+            </a>
 
-        <a href="{% url 'empleados' %}">
 
-            <i class="fa-solid fa-user-tie"></i>
+            <!-- CLIENTES -->
 
-            <span>Empleados</span>
-
-        </a>
-
-
-        <!-- CLIENTES -->
-
-        <a href="{% url 'clientes' %}"
-           class="active">
-
-            <i class="fa-solid fa-users"></i>
-
-            <span>Clientes</span>
-
-        </a>
-
-
-        <!-- PRODUCTOS -->
-
-        <a href="{% url 'productos' %}">
-
-            <i class="fa-solid fa-box-open"></i>
-
-            <span>Productos</span>
-
-        </a>
-
-
-        <!-- PROVEEDORES -->
-
-        <a href="{% url 'proveedores' %}">
-
-            <i class="fa-solid fa-truck-fast"></i>
-
-            <span>Proveedores</span>
-
-        </a>
-
-
-        <!-- VENTAS -->
-
-        <a href="{% url 'ventas' %}">
-
-            <i class="fa-solid fa-cart-shopping"></i>
-
-            <span>Ventas</span>
-
-        </a>
-
-    </nav>
-
-
-    <hr>
-
-
-    <!-- ANÁLISIS -->
-
-    <span class="menu-title">
-        ANÁLISIS
-    </span>
-
-
-    <nav>
-
-        <!-- REPORTES -->
-
-        <a href="#">
-
-            <i class="fa-solid fa-chart-line"></i>
-
-            <span>Reportes</span>
-
-        </a>
-
-
-        <!-- CONFIGURACIÓN -->
-
-        <a href="#">
-
-            <i class="fa-solid fa-gear"></i>
-
-            <span>Configuración</span>
-
-        </a>
-
-    </nav>
-
-
-    <!-- CERRAR SESIÓN -->
-
-    <div class="sidebar-bottom">
-
-        <a href="{% url 'login' %}"
-           class="logout">
-
-            <i class="fa-solid fa-right-from-bracket"></i>
-
-            <span>Cerrar Sesión</span>
-
-        </a>
-
-    </div>
-
-</aside>
-
-
-
-<!-- =========================================================
-                         CONTENIDO
-========================================================= -->
-
-<main class="contenido">
-
-
-    <!-- =====================================================
-                            ENCABEZADO
-    ====================================================== -->
-
-    <div class="page-header">
-
-        <div>
-
-            <h1>
+            <a href="{% url 'clientes' %}"
+               class="active">
 
                 <i class="fa-solid fa-users"></i>
 
-                Gestión de Clientes
+                <span>Clientes</span>
 
-            </h1>
+            </a>
 
 
-            <p>
+            <!-- PRODUCTOS -->
 
-                Administre la información de todos los clientes
-                de Mining Star ERP.
+            <a href="{% url 'productos' %}">
 
-            </p>
+                <i class="fa-solid fa-box-open"></i>
+
+                <span>Productos</span>
+
+            </a>
+
+
+            <!-- PROVEEDORES -->
+
+            <a href="{% url 'proveedores' %}">
+
+                <i class="fa-solid fa-truck-fast"></i>
+
+                <span>Proveedores</span>
+
+            </a>
+
+
+            <!-- VENTAS -->
+
+            <a href="{% url 'ventas' %}">
+
+                <i class="fa-solid fa-cart-shopping"></i>
+
+                <span>Ventas</span>
+
+            </a>
+
+        </nav>
+
+
+        <hr>
+
+
+        <!-- ANÁLISIS -->
+
+        <span class="menu-title">
+            ANÁLISIS
+        </span>
+
+
+        <nav>
+
+            <!-- REPORTES -->
+
+            <a href="#">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>Reportes</span>
+
+            </a>
+
+
+            <!-- CONFIGURACIÓN -->
+
+            <a href="#">
+
+                <i class="fa-solid fa-gear"></i>
+
+                <span>Configuración</span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- CERRAR SESIÓN -->
+
+        <div class="sidebar-bottom">
+
+            <form method="post" action="{% url 'logout' %}" class="form-logout">
+                {% csrf_token %}
+                <button type="submit" class="logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>Cerrar Sesión</span>
+
+            </button>
+            </form>
 
         </div>
 
-
-        <button
-            type="button"
-            id="btnNuevoCliente"
-            class="btn-primary">
-
-            <i class="fa-solid fa-user-plus"></i>
-
-            Nuevo Cliente
-
-        </button>
-
-    </div>
+    </aside>
 
 
 
-    <!-- =====================================================
-                         MENSAJES DJANGO
-    ====================================================== -->
+    <!-- =========================================================
+                             CONTENIDO
+    ========================================================= -->
 
-    {% if messages %}
+    <main class="contenido">
 
-        {% for message in messages %}
 
-            <div class="alert alert-success">
+        <!-- =====================================================
+                                ENCABEZADO
+        ====================================================== -->
 
-                <i class="fa-solid fa-circle-check"></i>
+        <div class="page-header">
 
-                {{ message }}
+            <div>
+
+                <h1>
+
+                    <i class="fa-solid fa-users"></i>
+
+                    Gestión de Clientes
+
+                </h1>
+
+
+                <p>
+
+                    Administre la información de todos los clientes
+                    de Mining Star ERP.
+
+                </p>
 
             </div>
 
-        {% endfor %}
-
-    {% endif %}
-
-
-
-    <!-- =====================================================
-                            BUSCADOR
-    ====================================================== -->
-
-    <div class="search-box">
-
-        <i class="fa-solid fa-magnifying-glass"></i>
-
-        <input
-            type="text"
-            id="buscarCliente"
-            placeholder="Buscar por documento, nombre o empresa...">
-
-    </div>
-
-
-
-    <!-- =====================================================
-                              KPI
-    ====================================================== -->
-
-    <div
-        class="kpi-container"
-        style="
-            display:grid;
-            grid-template-columns:repeat(3, minmax(0, 1fr));
-            gap:20px;
-            width:100%;
-            margin:20px 0;
-        ">
-
-
-        <!-- TOTAL -->
-
-        <div
-            class="kpi-card"
-            style="
-                width:auto;
-                min-width:0;
-                min-height:145px;
-                box-sizing:border-box;
-            ">
-
-            <i class="fa-solid fa-users"></i>
-
-            <h3>Total Clientes</h3>
-
-            <span id="totalClientes">
-                {{ total_clientes }}
-            </span>
-
-        </div>
-
-
-
-        <!-- ACTIVOS -->
-
-        <div
-            class="kpi-card"
-            style="
-                width:auto;
-                min-width:0;
-                min-height:145px;
-                box-sizing:border-box;
-            ">
-
-            <i class="fa-solid fa-user-check"></i>
-
-            <h3>Clientes Activos</h3>
-
-            <span id="clientesActivos">
-                {{ total_clientes }}
-            </span>
-
-        </div>
-
-
-
-        <!-- INACTIVOS -->
-
-        <div
-            class="kpi-card"
-            style="
-                width:auto;
-                min-width:0;
-                min-height:145px;
-                box-sizing:border-box;
-            ">
-
-            <i class="fa-solid fa-user-xmark"></i>
-
-            <h3>Clientes Inactivos</h3>
-
-            <span id="clientesInactivos">
-                0
-            </span>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================================================
-                           HERRAMIENTAS
-    ====================================================== -->
-
-    <div class="tools-bar">
-
-
-        <div class="left-tools">
-
-
-            <!-- EXCEL -->
-
-            <a
-                href="{% url 'exportar_clientes_excel' %}"
-                id="btnExportarExcel"
-                class="btn-tool">
-
-                <i class="fa-solid fa-file-excel"></i>
-
-                Excel
-
-            </a>
-
-
-
-            <!-- PDF -->
-
-            <a
-                href="{% url 'exportar_clientes_pdf' %}"
-                id="btnExportarPDF"
-                class="btn-tool">
-
-                <i class="fa-solid fa-file-pdf"></i>
-
-                PDF
-
-            </a>
-
-
-
-            <!-- IMPRIMIR -->
 
             <button
                 type="button"
-                id="btnImprimir"
-                class="btn-tool">
+                id="btnNuevoCliente"
+                class="btn-primary">
 
-                <i class="fa-solid fa-print"></i>
-
-                Imprimir
-
-            </button>
-
-
-
-            <!-- ACTUALIZAR -->
-
-            <button
-                type="button"
-                id="btnActualizar"
-                class="btn-tool">
-
-                <i class="fa-solid fa-rotate"></i>
-
-                Actualizar
-
-            </button>
-
-        </div>
-
-
-
-        <div class="right-tools">
-
-            <span id="totalRegistros">
-
-                {{ total_clientes }}
-
-                {% if total_clientes == 1 %}
-                    registro
-                {% else %}
-                    registros
-                {% endif %}
-
-            </span>
-
-        </div>
-
-    </div>
-
-
-
-    <!-- =====================================================
-                             TABLA
-    ====================================================== -->
-
-    <div class="table-container">
-
-
-        <div class="table-header">
-
-            <h3>
-
-                <i class="fa-solid fa-address-book"></i>
-
-                Lista de Clientes
-
-            </h3>
-
-        </div>
-
-
-
-        <!-- IMPORTANTE:
-             AQUÍ SÍ ABRIMOS LA TABLA
-        -->
-
-        <div class="table-responsive">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Documento
-                        </th>
-
-                        <th>
-                            Nombre
-                        </th>
-
-                        <th>
-                            Empresa
-                        </th>
-
-                        <th>
-                            Correo
-                        </th>
-
-                        <th>
-                            Teléfono
-                        </th>
-
-                        <th>
-                            Estado
-                        </th>
-
-                        <th>
-                            Acciones
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-
-                <tbody id="tablaClientes">
-
-
-                    {% for cliente in clientes %}
-
-                    <tr>
-
-
-                        <!-- DOCUMENTO -->
-
-                        <td>
-                            {{ cliente.documento }}
-                        </td>
-
-
-                        <!-- NOMBRE -->
-
-                        <td>
-                            {{ cliente.nombre }}
-                        </td>
-
-
-                        <!-- EMPRESA -->
-
-                        <td>
-                            {{ cliente.empresa|default:"-" }}
-                        </td>
-
-
-                        <!-- CORREO -->
-
-                        <td>
-                            {{ cliente.correo }}
-                        </td>
-
-
-                        <!-- TELEFONO -->
-
-                        <td>
-                            {{ cliente.telefono }}
-                        </td>
-
-
-                        <!-- ESTADO -->
-
-                        <td>
-
-                            <span class="estado-cliente">
-                                Activo
-                            </span>
-
-                        </td>
-
-
-                        <!-- ACCIONES -->
-
-                        <td class="acciones">
-
-
-                            <!-- EDITAR -->
-
-                            <a
-                                href="{% url 'editar_cliente' cliente.id %}"
-                                class="btn-action btn-edit"
-                                title="Editar cliente">
-
-                                <i class="fa-solid fa-pen-to-square"></i>
-
-                            </a>
-
-
-
-                            <!-- ELIMINAR -->
-
-                            <a
-                                href="{% url 'eliminar_cliente' cliente.id %}"
-                                class="btn-action btn-delete"
-                                title="Eliminar cliente"
-                                onclick="return confirm('¿Está seguro de eliminar este cliente? Esta acción no se puede deshacer.');">
-
-                                <i class="fa-solid fa-trash"></i>
-
-                            </a>
-
-
-                        </td>
-
-
-                    </tr>
-
-                    {% empty %}
-
-
-                    <!-- SIN CLIENTES -->
-
-                    <tr class="fila-vacia">
-
-                        <td
-                            colspan="7"
-                            class="empty">
-
-                            <i class="fa-solid fa-users-slash"></i>
-
-                            <p>
-                                No hay clientes registrados.
-                            </p>
-
-                        </td>
-
-                    </tr>
-
-
-                    {% endfor %}
-
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-
-</main>
-
-
-
-<!-- =========================================================
-                MODAL NUEVO CLIENTE (Dashboard)
-========================================================= -->
-
-<div class="modal" id="modalClienteDash" style="display:none;">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2>
                 <i class="fa-solid fa-user-plus"></i>
-                Registrar Cliente
-            </h2>
 
-            <button type="button" id="cerrarModalClienteDash" class="cerrar-modal">
-                <i class="fa-solid fa-xmark"></i>
+                Nuevo Cliente
+
             </button>
 
         </div>
 
-        <form id="formClienteDash" method="POST" action="{% url 'clientes' %}">
 
-            {% csrf_token %}
 
-            <div class="form-grid">
+        {% include "_mensajes.html" %}
 
-                <div class="form-group">
-                    <label>Documento / NIT</label>
-                    <input type="text" name="documento" required>
-                </div>
 
-                <div class="form-group">
-                    <label>Nombre completo</label>
-                    <input type="text" name="nombre" required>
-                </div>
 
-                <div class="form-group">
-                    <label>Empresa</label>
-                    <input type="text" name="empresa">
-                </div>
+        <!-- =====================================================
+                                BUSCADOR
+        ====================================================== -->
 
-                <div class="form-group">
-                    <label>Correo</label>
-                    <input type="email" name="correo" required>
-                </div>
+        <div class="search-box">
 
-                <div class="form-group">
-                    <label>Teléfono</label>
-                    <input type="text" name="telefono" required>
-                </div>
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="buscarCliente"
+                placeholder="Buscar por documento, nombre o empresa...">
+
+        </div>
+
+
+
+        <!-- =====================================================
+                                  KPI
+        ====================================================== -->
+
+        <div
+            class="kpi-container"
+            style="
+                display:grid;
+                grid-template-columns:repeat(3, minmax(0, 1fr));
+                gap:20px;
+                width:100%;
+                margin:20px 0;
+            ">
+
+
+            <!-- TOTAL -->
+
+            <div
+                class="kpi-card"
+                style="
+                    width:auto;
+                    min-width:0;
+                    min-height:145px;
+                    box-sizing:border-box;
+                ">
+
+                <i class="fa-solid fa-users"></i>
+
+                <h3>Total Clientes</h3>
+
+                <span id="totalClientes">
+                    {{ total_clientes }}
+                </span>
 
             </div>
 
-            <div class="modal-footer">
 
-                <button type="button" id="cancelarClienteDash" class="btn gris">
-                    Cancelar
+
+            <!-- ACTIVOS -->
+
+            <div
+                class="kpi-card"
+                style="
+                    width:auto;
+                    min-width:0;
+                    min-height:145px;
+                    box-sizing:border-box;
+                ">
+
+                <i class="fa-solid fa-user-check"></i>
+
+                <h3>Clientes Activos</h3>
+
+                <span id="clientesActivos">
+                    {{ total_clientes }}
+                </span>
+
+            </div>
+
+
+
+            <!-- INACTIVOS -->
+
+            <div
+                class="kpi-card"
+                style="
+                    width:auto;
+                    min-width:0;
+                    min-height:145px;
+                    box-sizing:border-box;
+                ">
+
+                <i class="fa-solid fa-user-xmark"></i>
+
+                <h3>Clientes Inactivos</h3>
+
+                <span id="clientesInactivos">
+                    0
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+                               HERRAMIENTAS
+        ====================================================== -->
+
+        <div class="tools-bar">
+
+
+            <div class="left-tools">
+
+
+                <!-- EXCEL -->
+
+                <a
+                    href="{% url 'exportar_clientes_excel' %}"
+                    id="btnExportarExcel"
+                    class="btn-tool">
+
+                    <i class="fa-solid fa-file-excel"></i>
+
+                    Excel
+
+                </a>
+
+
+
+                <!-- PDF -->
+
+                <a
+                    href="{% url 'exportar_clientes_pdf' %}"
+                    id="btnExportarPDF"
+                    class="btn-tool">
+
+                    <i class="fa-solid fa-file-pdf"></i>
+
+                    PDF
+
+                </a>
+
+
+
+                <!-- IMPRIMIR -->
+
+                <button
+                    type="button"
+                    id="btnImprimir"
+                    class="btn-tool">
+
+                    <i class="fa-solid fa-print"></i>
+
+                    Imprimir
+
                 </button>
 
-                <button type="submit" class="btn verde">
-                    <i class="fa-solid fa-floppy-disk"></i>
-                    Guardar Cliente
+
+
+                <!-- ACTUALIZAR -->
+
+                <button
+                    type="button"
+                    id="btnActualizar"
+                    class="btn-tool">
+
+                    <i class="fa-solid fa-rotate"></i>
+
+                    Actualizar
+
                 </button>
 
             </div>
 
-        </form>
+
+
+            <div class="right-tools">
+
+                <span id="totalRegistros">
+
+                    {{ total_clientes }}
+
+                    {% if total_clientes == 1 %}
+                        registro
+                    {% else %}
+                        registros
+                    {% endif %}
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================================================
+                                 TABLA
+        ====================================================== -->
+
+        <div class="table-container">
+
+
+            <div class="table-header">
+
+                <h3>
+
+                    <i class="fa-solid fa-address-book"></i>
+
+                    Lista de Clientes
+
+                </h3>
+
+            </div>
+
+
+
+            <!-- IMPORTANTE:
+                 AQUÍ SÍ ABRIMOS LA TABLA
+            -->
+
+            <div class="table-responsive">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Documento
+                            </th>
+
+                            <th>
+                                Nombre
+                            </th>
+
+                            <th>
+                                Empresa
+                            </th>
+
+                            <th>
+                                Correo
+                            </th>
+
+                            <th>
+                                Teléfono
+                            </th>
+
+                            <th>
+                                Estado
+                            </th>
+
+                            <th>
+                                Acciones
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+
+                    <tbody id="tablaClientes">
+
+
+                        {% for cliente in clientes %}
+
+                        <tr>
+
+
+                            <!-- DOCUMENTO -->
+
+                            <td>
+                                {{ cliente.documento }}
+                            </td>
+
+
+                            <!-- NOMBRE -->
+
+                            <td>
+                                {{ cliente.nombre }}
+                            </td>
+
+
+                            <!-- EMPRESA -->
+
+                            <td>
+                                {{ cliente.empresa|default:"-" }}
+                            </td>
+
+
+                            <!-- CORREO -->
+
+                            <td>
+                                {{ cliente.correo }}
+                            </td>
+
+
+                            <!-- TELEFONO -->
+
+                            <td>
+                                {{ cliente.telefono }}
+                            </td>
+
+
+                            <!-- ESTADO -->
+
+                            <td>
+
+                                <span class="estado-cliente">
+                                    Activo
+                                </span>
+
+                            </td>
+
+
+                            <!-- ACCIONES -->
+
+                            <td class="acciones">
+
+
+                                <!-- EDITAR -->
+
+                                <a
+                                    href="{% url 'editar_cliente' cliente.id %}"
+                                    class="btn-action btn-edit"
+                                    title="Editar cliente">
+
+                                    <i class="fa-solid fa-pen-to-square"></i>
+
+                                </a>
+
+
+
+                                <!-- ELIMINAR -->
+
+                                <form method="post" action="{% url 'eliminar_cliente' cliente.id %}"
+                                      class="form-eliminar"
+                                      onsubmit="return confirm('¿Está seguro de eliminar este cliente? Esta acción no se puede deshacer.');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-action btn-delete" title="Eliminar cliente">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </button>
+                                </form>
+
+
+                            </td>
+
+
+                        </tr>
+
+                        {% empty %}
+
+
+                        <!-- SIN CLIENTES -->
+
+                        <tr class="fila-vacia">
+
+                            <td
+                                colspan="7"
+                                class="empty">
+
+                                <i class="fa-solid fa-users-slash"></i>
+
+                                <p>
+                                    No hay clientes registrados.
+                                </p>
+
+                            </td>
+
+                        </tr>
+
+
+                        {% endfor %}
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =========================================================
+                    MODAL NUEVO CLIENTE (Dashboard)
+    ========================================================= -->
+
+    <div class="modal" id="modalClienteDash" style="display:none;">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h2>
+                    <i class="fa-solid fa-user-plus"></i>
+                    Registrar Cliente
+                </h2>
+
+                <button type="button" id="cerrarModalClienteDash" class="cerrar-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+
+            </div>
+
+            <form id="formClienteDash" method="POST" action="{% url 'clientes' %}">
+
+                {% csrf_token %}
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Documento / NIT</label>
+                        <input type="text" name="documento" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nombre completo</label>
+                        <input type="text" name="nombre" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Empresa</label>
+                        <input type="text" name="empresa">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Correo</label>
+                        <input type="email" name="correo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Teléfono</label>
+                        <input type="text" name="telefono" required>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button" id="cancelarClienteDash" class="btn gris">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" class="btn verde">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Guardar Cliente
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 
-</div>
+
+
+    <!-- =========================================================
+                            FOOTER
+    ========================================================= -->
+
+    <footer>
+
+        <p>
+
+            © 2026 Mining Star ERP |
+            Sistema Integral de Gestión Minera
+
+        </p>
+
+    </footer>
 
 
 
-<!-- =========================================================
-                        FOOTER
-========================================================= -->
+    <!-- =========================================================
+                             JAVASCRIPT
+    ========================================================= -->
+{% endblock %}
 
-<footer>
-
-    <p>
-
-        © 2026 Mining Star ERP |
-        Sistema Integral de Gestión Minera
-
-    </p>
-
-</footer>
-
-
-
-<!-- =========================================================
-                         JAVASCRIPT
-========================================================= -->
-
-<script src="{% static 'js/clientes.js' %}?v=2"></script>
-
-</body>
-
-</html>
+{% block js %}
+    <script src="{% static 'js/clientes.js' %}?v=2"></script>
+{% endblock %}

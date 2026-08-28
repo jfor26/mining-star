@@ -1,286 +1,270 @@
+{% extends "base.html" %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es">
+{% block titulo %}Empleados | Mining Star ERP{% endblock %}
 
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
-
-    <title>Empleados | Mining Star ERP</title>
-
-    <!-- CSS DASHBOARD -->
-<link rel="stylesheet"
-      href="{% static 'css/dashboard.css' %}">
-
-<link rel="stylesheet"
-      href="{% static 'css/empleados.css' %}?v=5">
-
-    <!-- FONT AWESOME -->
+{% block css %}
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+      href="{% static 'css/empleados.css' %}?v=5">
+{% endblock %}
 
-</head>
+{% block contenido %}
+    <!-- =========================================================
+                            CONTENEDOR
+    ========================================================= -->
 
+    <div class="container">
 
-<body>
 
+    <!-- =========================================================
+                            SIDEBAR
+    ========================================================= -->
 
-<!-- =========================================================
-                        CONTENEDOR
-========================================================= -->
+    <aside class="sidebar">
 
-<div class="container">
+        <!-- LOGO -->
 
-
-<!-- =========================================================
-                        SIDEBAR
-========================================================= -->
-
-<aside class="sidebar">
-
-    <!-- LOGO -->
-
-    <div class="logo-area">
-
-        <img
-            src="{% static 'img/logo.png' %}"
-            alt="Mining Star">
-
-        <h2>
-            Mining Star ERP
-        </h2>
-
-        <p>
-            Sistema Integral de Gestión
-        </p>
-
-    </div>
-
-
-    <!-- MENÚ PRINCIPAL -->
-
-    <span class="menu-title">
-        MENÚ PRINCIPAL
-    </span>
-
-
-    <nav>
-
-        <!-- DASHBOARD -->
-
-        <a href="{% url 'dashboard' %}">
-
-            <i class="fa-solid fa-house"></i>
-
-            <span>
-                Dashboard
-            </span>
-
-        </a>
-
-
-        <!-- EMPLEADOS -->
-
-        <a href="{% url 'empleados' %}"
-           class="active">
-
-            <i class="fa-solid fa-user-tie"></i>
-
-            <span>
-                Empleados
-            </span>
-
-        </a>
-
-
-        <!-- CLIENTES -->
-
-        <a href="{% url 'clientes' %}">
-
-            <i class="fa-solid fa-users"></i>
-
-            <span>
-                Clientes
-            </span>
-
-        </a>
-
-
-        <!-- PRODUCTOS -->
-
-        <a href="{% url 'productos' %}">
-
-            <i class="fa-solid fa-box-open"></i>
-
-            <span>
-                Productos
-            </span>
-
-        </a>
-
-
-        <!-- PROVEEDORES -->
-
-        <a href="{% url 'proveedores' %}">
-
-            <i class="fa-solid fa-truck-fast"></i>
-
-            <span>
-                Proveedores
-            </span>
-
-        </a>
-
-
-        <!-- VENTAS -->
-
-        <a href="{% url 'ventas' %}">
-
-            <i class="fa-solid fa-cart-shopping"></i>
-
-            <span>
-                Ventas
-            </span>
-
-        </a>
-
-    </nav>
-
-
-    <hr>
-
-
-    <!-- ANÁLISIS -->
-
-    <span class="menu-title">
-        ANÁLISIS
-    </span>
-
-
-    <nav>
-
-        <!-- REPORTES -->
-
-        <a href="#">
-
-            <i class="fa-solid fa-chart-line"></i>
-
-            <span>
-                Reportes
-            </span>
-
-        </a>
-
-
-        <!-- CONFIGURACIÓN -->
-
-        <a href="#">
-
-            <i class="fa-solid fa-gear"></i>
-
-            <span>
-                Configuración
-            </span>
-
-        </a>
-
-    </nav>
-
-
-    <!-- CERRAR SESIÓN -->
-
-    <div class="sidebar-bottom">
-
-        <a
-            href="{% url 'login' %}"
-            class="logout">
-
-            <i class="fa-solid fa-right-from-bracket"></i>
-
-            <span>
-                Cerrar Sesión
-            </span>
-
-        </a>
-
-    </div>
-
-
-</aside>
-
-
-<!-- =========================================================
-                        CONTENIDO
-========================================================= -->
-
-<main class="contenido">
-
-
-<!-- =========================================================
-                        TOPBAR
-========================================================= -->
-
-<header class="topbar">
-
-
-    <div class="search-box">
-
-        <i class="fa-solid fa-magnifying-glass"></i>
-
-        <input
-            type="text"
-            id="buscarEmpleado"
-            placeholder="Buscar empleado...">
-
-    </div>
-
-
-    <div class="topbar-right">
-
-
-        <button
-            type="button"
-            class="icon-btn">
-
-            <i class="fa-regular fa-bell"></i>
-
-            <span class="badge">
-                2
-            </span>
-
-        </button>
-
-
-        <button
-            type="button"
-            class="icon-btn">
-
-            <i class="fa-solid fa-gear"></i>
-
-        </button>
-
-
-        <div class="perfil">
-
+        <div class="logo-area">
 
             <img
                 src="{% static 'img/logo.png' %}"
-                alt="Administrador">
+                alt="Mining Star">
+
+            <h2>
+                Mining Star ERP
+            </h2>
+
+            <p>
+                Sistema Integral de Gestión
+            </p>
+
+        </div>
 
 
-            <div>
+        <!-- MENÚ PRINCIPAL -->
 
-                <strong>
-                    Administrador
-                </strong>
+        <span class="menu-title">
+            MENÚ PRINCIPAL
+        </span>
 
-                <small>
-                    En línea
-                </small>
+
+        <nav>
+
+            <!-- DASHBOARD -->
+
+            <a href="{% url 'dashboard' %}">
+
+                <i class="fa-solid fa-house"></i>
+
+                <span>
+                    Dashboard
+                </span>
+
+            </a>
+
+
+            <!-- EMPLEADOS -->
+
+            <a href="{% url 'empleados' %}"
+               class="active">
+
+                <i class="fa-solid fa-user-tie"></i>
+
+                <span>
+                    Empleados
+                </span>
+
+            </a>
+
+
+            <!-- CLIENTES -->
+
+            <a href="{% url 'clientes' %}">
+
+                <i class="fa-solid fa-users"></i>
+
+                <span>
+                    Clientes
+                </span>
+
+            </a>
+
+
+            <!-- PRODUCTOS -->
+
+            <a href="{% url 'productos' %}">
+
+                <i class="fa-solid fa-box-open"></i>
+
+                <span>
+                    Productos
+                </span>
+
+            </a>
+
+
+            <!-- PROVEEDORES -->
+
+            <a href="{% url 'proveedores' %}">
+
+                <i class="fa-solid fa-truck-fast"></i>
+
+                <span>
+                    Proveedores
+                </span>
+
+            </a>
+
+
+            <!-- VENTAS -->
+
+            <a href="{% url 'ventas' %}">
+
+                <i class="fa-solid fa-cart-shopping"></i>
+
+                <span>
+                    Ventas
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <hr>
+
+
+        <!-- ANÁLISIS -->
+
+        <span class="menu-title">
+            ANÁLISIS
+        </span>
+
+
+        <nav>
+
+            <!-- REPORTES -->
+
+            <a href="#">
+
+                <i class="fa-solid fa-chart-line"></i>
+
+                <span>
+                    Reportes
+                </span>
+
+            </a>
+
+
+            <!-- CONFIGURACIÓN -->
+
+            <a href="#">
+
+                <i class="fa-solid fa-gear"></i>
+
+                <span>
+                    Configuración
+                </span>
+
+            </a>
+
+        </nav>
+
+
+        <!-- CERRAR SESIÓN -->
+
+        <div class="sidebar-bottom">
+
+            <form method="post" action="{% url 'logout' %}" class="form-logout">
+                {% csrf_token %}
+                <button type="submit" class="logout">
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+                <span>
+                    Cerrar Sesión
+                </span>
+
+            </button>
+            </form>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =========================================================
+                            CONTENIDO
+    ========================================================= -->
+
+    <main class="contenido">
+
+
+    <!-- =========================================================
+                            TOPBAR
+    ========================================================= -->
+
+    <header class="topbar">
+
+
+        <div class="search-box">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="text"
+                id="buscarEmpleado"
+                placeholder="Buscar empleado...">
+
+        </div>
+
+
+        <div class="topbar-right">
+
+
+            <button
+                type="button"
+                class="icon-btn">
+
+                <i class="fa-regular fa-bell"></i>
+
+                <span class="badge">
+                    2
+                </span>
+
+            </button>
+
+
+            <button
+                type="button"
+                class="icon-btn">
+
+                <i class="fa-solid fa-gear"></i>
+
+            </button>
+
+
+            <div class="perfil">
+
+
+                <img
+                    src="{% static 'img/logo.png' %}"
+                    alt="Administrador">
+
+
+                <div>
+
+                    <strong>
+                        Administrador
+                    </strong>
+
+                    <small>
+                        En línea
+                    </small>
+
+                </div>
+
 
             </div>
 
@@ -288,534 +272,213 @@
         </div>
 
 
-    </div>
+    </header>
 
 
-</header>
+    <!-- =========================================================
+                            ENCABEZADO
+    ========================================================= -->
+
+    <section class="page-header">
 
 
-<!-- =========================================================
-                        ENCABEZADO
-========================================================= -->
+        <div>
 
-<section class="page-header">
+            <h1>
 
+                <i class="fa-solid fa-users"></i>
 
-    <div>
+                Gestión de Empleados
 
-        <h1>
-
-            <i class="fa-solid fa-users"></i>
-
-            Gestión de Empleados
-
-        </h1>
+            </h1>
 
 
-        <p>
+            <p>
 
-            Administre el personal de la empresa
-            de forma rápida y segura.
+                Administre el personal de la empresa
+                de forma rápida y segura.
 
-        </p>
-
-    </div>
-
-
-    <!-- NUEVO EMPLEADO -->
-
-    <button
-    type="button"
-    class="btn-principal"
-    id="btnNuevoEmpleado">
-
-    <i class="fa-solid fa-user-plus"></i>
-
-    Nuevo Empleado
-
-</button>
-
-
-</section>
-
-
-<!-- =========================================================
-                        MENSAJES DJANGO
-========================================================= -->
-
-{% if messages %}
-
-    {% for message in messages %}
-
-        <div class="alert alert-success">
-
-            <i class="fa-solid fa-circle-check"></i>
-
-            {{ message }}
+            </p>
 
         </div>
 
-    {% endfor %}
 
-{% endif %}
+        <!-- NUEVO EMPLEADO -->
 
-
-<!-- =========================================================
-                        KPI
-========================================================= -->
-
-<section class="dashboard-grid">
-
-
-    <!-- TOTAL -->
-
-    <div class="stat-card empleados">
-
-        <i class="fa-solid fa-users"></i>
-
-        <h3>
-            Total Empleados
-        </h3>
-
-        <span id="totalEmpleados">
-            {{ total_empleados }}
-        </span>
-
-        <small>
-            Personal registrado
-        </small>
-
-    </div>
-
-
-    <!-- ACTIVOS -->
-
-    <div class="stat-card clientes">
-
-        <i class="fa-solid fa-user-check"></i>
-
-        <h3>
-            Activos
-        </h3>
-
-        <span id="empleadosActivos">
-            {{ empleados_activos }}
-        </span>
-
-        <small>
-            Actualmente laborando
-        </small>
-
-    </div>
-
-
-    <!-- VACACIONES -->
-
-    <div class="stat-card productos">
-
-        <i class="fa-solid fa-user-clock"></i>
-
-        <h3>
-            Vacaciones
-        </h3>
-
-        <span id="empleadosVacaciones">
-            {{ empleados_vacaciones }}
-        </span>
-
-        <small>
-            En descanso
-        </small>
-
-    </div>
-
-
-    <!-- NUEVOS -->
-
-    <div class="stat-card ventas">
+        <button
+        type="button"
+        class="btn-principal"
+        id="btnNuevoEmpleado">
 
         <i class="fa-solid fa-user-plus"></i>
 
-        <h3>
-            Nuevos
-        </h3>
+        Nuevo Empleado
 
-        <span id="empleadosNuevos">
-            {{ empleados_nuevos }}
-        </span>
-
-        <small>
-            Ingresaron este mes
-        </small>
-
-    </div>
+    </button>
 
 
-</section>
+    </section>
 
 
-<!-- =========================================================
-                    BARRA DE HERRAMIENTAS
-========================================================= -->
-
-<section class="toolbar">
+    {% include "_mensajes.html" %}
 
 
-    <div class="toolbar-left">
+    <!-- =========================================================
+                            KPI
+    ========================================================= -->
+
+    <section class="dashboard-grid">
 
 
-        <!-- EXCEL -->
+        <!-- TOTAL -->
 
-        <a
-            href="{% url 'exportar_empleados_excel' %}"
-            id="btnExportarExcel"
-            class="btn azul">
-
-            <i class="fa-solid fa-file-excel"></i>
-
-            Excel
-
-        </a>
-
-
-        <!-- PDF -->
-
-        <a
-            href="{% url 'exportar_empleados_pdf' %}"
-            id="btnExportarPDF"
-            class="btn rojo">
-
-            <i class="fa-solid fa-file-pdf"></i>
-
-            PDF
-
-        </a>
-
-
-        <!-- IMPRIMIR -->
-
-        <button
-            type="button"
-            id="btnImprimir"
-            class="btn gris">
-
-            <i class="fa-solid fa-print"></i>
-
-            Imprimir
-
-        </button>
-
-
-        <!-- ACTUALIZAR -->
-
-        <button
-            type="button"
-            id="btnActualizar"
-            class="btn gris">
-
-            <i class="fa-solid fa-rotate"></i>
-
-            Actualizar
-
-        </button>
-
-
-    </div>
-
-
-    <div class="toolbar-right">
-
-        <span id="totalRegistros">
-
-            {{ total_empleados }}
-
-            {% if total_empleados == 1 %}
-                registro
-            {% else %}
-                registros
-            {% endif %}
-
-        </span>
-
-    </div>
-
-
-</section>
-
-
-<!-- =========================================================
-                        TABLA
-========================================================= -->
-
-<section class="table-card">
-
-
-    <div class="table-header">
-
-
-        <h3>
+        <div class="stat-card empleados">
 
             <i class="fa-solid fa-users"></i>
 
-            Lista de Empleados
+            <h3>
+                Total Empleados
+            </h3>
 
-        </h3>
+            <span id="totalEmpleados">
+                {{ total_empleados }}
+            </span>
 
+            <small>
+                Personal registrado
+            </small>
 
-        <span id="contadorTabla">
+        </div>
 
-            {{ total_empleados }}
 
-            {% if total_empleados == 1 %}
-                registro
-            {% else %}
-                registros
-            {% endif %}
+        <!-- ACTIVOS -->
 
-        </span>
+        <div class="stat-card clientes">
 
+            <i class="fa-solid fa-user-check"></i>
 
-    </div>
+            <h3>
+                Activos
+            </h3>
 
+            <span id="empleadosActivos">
+                {{ empleados_activos }}
+            </span>
 
-    <div class="table-responsive">
+            <small>
+                Actualmente laborando
+            </small>
 
+        </div>
 
-        <table>
 
+        <!-- VACACIONES -->
 
-            <thead>
+        <div class="stat-card productos">
 
-                <tr>
+            <i class="fa-solid fa-user-clock"></i>
 
-                    <th>
-                        Documento
-                    </th>
+            <h3>
+                Vacaciones
+            </h3>
 
-                    <th>
-                        Nombre
-                    </th>
+            <span id="empleadosVacaciones">
+                {{ empleados_vacaciones }}
+            </span>
 
-                    <th>
-                        Cargo
-                    </th>
+            <small>
+                En descanso
+            </small>
 
-                    <th>
-                        Área
-                    </th>
+        </div>
 
-                    <th>
-                        Correo
-                    </th>
 
-                    <th>
-                        Teléfono
-                    </th>
+        <!-- NUEVOS -->
 
-                    <th>
-                        Estado
-                    </th>
+        <div class="stat-card ventas">
 
-                    <th>
-                        Acciones
-                    </th>
+            <i class="fa-solid fa-user-plus"></i>
 
-                </tr>
+            <h3>
+                Nuevos
+            </h3>
 
-            </thead>
+            <span id="empleadosNuevos">
+                {{ empleados_nuevos }}
+            </span>
 
+            <small>
+                Ingresaron este mes
+            </small>
 
-            <tbody id="tablaEmpleados">
+        </div>
 
 
-                {% for empleado in empleados %}
+    </section>
 
-                <tr>
 
+    <!-- =========================================================
+                        BARRA DE HERRAMIENTAS
+    ========================================================= -->
 
-                    <!-- DOCUMENTO -->
+    <section class="toolbar">
 
-                    <td>
-                        {{ empleado.documento }}
-                    </td>
 
+        <div class="toolbar-left">
 
-                    <!-- NOMBRE -->
 
-                    <td>
+            <!-- EXCEL -->
 
-                        {{ empleado.nombres }}
-                        {{ empleado.apellidos }}
+            <a
+                href="{% url 'exportar_empleados_excel' %}"
+                id="btnExportarExcel"
+                class="btn azul">
 
-                    </td>
+                <i class="fa-solid fa-file-excel"></i>
 
+                Excel
 
-                    <!-- CARGO -->
+            </a>
 
-                    <td>
-                        {{ empleado.cargo }}
-                    </td>
 
+            <!-- PDF -->
 
-                    <!-- ÁREA -->
+            <a
+                href="{% url 'exportar_empleados_pdf' %}"
+                id="btnExportarPDF"
+                class="btn rojo">
 
-                    <td>
-                        {{ empleado.area }}
-                    </td>
+                <i class="fa-solid fa-file-pdf"></i>
 
+                PDF
 
-                    <!-- CORREO -->
+            </a>
 
-                    <td>
-                        {{ empleado.correo }}
-                    </td>
 
-
-                    <!-- TELÉFONO -->
-
-                    <td>
-                        {{ empleado.telefono }}
-                    </td>
-
-
-                    <!-- ESTADO -->
-
-                    <td>
-
-
-                        {% if empleado.estado == "Activo" %}
-
-                            <span class="estado activo">
-                                Activo
-                            </span>
-
-
-                        {% elif empleado.estado == "Vacaciones" %}
-
-                            <span class="estado vacaciones">
-                                Vacaciones
-                            </span>
-
-
-                        {% else %}
-
-                            <span class="estado inactivo">
-                                Inactivo
-                            </span>
-
-                        {% endif %}
-
-
-                    </td>
-
-
-                    <!-- =================================================
-                            ACCIONES
-                    ================================================== -->
-
-                    <td class="acciones">
-
-
-                        <!-- EDITAR -->
-
-                        <a
-                            href="{% url 'editar_empleado' empleado.id %}"
-                            class="accion editar"
-                            title="Editar empleado">
-
-                            <i class="fa-solid fa-pen-to-square"></i>
-
-                        </a>
-
-
-                        <!-- ELIMINAR -->
-
-                        <button
-                            type="button"
-                            class="accion eliminar btn-delete"
-                            data-url="{% url 'eliminar_empleado' empleado.id %}"
-                            title="Eliminar empleado">
-
-                            <i class="fa-solid fa-trash"></i>
-
-                        </button>
-
-
-                    </td>
-
-
-                </tr>
-
-
-                {% empty %}
-
-
-                <tr class="fila-vacia">
-
-
-                    <td
-                        colspan="8"
-                        class="empty">
-
-                        <i class="fa-solid fa-users-slash"></i>
-
-                        <p>
-                            No existen empleados registrados.
-                        </p>
-
-                    </td>
-
-
-                </tr>
-
-
-                {% endfor %}
-
-
-            </tbody>
-
-
-        </table>
-
-
-    </div>
-
-
-</section>
-
-
-<!-- =========================================================
-                    MODAL NUEVO EMPLEADO
-========================================================= -->
-
-<div
-    class="modal"
-    id="modalEmpleado">
-
-
-    <div class="modal-content">
-
-
-        <!-- CABECERA -->
-
-        <div class="modal-header">
-
-
-            <h2>
-
-                <i class="fa-solid fa-user-plus"></i>
-
-                Registrar Empleado
-
-            </h2>
-
+            <!-- IMPRIMIR -->
 
             <button
                 type="button"
-                id="cerrarModal"
-                class="cerrar-modal">
+                id="btnImprimir"
+                class="btn gris">
 
-                <i class="fa-solid fa-xmark"></i>
+                <i class="fa-solid fa-print"></i>
+
+                Imprimir
+
+            </button>
+
+
+            <!-- ACTUALIZAR -->
+
+            <button
+                type="button"
+                id="btnActualizar"
+                class="btn gris">
+
+                <i class="fa-solid fa-rotate"></i>
+
+                Actualizar
 
             </button>
 
@@ -823,168 +486,300 @@
         </div>
 
 
-        <!-- FORMULARIO -->
+        <div class="toolbar-right">
 
-        <form
-            method="POST"
-            action="{% url 'empleados' %}"
-            autocomplete="off">
+            <span id="totalRegistros">
 
+                {{ total_empleados }}
 
-            {% csrf_token %}
+                {% if total_empleados == 1 %}
+                    registro
+                {% else %}
+                    registros
+                {% endif %}
 
+            </span>
 
-            <div class="form-grid">
-
-
-                <!-- DOCUMENTO -->
-
-                <div class="form-group">
-
-                    <label>
-                        Documento
-                    </label>
-
-                    {{ form.documento }}
-
-                </div>
+        </div>
 
 
-                <!-- NOMBRES -->
-
-                <div class="form-group">
-
-                    <label>
-                        Nombres
-                    </label>
-
-                    {{ form.nombres }}
-
-                </div>
+    </section>
 
 
-                <!-- APELLIDOS -->
+    <!-- =========================================================
+                            TABLA
+    ========================================================= -->
 
-                <div class="form-group">
-
-                    <label>
-                        Apellidos
-                    </label>
-
-                    {{ form.apellidos }}
-
-                </div>
+    <section class="table-card">
 
 
-                <!-- CORREO -->
-
-                <div class="form-group">
-
-                    <label>
-                        Correo Electrónico
-                    </label>
-
-                    {{ form.correo }}
-
-                </div>
+        <div class="table-header">
 
 
-                <!-- TELÉFONO -->
+            <h3>
 
-                <div class="form-group">
+                <i class="fa-solid fa-users"></i>
 
-                    <label>
-                        Teléfono
-                    </label>
+                Lista de Empleados
 
-                    {{ form.telefono }}
-
-                </div>
+            </h3>
 
 
-                <!-- CARGO -->
+            <span id="contadorTabla">
 
-                <div class="form-group">
+                {{ total_empleados }}
 
-                    <label>
-                        Cargo
-                    </label>
+                {% if total_empleados == 1 %}
+                    registro
+                {% else %}
+                    registros
+                {% endif %}
 
-                    {{ form.cargo }}
-
-                </div>
-
-
-                <!-- ÁREA -->
-
-                <div class="form-group">
-
-                    <label>
-                        Área
-                    </label>
-
-                    {{ form.area }}
-
-                </div>
+            </span>
 
 
-                <!-- ESTADO -->
-
-                <div class="form-group">
-
-                    <label>
-                        Estado
-                    </label>
-
-                    {{ form.estado }}
-
-                </div>
+        </div>
 
 
-            </div>
+        <div class="table-responsive">
 
 
-            <!-- BOTONES -->
-
-            <div class="modal-footer">
+            <table>
 
 
-                <!-- CANCELAR -->
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Documento
+                        </th>
+
+                        <th>
+                            Nombre
+                        </th>
+
+                        <th>
+                            Cargo
+                        </th>
+
+                        <th>
+                            Área
+                        </th>
+
+                        <th>
+                            Correo
+                        </th>
+
+                        <th>
+                            Teléfono
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tablaEmpleados">
+
+
+                    {% for empleado in empleados %}
+
+                    <tr>
+
+
+                        <!-- DOCUMENTO -->
+
+                        <td>
+                            {{ empleado.documento }}
+                        </td>
+
+
+                        <!-- NOMBRE -->
+
+                        <td>
+
+                            {{ empleado.nombres }}
+                            {{ empleado.apellidos }}
+
+                        </td>
+
+
+                        <!-- CARGO -->
+
+                        <td>
+                            {{ empleado.cargo }}
+                        </td>
+
+
+                        <!-- ÁREA -->
+
+                        <td>
+                            {{ empleado.area }}
+                        </td>
+
+
+                        <!-- CORREO -->
+
+                        <td>
+                            {{ empleado.correo }}
+                        </td>
+
+
+                        <!-- TELÉFONO -->
+
+                        <td>
+                            {{ empleado.telefono }}
+                        </td>
+
+
+                        <!-- ESTADO -->
+
+                        <td>
+
+
+                            {% if empleado.estado == "Activo" %}
+
+                                <span class="estado activo">
+                                    Activo
+                                </span>
+
+
+                            {% elif empleado.estado == "Vacaciones" %}
+
+                                <span class="estado vacaciones">
+                                    Vacaciones
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="estado inactivo">
+                                    Inactivo
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+                        <!-- =================================================
+                                ACCIONES
+                        ================================================== -->
+
+                        <td class="acciones">
+
+
+                            <!-- EDITAR -->
+
+                            <a
+                                href="{% url 'editar_empleado' empleado.id %}"
+                                class="accion editar"
+                                title="Editar empleado">
+
+                                <i class="fa-solid fa-pen-to-square"></i>
+
+                            </a>
+
+
+                            <!-- ELIMINAR -->
+
+                            <form method="post" action="{% url 'eliminar_empleado' empleado.id %}"
+                                      class="form-eliminar"
+                                      onsubmit="return confirm('Eliminar empleado: ¿confirma la operación? Esta acción no se puede deshacer.');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="accion eliminar btn-delete" title="Eliminar empleado">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </button>
+                                </form>
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% empty %}
+
+
+                    <tr class="fila-vacia">
+
+
+                        <td
+                            colspan="8"
+                            class="empty">
+
+                            <i class="fa-solid fa-users-slash"></i>
+
+                            <p>
+                                No existen empleados registrados.
+                            </p>
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+
+            </table>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =========================================================
+                        MODAL NUEVO EMPLEADO
+    ========================================================= -->
+
+    <div
+        class="modal"
+        id="modalEmpleado">
+
+
+        <div class="modal-content">
+
+
+            <!-- CABECERA -->
+
+            <div class="modal-header">
+
+
+                <h2>
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                    Registrar Empleado
+
+                </h2>
+
 
                 <button
                     type="button"
-                    id="cancelarEmpleado"
-                    class="btn gris">
+                    id="cerrarModal"
+                    class="cerrar-modal">
 
-                    <i class="fa-solid fa-ban"></i>
-
-                    Cancelar
-
-                </button>
-
-
-                <!-- LIMPIAR -->
-
-                <button
-                    type="reset"
-                    class="btn azul">
-
-                    <i class="fa-solid fa-rotate-left"></i>
-
-                    Limpiar
-
-                </button>
-
-
-                <!-- GUARDAR -->
-
-                <button
-                    type="submit"
-                    class="btn verde">
-
-                    <i class="fa-solid fa-floppy-disk"></i>
-
-                    Guardar Empleado
+                    <i class="fa-solid fa-xmark"></i>
 
                 </button>
 
@@ -992,43 +787,211 @@
             </div>
 
 
-        </form>
+            <!-- FORMULARIO -->
+
+            <form
+                method="POST"
+                action="{% url 'empleados' %}"
+                autocomplete="off">
+
+
+                {% csrf_token %}
+
+
+                <div class="form-grid">
+
+
+                    <!-- DOCUMENTO -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Documento
+                        </label>
+
+                        {{ form.documento }}
+
+                    </div>
+
+
+                    <!-- NOMBRES -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Nombres
+                        </label>
+
+                        {{ form.nombres }}
+
+                    </div>
+
+
+                    <!-- APELLIDOS -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Apellidos
+                        </label>
+
+                        {{ form.apellidos }}
+
+                    </div>
+
+
+                    <!-- CORREO -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Correo Electrónico
+                        </label>
+
+                        {{ form.correo }}
+
+                    </div>
+
+
+                    <!-- TELÉFONO -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Teléfono
+                        </label>
+
+                        {{ form.telefono }}
+
+                    </div>
+
+
+                    <!-- CARGO -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Cargo
+                        </label>
+
+                        {{ form.cargo }}
+
+                    </div>
+
+
+                    <!-- ÁREA -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Área
+                        </label>
+
+                        {{ form.area }}
+
+                    </div>
+
+
+                    <!-- ESTADO -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Estado
+                        </label>
+
+                        {{ form.estado }}
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- BOTONES -->
+
+                <div class="modal-footer">
+
+
+                    <!-- CANCELAR -->
+
+                    <button
+                        type="button"
+                        id="cancelarEmpleado"
+                        class="btn gris">
+
+                        <i class="fa-solid fa-ban"></i>
+
+                        Cancelar
+
+                    </button>
+
+
+                    <!-- LIMPIAR -->
+
+                    <button
+                        type="reset"
+                        class="btn azul">
+
+                        <i class="fa-solid fa-rotate-left"></i>
+
+                        Limpiar
+
+                    </button>
+
+
+                    <!-- GUARDAR -->
+
+                    <button
+                        type="submit"
+                        class="btn verde">
+
+                        <i class="fa-solid fa-floppy-disk"></i>
+
+                        Guardar Empleado
+
+                    </button>
+
+
+                </div>
+
+
+            </form>
+
+
+        </div>
 
 
     </div>
 
 
-</div>
+    <!-- =========================================================
+                                FOOTER
+    ========================================================= -->
+
+    <footer class="dashboard-footer">
+
+        <p>
+
+            © 2026 Mining Star ERP |
+            Sistema Integral de Gestión Minera
+
+        </p>
+
+    </footer>
 
 
-<!-- =========================================================
-                            FOOTER
-========================================================= -->
-
-<footer class="dashboard-footer">
-
-    <p>
-
-        © 2026 Mining Star ERP |
-        Sistema Integral de Gestión Minera
-
-    </p>
-
-</footer>
+    </main>
 
 
-</main>
+    </div>
 
 
-</div>
+    <!-- =========================================================
+                            JAVASCRIPT
+    ========================================================= -->
+{% endblock %}
 
-
-<!-- =========================================================
-                        JAVASCRIPT
-========================================================= -->
-
-<script src="{% static 'js/empleados.js' %}?v=10"></script>
-
-</body>
-
-</html>
+{% block js %}
+    <script src="{% static 'js/empleados.js' %}?v=10"></script>
+{% endblock %}

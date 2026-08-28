@@ -1,0 +1,30 @@
+# ==========================================================
+# Configuración de herramientas de calidad de código.
+# Ruff reemplaza a Black, Flake8 e isort en una sola herramienta.
+# ==========================================================
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "venv", "migrations", "__pycache__"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # errores de estilo (pycodestyle)
+    "F",    # errores reales (pyflakes): variables sin usar, imports muertos
+    "I",    # orden de los imports (isort)
+    "UP",   # sintaxis moderna de Python (pyupgrade)
+    "B",    # trampas comunes (flake8-bugbear)
+    "DJ",   # reglas específicas de Django
+    "C4",   # comprensiones innecesarias
+]
+ignore = [
+    "E501",  # el largo de línea lo maneja el formateador
+]
+
+[tool.ruff.lint.per-file-ignores]
+"core/views/__init__.py" = ["F401"]   # reexporta a propósito
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

@@ -1,0 +1,13 @@
+# ==========================================
+# Mining Star - dependencias del proyecto
+# Instalar con:  pip install -r requirements.txt
+# ==========================================
+
+Django==6.0.7
+
+# Exportacion de reportes
+openpyxl==3.1.5          # Archivos Excel (.xlsx)
+reportlab==4.2.5         # Archivos PDF
+
+# Configuracion por variables de entorno
+python-dotenv==1.0.1

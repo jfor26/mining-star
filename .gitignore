@@ -54,3 +54,8 @@ desktop.ini
 .pytest_cache/
 .coverage
 htmlcov/
+
+# ==========================================
+# Reportes generados por la aplicacion
+# ==========================================
+catalogo_mining_star.xlsx

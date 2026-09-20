@@ -59,3 +59,6 @@ htmlcov/
 # Reportes generados por la aplicacion
 # ==========================================
 catalogo_mining_star.xlsx
+
+# Salidas generadas por asistentes
+Claude outputs/

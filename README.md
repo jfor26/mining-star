@@ -26,7 +26,8 @@ python -m venv .venv
 source .venv/bin/activate     # Linux / macOS / WSL
 
 # 4. Instalar las dependencias
-pip install -r requirements.txt
+pip install -r requirements.txt        # solo ejecucion
+pip install -r requirements-dev.txt    # ejecucion + herramientas de calidad (ruff)
 
 # 5. Crear el archivo de configuración local
 copy .env.example .env        # Windows

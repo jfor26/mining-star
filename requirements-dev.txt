@@ -1,0 +1,16 @@
+# ==========================================
+# Mining Star - dependencias de desarrollo
+# Instalar con:  pip install -r requirements-dev.txt
+#
+# Incluye las dependencias de produccion mas las
+# herramientas de calidad de codigo exigidas por el
+# estandar de codificacion del proyecto (evidencia
+# GA7-220501096-AA1-EV02).
+# ==========================================
+
+-r requirements.txt
+
+# Analizador estatico y formateador.
+# Reemplaza a Black, Flake8 e isort en una sola herramienta.
+# Su configuracion esta en pyproject.toml, seccion [tool.ruff].
+ruff==0.16.8

@@ -22,6 +22,7 @@ from .empleados import (
     exportar_empleados_pdf,
 )
 from .panel import dashboard
+from .produccion import eliminar_produccion, produccion
 from .productos import (
     editar_producto,
     eliminar_producto,
@@ -37,6 +38,7 @@ from .proveedores import (
     exportar_proveedores_pdf,
     proveedores,
 )
+from .reportes import reportes
 from .ventas import eliminar_venta, ventas
 
 __all__ = [
@@ -50,4 +52,6 @@ __all__ = [
     "proveedores", "editar_proveedor", "eliminar_proveedor",
     "exportar_proveedores_excel", "exportar_proveedores_pdf",
     "ventas", "eliminar_venta",
+    "produccion", "eliminar_produccion",
+    "reportes",
 ]

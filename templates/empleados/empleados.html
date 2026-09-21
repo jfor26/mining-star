@@ -128,6 +128,11 @@
 
             </a>
 
+                <a href="{% url 'produccion' %}">
+                    <i class="fa-solid fa-helmet-safety"></i>
+                    <span>Producción</span>
+                </a>
+
         </nav>
 
 
@@ -145,7 +150,7 @@
 
             <!-- REPORTES -->
 
-            <a href="#">
+            <a href="{% url 'reportes' %}">
 
                 <i class="fa-solid fa-chart-line"></i>
 
@@ -158,7 +163,7 @@
 
             <!-- CONFIGURACIÓN -->
 
-            <a href="#">
+            <a href="{% url 'admin:index' %}" title="Usuarios y permisos">
 
                 <i class="fa-solid fa-gear"></i>
 

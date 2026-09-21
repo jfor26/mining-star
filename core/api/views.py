@@ -23,23 +23,26 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
-from ..models import Cliente, Empleado, Producto, Proveedor, Venta
+from ..models import Cliente, Empleado, Producto, Proveedor, RegistroProduccion, Venta
 from ..servicios import (
     StockInsuficiente,
     anular_venta,
     eliminar_venta,
     registrar_venta,
+    stock_materia_prima,
     total_vendido,
 )
 from .serializers import (
     ClienteSerializer,
     EmpleadoSerializer,
     LoginSerializer,
+    ProduccionSerializer,
     ProductoSerializer,
     ProveedorSerializer,
     RegistrarVentaSerializer,
     RegistroSerializer,
     ResumenSerializer,
+    StockMateriaPrimaSerializer,
     UsuarioSerializer,
     VentaSerializer,
 )
@@ -279,6 +282,28 @@ class EmpleadoViewSet(BaseViewSet):
     filterset_fields = ["cargo", "area", "estado"]
     search_fields = ["documento", "nombres", "apellidos", "correo"]
     ordering_fields = ["nombres", "apellidos", "fecha_ingreso"]
+
+
+@extend_schema(tags=["Produccion"])
+class ProduccionViewSet(BaseViewSet):
+    """Produccion diaria de la mina (historia de usuario HU-001)."""
+
+    queryset = RegistroProduccion.objects.select_related("supervisor", "registrado_por")
+    serializer_class = ProduccionSerializer
+    filterset_fields = ["fecha", "turno", "material"]
+    search_fields = ["observaciones"]
+    ordering_fields = ["fecha", "cantidad"]
+
+    def perform_create(self, serializer):
+        serializer.save(registrado_por=self.request.user)
+
+    @extend_schema(
+        summary="Stock de materia prima en la mina",
+        responses={200: StockMateriaPrimaSerializer(many=True)},
+    )
+    @action(detail=False, methods=["get"], url_path="stock-materia-prima")
+    def stock_materia_prima(self, request):
+        return Response(StockMateriaPrimaSerializer(stock_materia_prima(), many=True).data)
 
 
 @extend_schema(tags=["Ventas"])

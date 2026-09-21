@@ -11,9 +11,18 @@ que no existan dos definiciones del mismo limite que puedan divergir.
 
 from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
+from django.utils import timezone
 from rest_framework import serializers
 
-from ..models import Cliente, DetalleVenta, Empleado, Producto, Proveedor, Venta
+from ..models import (
+    Cliente,
+    DetalleVenta,
+    Empleado,
+    Producto,
+    Proveedor,
+    RegistroProduccion,
+    Venta,
+)
 
 # ==========================================================
 # AUTENTICACION
@@ -240,3 +249,43 @@ class RegistrarVentaSerializer(serializers.Serializer):
                 "cantidad": f"Solo hay {producto.stock} unidades de {producto.nombre}."
             })
         return datos
+
+
+# ==========================================================
+# PRODUCCION DIARIA (HU-001)
+# ==========================================================
+
+class ProduccionSerializer(serializers.ModelSerializer):
+    """Registro de produccion de un turno.
+
+    registrado_por no se recibe del cliente: la vista lo toma del token, para
+    que nadie pueda registrar produccion a nombre de otro usuario.
+    """
+
+    material_nombre = serializers.CharField(source="get_material_display", read_only=True)
+    turno_nombre = serializers.CharField(source="get_turno_display", read_only=True)
+    supervisor_nombre = serializers.CharField(
+        source="supervisor.nombre_completo", read_only=True, default=None
+    )
+    registrado_por = serializers.CharField(source="registrado_por.username", read_only=True, default=None)
+
+    class Meta:
+        model = RegistroProduccion
+        fields = [
+            "id", "fecha", "turno", "turno_nombre", "material", "material_nombre",
+            "cantidad", "unidad", "supervisor", "supervisor_nombre", "observaciones",
+            "registrado_por", "fecha_registro",
+        ]
+        read_only_fields = ["fecha_registro"]
+
+    def validate_fecha(self, valor):
+        if valor > timezone.localdate():
+            raise serializers.ValidationError("La fecha de producción no puede ser posterior a hoy.")
+        return valor
+
+
+class StockMateriaPrimaSerializer(serializers.Serializer):
+    material = serializers.CharField()
+    material_nombre = serializers.CharField()
+    unidad = serializers.CharField()
+    total = serializers.DecimalField(max_digits=12, decimal_places=2)

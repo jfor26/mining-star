@@ -64,4 +64,15 @@ urlpatterns = [
     # ==========================================
     path("ventas/", views.ventas, name="ventas"),
     path("ventas/eliminar/<int:id>/", views.eliminar_venta, name="eliminar_venta"),
+
+    # ==========================================
+    # PRODUCCION DIARIA (HU-001)
+    # ==========================================
+    path("produccion/", views.produccion, name="produccion"),
+    path("produccion/eliminar/<int:id>/", views.eliminar_produccion, name="eliminar_produccion"),
+
+    # ==========================================
+    # REPORTES
+    # ==========================================
+    path("reportes/", views.reportes, name="reportes"),
 ]

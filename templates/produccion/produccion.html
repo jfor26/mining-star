@@ -1,0 +1,349 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% comment %}
+    Produccion diaria de la mina - historia de usuario HU-001.
+    Tres bloques, uno por criterio de aceptacion: registrar la produccion
+    del turno, ver el stock de materia prima y ver el reporte del dia.
+{% endcomment %}
+
+{% block titulo %}Producción | Mining Star ERP{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/empleados.css' %}">
+    <style>
+        .filtro-fecha { display:flex; gap:10px; align-items:center; }
+        .filtro-fecha input { padding:8px 10px; border:1px solid #cbd5e1; border-radius:8px; }
+        .errores-campo { color:#dc2626; font-size:12px; margin-top:4px; list-style:none; padding:0; }
+        .form-group.ancho-completo { grid-column: 1 / -1; }
+        .unidad { color:#64748b; font-size:13px; }
+    </style>
+{% endblock %}
+
+{% block contenido %}
+
+    <div class="container">
+
+        <aside class="sidebar">
+ 
+            <div class="logo-area">
+                <img src="{% static 'img/logo.png' %}" alt="Mining Star">
+                <h2>Mining Star ERP</h2>
+                <p>Sistema Integral de Gestión</p>
+            </div>
+ 
+            <span class="menu-title">MENÚ PRINCIPAL</span>
+ 
+            <nav>
+ 
+                <a href="{% url 'dashboard' %}">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+ 
+                <a href="{% url 'empleados' %}">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>Empleados</span>
+                </a>
+ 
+                <a href="{% url 'clientes' %}">
+                    <i class="fa-solid fa-users"></i>
+                    <span>Clientes</span>
+                </a>
+ 
+                <a href="{% url 'productos' %}">
+                    <i class="fa-solid fa-box-open"></i>
+                    <span>Productos</span>
+                </a>
+ 
+                <a href="{% url 'proveedores' %}">
+                    <i class="fa-solid fa-truck-fast"></i>
+                    <span>Proveedores</span>
+                </a>
+ 
+                <a href="{% url 'ventas' %}">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>Ventas</span>
+                </a>
+ 
+                <a href="{% url 'produccion' %}" class="active">
+                    <i class="fa-solid fa-helmet-safety"></i>
+                    <span>Producción</span>
+                </a>
+ 
+            </nav>
+ 
+            <hr>
+ 
+            <span class="menu-title">ANÁLISIS</span>
+ 
+            <nav>
+                <a href="{% url 'reportes' %}">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+ 
+            <div class="sidebar-bottom">
+                <form method="post" action="{% url 'logout' %}" class="form-logout">
+                {% csrf_token %}
+                <button type="submit" class="logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+            </form>
+            </div>
+ 
+        </aside>
+ 
+ 
+        <!-- =====================================================
+                        CONTENIDO PRINCIPAL
+        ===================================================== -->
+ 
+        <main class="contenido">
+ 
+ 
+            <!-- =================================================
+                                TOPBAR
+            ================================================= -->
+ 
+            <header class="topbar">
+ 
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="buscarProduccion" placeholder="Buscar en los registros...">
+                </div>
+ 
+                <div class="topbar-right">
+ 
+                    <button type="button" class="icon-btn">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+ 
+                    <div class="perfil">
+                        <img src="{% static 'img/logo.png' %}" alt="Administrador">
+                        <div>
+                            <strong>Administrador</strong>
+                            <small>Administrador General</small>
+                        </div>
+                    </div>
+ 
+                </div>
+ 
+            </header>
+
+
+            <section class="page-header">
+                <div>
+                    <h1>
+                        <i class="fa-solid fa-helmet-safety"></i>
+                        Producción diaria de la mina
+                    </h1>
+                    <p>Registre por turno el material extraído y consulte el stock de materia prima.</p>
+                </div>
+                <button type="button" class="btn-principal" id="btnNuevaProduccion">
+                    <i class="fa-solid fa-plus"></i>
+                    Registrar producción
+                </button>
+            </section>
+
+            {% include "_mensajes.html" %}
+
+
+            <!-- ============ STOCK DE MATERIA PRIMA ============ -->
+            <section class="dashboard-grid">
+                {% for fila in stock %}
+                <div class="stat-card {% cycle 'empleados' 'clientes' 'productos' 'ventas' %}">
+                    <i class="fa-solid fa-mountain"></i>
+                    <h3>{{ fila.material_nombre }}</h3>
+                    <span>{{ fila.total|floatformat:2 }}</span>
+                    <small>{% if fila.unidad == "t" %}toneladas{% else %}metros cúbicos{% endif %} en stock</small>
+                </div>
+                {% empty %}
+                <div class="stat-card empleados">
+                    <i class="fa-solid fa-mountain"></i>
+                    <h3>Materia prima</h3>
+                    <span>0</span>
+                    <small>Sin producción registrada</small>
+                </div>
+                {% endfor %}
+            </section>
+
+
+            <!-- ============ REPORTE DE PRODUCCION DIARIA ============ -->
+            <section class="table-card">
+                <div class="table-header">
+                    <h3>
+                        <i class="fa-solid fa-calendar-day"></i>
+                        Reporte de producción del {{ fecha|date:"d/m/Y" }}
+                    </h3>
+                    <form method="get" class="filtro-fecha">
+                        <input type="date" name="fecha" value="{{ fecha|date:'Y-m-d' }}" aria-label="Fecha del reporte">
+                        <button type="submit" class="btn azul">Consultar</button>
+                    </form>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Turno</th>
+                                <th>Material</th>
+                                <th>Cantidad</th>
+                                <th>Supervisor</th>
+                                <th>Observaciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in registros_dia %}
+                            <tr>
+                                <td>{{ r.get_turno_display }}</td>
+                                <td><strong>{{ r.get_material_display }}</strong></td>
+                                <td>{{ r.cantidad|floatformat:2 }} <span class="unidad">{{ r.unidad }}</span></td>
+                                <td>{{ r.supervisor.nombre_completo|default:"—" }}</td>
+                                <td>{{ r.observaciones|default:"—" }}</td>
+                                <td class="acciones">
+                                    <form method="post" action="{% url 'eliminar_produccion' r.id %}" class="form-eliminar"
+                                          onsubmit="return confirm('¿Eliminar este registro de producción?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="accion eliminar" title="Eliminar registro">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr class="fila-vacia">
+                                <td colspan="6" class="empty">
+                                    <i class="fa-solid fa-helmet-safety"></i>
+                                    <p>No hay producción registrada para esta fecha.</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        {% if totales_dia %}
+                        <tfoot>
+                            {% for t in totales_dia %}
+                            <tr>
+                                <td><strong>Total del día</strong></td>
+                                <td><strong>{{ t.material_nombre }}</strong></td>
+                                <td colspan="4"><strong>{{ t.total|floatformat:2 }} {{ t.unidad }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tfoot>
+                        {% endif %}
+                    </table>
+                </div>
+            </section>
+
+
+            <!-- ============ ULTIMOS REGISTROS ============ -->
+            <section class="table-card">
+                <div class="table-header">
+                    <h3><i class="fa-solid fa-list"></i> Últimos registros</h3>
+                    <span>{{ recientes|length }} registros</span>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Turno</th>
+                                <th>Material</th>
+                                <th>Cantidad</th>
+                                <th>Supervisor</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in recientes %}
+                            <tr>
+                                <td>{{ r.fecha|date:"d/m/Y" }}</td>
+                                <td>{{ r.get_turno_display }}</td>
+                                <td>{{ r.get_material_display }}</td>
+                                <td>{{ r.cantidad|floatformat:2 }} <span class="unidad">{{ r.unidad }}</span></td>
+                                <td>{{ r.supervisor.nombre_completo|default:"—" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr class="fila-vacia">
+                                <td colspan="5" class="empty"><p>Todavía no hay registros.</p></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <footer class="dashboard-footer">
+                <p>© 2026 Mining Star ERP | Sistema Integral de Gestión Minera</p>
+            </footer>
+
+        </main>
+    </div>
+
+
+    <!-- ============ MODAL REGISTRAR PRODUCCION ============ -->
+    <div class="modal" id="modalProduccion" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fa-solid fa-helmet-safety"></i> Registrar producción del turno</h2>
+                <button type="button" id="cerrarModalProduccion" class="cerrar-modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form method="POST" action="{% url 'produccion' %}" novalidate>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <ul class="errores-campo" style="padding:0 25px;">
+                        {% for e in form.non_field_errors %}<li>{{ e }}</li>{% endfor %}
+                    </ul>
+                {% endif %}
+                <div class="form-grid">
+                    {% for campo in form %}
+                    <div class="form-group{% if campo.name == 'observaciones' %} ancho-completo{% endif %}">
+                        <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+                        {{ campo }}
+                        {% if campo.errors %}
+                            <ul class="errores-campo">
+                                {% for e in campo.errors %}<li>{{ e }}</li>{% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="cancelarProduccion" class="btn gris">Cancelar</button>
+                    <button type="submit" class="btn verde">
+                        <i class="fa-solid fa-floppy-disk"></i> Guardar registro
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    // Abrir y cerrar el modal de registro.
+    const modal = document.getElementById("modalProduccion");
+    const abrir = () => { modal.style.display = "flex"; };
+    const cerrar = () => { modal.style.display = "none"; };
+    document.getElementById("btnNuevaProduccion").addEventListener("click", abrir);
+    document.getElementById("cerrarModalProduccion").addEventListener("click", cerrar);
+    document.getElementById("cancelarProduccion").addEventListener("click", cerrar);
+
+    // Si el servidor rechazo el formulario, se reabre para mostrar los errores.
+    {% if abrir_modal %}abrir();{% endif %}
+
+    // Busqueda rapida en las tablas de la pagina.
+    document.getElementById("buscarProduccion").addEventListener("input", function () {
+        const texto = this.value.trim().toLowerCase();
+        document.querySelectorAll(".table-responsive tbody tr").forEach(fila => {
+            fila.style.display = fila.textContent.toLowerCase().includes(texto) ? "" : "none";
+        });
+    });
+</script>
+{% endblock %}

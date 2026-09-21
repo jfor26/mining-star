@@ -9,14 +9,16 @@ comprobar que el codigo hace lo que hace, sino que rechaza lo que debe
 rechazar. Una API que devuelve 200 siempre es facil de escribir y no sirve.
 """
 
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.urls import reverse
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Cliente, Producto, Proveedor, Venta
+from .models import Cliente, Empleado, Producto, Proveedor, RegistroProduccion, Venta
 
 
 class BaseAPI(APITestCase):
@@ -352,3 +354,57 @@ class PruebasDeDocumentacion(BaseAPI):
     def test_el_esquema_openapi_se_genera(self):
         respuesta = self.client.get("/api/schema/")
         self.assertEqual(respuesta.status_code, status.HTTP_200_OK)
+
+
+class PruebasDeProduccionAPI(BaseAPI):
+    """Servicio web de la HU-001."""
+
+    def setUp(self):
+        super().setUp()
+        self.supervisor = Empleado.objects.create(
+            documento="1085777666", nombres="Carlos", apellidos="Munoz",
+            correo="carlos@miningstar.co", telefono="3104445566",
+            cargo="Supervisor", area="Operaciones",
+        )
+        self.hoy = timezone.localdate().isoformat()
+
+    def crear(self, **cambios):
+        datos = {"fecha": self.hoy, "turno": "Manana", "material": "Marmol", "unidad": "t",
+                 "cantidad": "35.50", "supervisor": self.supervisor.id}
+        datos.update(cambios)
+        return self.client.post(reverse("api-produccion-list"), datos, format="json")
+
+    def test_crear_registro_toma_el_usuario_del_token(self):
+        respuesta = self.crear()
+        self.assertEqual(respuesta.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(respuesta.data["registrado_por"], "operario")
+        self.assertEqual(respuesta.data["material_nombre"], "Mármol")
+
+    def test_fecha_futura_es_rechazada(self):
+        manana = (timezone.localdate() + timedelta(days=1)).isoformat()
+        respuesta = self.crear(fecha=manana)
+        self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("fecha", respuesta.data)
+
+    def test_duplicado_en_el_mismo_turno_es_rechazado(self):
+        self.crear()
+        respuesta = self.crear(cantidad="10")
+        self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(RegistroProduccion.objects.count(), 1)
+
+    def test_cantidad_fuera_de_rango_es_rechazada(self):
+        for valor in ["0", "5000.01"]:
+            with self.subTest(cantidad=valor):
+                self.assertEqual(self.crear(cantidad=valor).status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_stock_de_materia_prima(self):
+        self.crear(turno="Manana", cantidad="30")
+        self.crear(turno="Noche", cantidad="12.50")
+        respuesta = self.client.get(reverse("api-produccion-stock-materia-prima"))
+        self.assertEqual(respuesta.status_code, status.HTTP_200_OK)
+        self.assertEqual(respuesta.data[0]["total"], "42.50")
+
+    def test_filtrar_por_fecha(self):
+        self.crear()
+        respuesta = self.client.get(reverse("api-produccion-list"), {"fecha": self.hoy})
+        self.assertEqual(respuesta.data["count"], 1)

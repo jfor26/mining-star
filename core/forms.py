@@ -8,7 +8,7 @@ por IntegrityError y los datos basura que entran con request.POST.get().
 
 from django import forms
 
-from .models import Cliente, Empleado, Producto, Proveedor
+from .models import Cliente, Empleado, Producto, Proveedor, RegistroProduccion
 
 # Clases CSS reutilizadas por todos los widgets.
 INPUT = {"class": "form-control"}
@@ -162,3 +162,34 @@ class VentaRapidaForm(forms.Form):
                     f"unidades de {producto.nombre}.",
                 )
         return datos
+
+
+# =========================================================
+# PRODUCCION DIARIA (HU-001)
+# =========================================================
+
+class ProduccionForm(forms.ModelForm):
+
+    class Meta:
+        model = RegistroProduccion
+        fields = ["fecha", "turno", "material", "unidad", "cantidad", "supervisor", "observaciones"]
+        widgets = {
+            "fecha": forms.DateInput({**INPUT, "type": "date"}, format="%Y-%m-%d"),
+            "turno": forms.Select(SELECT),
+            "material": forms.Select(SELECT),
+            "unidad": forms.Select(SELECT),
+            "cantidad": forms.NumberInput({**INPUT, "step": "0.01", "min": "0.01", "max": "5000",
+                                           "placeholder": "Cantidad extraída"}),
+            "supervisor": forms.Select(SELECT),
+            "observaciones": forms.TextInput({**INPUT, "maxlength": "300",
+                                              "placeholder": "Frente de explotación, novedades..."}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Solo supervisores activos pueden figurar como responsables del turno.
+        self.fields["supervisor"].queryset = Empleado.objects.filter(estado="Activo")
+        self.fields["supervisor"].empty_label = "Seleccione el supervisor"
+        # Texto de la opcion vacia en lugar de "---------".
+        self.fields["turno"].choices = [("", "Seleccione el turno"), *RegistroProduccion.TURNOS]
+        self.fields["material"].choices = [("", "Seleccione el material"), *RegistroProduccion.MATERIALES]

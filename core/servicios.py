@@ -104,3 +104,46 @@ def total_vendido():
 
     agregado = Venta.objects.exclude(estado="Anulada").aggregate(t=Sum("total"))
     return agregado["t"] or Decimal("0")
+
+
+# ==========================================================
+# PRODUCCION DE LA MINA (HU-001)
+# ==========================================================
+
+def stock_materia_prima():
+    """Existencias de materia prima en la mina, por material y unidad.
+
+    Se calcula sumando los registros de produccion en lugar de mantener un
+    contador aparte: si un registro se corrige o se elimina, el stock queda
+    bien automaticamente. Las toneladas y los metros cubicos se suman por
+    separado porque no son convertibles sin conocer la densidad del bloque.
+    """
+    from django.db.models import Sum
+
+    from .models import RegistroProduccion
+
+    filas = (
+        RegistroProduccion.objects
+        .values("material", "unidad")
+        .annotate(total=Sum("cantidad"))
+        .order_by("material", "unidad")
+    )
+    nombres = dict(RegistroProduccion.MATERIALES)
+    return [
+        {"material": f["material"], "material_nombre": nombres[f["material"]],
+         "unidad": f["unidad"], "total": f["total"]}
+        for f in filas
+    ]
+
+
+def reporte_diario(fecha):
+    """Registros de un dia y sus totales por material (criterio de la HU-001:
+    'el registro debe ser visible en el reporte de produccion diaria')."""
+    from django.db.models import Sum
+
+    from .models import RegistroProduccion
+
+    registros = RegistroProduccion.objects.filter(fecha=fecha).select_related("supervisor")
+    totales = registros.values("material", "unidad").annotate(total=Sum("cantidad")).order_by("material")
+    nombres = dict(RegistroProduccion.MATERIALES)
+    return registros, [{**t, "material_nombre": nombres[t["material"]]} for t in totales]

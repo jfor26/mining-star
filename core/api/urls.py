@@ -14,6 +14,7 @@ from .views import (
     EmpleadoViewSet,
     LoginView,
     PerfilView,
+    ProduccionViewSet,
     ProductoViewSet,
     ProveedorViewSet,
     RefrescarTokenView,
@@ -29,6 +30,7 @@ router.register("proveedores", ProveedorViewSet, basename="api-proveedores")
 router.register("productos", ProductoViewSet, basename="api-productos")
 router.register("empleados", EmpleadoViewSet, basename="api-empleados")
 router.register("ventas", VentaViewSet, basename="api-ventas")
+router.register("produccion", ProduccionViewSet, basename="api-produccion")
 
 urlpatterns = [
     # Autenticacion (evidencia AA5-EV01)

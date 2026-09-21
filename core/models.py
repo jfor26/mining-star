@@ -8,7 +8,8 @@ por el que pasan TODAS las escrituras: admin, formularios, shell y scripts.
 
 from decimal import Decimal
 
-from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 
@@ -256,3 +257,96 @@ class DetalleVenta(models.Model):
         # puede quedar desincronizado por un error de calculo en la vista.
         self.subtotal = Decimal(self.cantidad) * self.precio_unitario
         super().save(*args, **kwargs)
+
+
+# ==========================================================
+# PRODUCCION DIARIA DE LA MINA  (historia de usuario HU-001)
+# ==========================================================
+
+class RegistroProduccion(models.Model):
+    """Material extraido en la mina durante un turno.
+
+    HU-001: "Como Supervisor de Mina, quiero registrar la cantidad y tipo de
+    material extraido por turno para llevar un control preciso de la
+    produccion y actualizar el inventario de materia prima."
+
+    El stock de materia prima no se guarda en una columna aparte: se calcula
+    sumando estos registros (ver servicios.stock_materia_prima). Asi no
+    existen dos cifras que puedan contradecirse.
+    """
+
+    TURNOS = [
+        ("Manana", "Mañana (6:00 - 14:00)"),
+        ("Tarde", "Tarde (14:00 - 22:00)"),
+        ("Noche", "Noche (22:00 - 6:00)"),
+    ]
+
+    # Lista predefinida que exige el criterio de aceptacion de la HU-001.
+    MATERIALES = [
+        ("Marmol", "Mármol"),
+        ("Caliza", "Caliza"),
+        ("Recebo", "Recebo"),
+    ]
+
+    UNIDADES = [
+        ("t", "Toneladas (t)"),
+        ("m3", "Metros cúbicos (m³)"),
+    ]
+
+    fecha = models.DateField(default=timezone.localdate)
+    turno = models.CharField(max_length=10, choices=TURNOS)
+    material = models.CharField(max_length=10, choices=MATERIALES)
+    unidad = models.CharField(max_length=2, choices=UNIDADES, default="t")
+
+    # Minimo 0,01: un registro en cero no aporta informacion y suele ser
+    # un error de digitacion. Maximo 5.000 por turno: la cantera no extrae
+    # esa cifra en ocho horas; un valor mayor es casi seguro un cero de mas.
+    cantidad = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal("0.01")), MaxValueValidator(Decimal("5000"))],
+    )
+
+    supervisor = models.ForeignKey(
+        Empleado,
+        on_delete=models.PROTECT,
+        related_name="producciones",
+        null=True,
+        blank=True,
+    )
+    observaciones = models.CharField(max_length=300, blank=True)
+
+    # Quien lo registro en el sistema (usuario autenticado) y cuando.
+    registrado_por = models.ForeignKey(
+        "auth.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="producciones_registradas",
+    )
+    fecha_registro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-fecha", "turno", "material"]
+        verbose_name = "registro de producción"
+        verbose_name_plural = "registros de producción"
+        constraints = [
+            # Un mismo material no se registra dos veces en el mismo turno:
+            # duplicarlo inflaria la produccion y el stock de materia prima.
+            models.UniqueConstraint(
+                fields=["fecha", "turno", "material"],
+                name="produccion_unica_por_turno",
+                violation_error_message=(
+                    "Ya existe un registro de ese material para ese turno y esa fecha."
+                ),
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.get_material_display()} - {self.fecha:%d/%m/%Y} - {self.get_turno_display()}"
+
+    def clean(self):
+        """La produccion es un hecho ocurrido: no puede tener fecha futura."""
+        super().clean()
+        if self.fecha and self.fecha > timezone.localdate():
+            raise ValidationError({"fecha": "La fecha de producción no puede ser posterior a hoy."})

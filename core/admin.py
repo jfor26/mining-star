@@ -8,7 +8,15 @@ columnas, buscador y filtros utiles.
 
 from django.contrib import admin
 
-from .models import Cliente, DetalleVenta, Empleado, Producto, Proveedor, Venta
+from .models import (
+    Cliente,
+    DetalleVenta,
+    Empleado,
+    Producto,
+    Proveedor,
+    RegistroProduccion,
+    Venta,
+)
 
 
 @admin.register(Cliente)
@@ -83,3 +91,11 @@ class DetalleVentaAdmin(admin.ModelAdmin):
     list_display = ("venta", "producto", "cantidad", "precio_unitario", "subtotal")
     search_fields = ("producto__nombre", "producto__codigo")
     list_select_related = ("venta", "producto")
+
+
+@admin.register(RegistroProduccion)
+class RegistroProduccionAdmin(admin.ModelAdmin):
+    list_display = ("fecha", "turno", "material", "cantidad", "unidad", "supervisor")
+    list_filter = ("material", "turno", "fecha")
+    search_fields = ("observaciones",)
+    date_hierarchy = "fecha"

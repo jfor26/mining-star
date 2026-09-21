@@ -46,28 +46,34 @@
         </a>
 
         <a href="{% url 'empleados' %}">
-        <i class="fa-solid fa-user-tie"></i>
-        <span>Empleados</span>
-    </a>
+            <i class="fa-solid fa-user-tie"></i>
+            <span>Empleados</span>
+        </a>
 
-        <a href="#">
+        {# Antes estos cuatro enlaces apuntaban a "#" y no navegaban a ninguna parte. #}
+        <a href="{% url 'clientes' %}">
             <i class="fa-solid fa-users"></i>
             <span>Clientes</span>
         </a>
 
-        <a href="#">
+        <a href="{% url 'productos' %}">
             <i class="fa-solid fa-box-open"></i>
             <span>Productos</span>
         </a>
 
-        <a href="#">
+        <a href="{% url 'proveedores' %}">
             <i class="fa-solid fa-truck-fast"></i>
             <span>Proveedores</span>
         </a>
 
-        <a href="#">
+        <a href="{% url 'ventas' %}">
             <i class="fa-solid fa-cart-shopping"></i>
             <span>Ventas</span>
+        </a>
+
+        <a href="{% url 'produccion' %}">
+            <i class="fa-solid fa-helmet-safety"></i>
+            <span>Producción</span>
         </a>
 
     </nav>
@@ -85,7 +91,7 @@
 
             <nav>
 
-               <a href="#">
+               <a href="{% url 'reportes' %}">
 
                     <i class="fa-solid fa-chart-line"></i>
 
@@ -93,7 +99,7 @@
 
                 </a>
 
-                <a href="#">
+                <a href="{% url 'admin:index' %}" title="Usuarios y permisos">
 
                     <i class="fa-solid fa-gear"></i>
 

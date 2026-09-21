@@ -8,13 +8,23 @@ negativo ni descuadrado.
 Ejecutar con:  python manage.py test
 """
 
+from datetime import timedelta
 from decimal import Decimal
 
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
+from django.utils import timezone
 
-from .models import Cliente, DetalleVenta, Producto, Proveedor, Venta
+from .models import (
+    Cliente,
+    DetalleVenta,
+    Empleado,
+    Producto,
+    Proveedor,
+    RegistroProduccion,
+    Venta,
+)
 
 
 class BaseConSesion(TestCase):
@@ -265,6 +275,8 @@ class PruebasDeRenderizado(BaseConSesion):
         ("proveedores", None),
         ("editar_proveedor", "proveedor"),
         ("ventas", None),
+        ("produccion", None),
+        ("reportes", None),
     ]
 
     def test_todas_las_pantallas_responden_200(self):
@@ -307,3 +319,124 @@ class PruebasDeRenderizado(BaseConSesion):
                 self.assertEqual(respuesta.status_code, 200)
                 self.assertIn(tipo, respuesta["Content-Type"])
                 self.assertGreater(len(respuesta.content), 500)
+
+
+# =========================================================
+# PRODUCCION DIARIA (HU-001)
+# =========================================================
+
+class PruebasDeProduccion(BaseConSesion):
+    """Criterios de aceptacion de la HU-001 y validaciones del formulario."""
+
+    def setUp(self):
+        super().setUp()
+        self.iniciar_sesion()
+        self.supervisor = Empleado.objects.create(
+            documento="1085777666", nombres="Carlos", apellidos="Munoz",
+            correo="carlos@miningstar.co", telefono="3104445566",
+            cargo="Supervisor", area="Operaciones",
+        )
+        self.hoy = timezone.localdate()
+
+    def registrar(self, **cambios):
+        datos = {"fecha": self.hoy.isoformat(), "turno": "Manana", "material": "Marmol",
+                 "unidad": "t", "cantidad": "35.50", "supervisor": self.supervisor.id,
+                 "observaciones": "Frente norte"}
+        datos.update(cambios)
+        return self.client.post(reverse("produccion"), datos)
+
+    def test_registro_valido_se_guarda_con_el_usuario(self):
+        respuesta = self.registrar()
+        self.assertEqual(respuesta.status_code, 302)
+        registro = RegistroProduccion.objects.get()
+        self.assertEqual(registro.cantidad, Decimal("35.50"))
+        self.assertEqual(registro.registrado_por, self.usuario)
+
+    def test_el_registro_aparece_en_el_reporte_diario(self):
+        self.registrar()
+        respuesta = self.client.get(reverse("produccion"), {"fecha": self.hoy.isoformat()})
+        self.assertContains(respuesta, "Frente norte")
+        self.assertContains(respuesta, "Total del día")
+
+    def test_el_stock_de_materia_prima_suma_los_turnos(self):
+        self.registrar(turno="Manana", cantidad="30")
+        self.registrar(turno="Tarde", cantidad="12.5")
+        self.registrar(turno="Tarde", material="Caliza", cantidad="8")
+        from .servicios import stock_materia_prima
+        stock = {(f["material"], f["unidad"]): f["total"] for f in stock_materia_prima()}
+        self.assertEqual(stock[("Marmol", "t")], Decimal("42.50"))
+        self.assertEqual(stock[("Caliza", "t")], Decimal("8.00"))
+
+    def test_cantidad_cero_o_negativa_se_rechaza(self):
+        for valor in ["0", "-3"]:
+            with self.subTest(cantidad=valor):
+                self.assertEqual(self.registrar(cantidad=valor).status_code, 200)
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_cantidad_excesiva_se_rechaza(self):
+        self.assertEqual(self.registrar(cantidad="5000.01").status_code, 200)
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_cantidad_no_numerica_se_rechaza(self):
+        for valor in ["treinta", "12,5,3", "<script>"]:
+            with self.subTest(cantidad=valor):
+                self.registrar(cantidad=valor)
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_mas_de_dos_decimales_se_rechaza(self):
+        self.registrar(cantidad="10.555")
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_fecha_futura_se_rechaza(self):
+        manana = (self.hoy + timedelta(days=1)).isoformat()
+        respuesta = self.registrar(fecha=manana)
+        self.assertContains(respuesta, "no puede ser posterior a hoy")
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_fecha_con_formato_invalido_se_rechaza(self):
+        for valor in ["31/02/2026", "2026-13-01", "ayer"]:
+            with self.subTest(fecha=valor):
+                self.registrar(fecha=valor)
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_material_fuera_de_la_lista_se_rechaza(self):
+        self.registrar(material="Oro")
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_observaciones_de_mas_de_300_caracteres_se_rechazan(self):
+        self.registrar(observaciones="x" * 301)
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+    def test_no_se_duplica_el_mismo_material_en_el_mismo_turno(self):
+        self.registrar()
+        respuesta = self.registrar(cantidad="10")
+        self.assertContains(respuesta, "Ya existe un registro de ese material")
+        self.assertEqual(RegistroProduccion.objects.count(), 1)
+
+    def test_caracteres_especiales_en_observaciones_se_guardan_escapados(self):
+        """Tildes y enes se guardan tal cual; el HTML se muestra como texto."""
+        self.registrar(observaciones="Bloque Ñ-3 <b>fracturado</b> & húmedo")
+        respuesta = self.client.get(reverse("produccion"))
+        self.assertContains(respuesta, "Bloque Ñ-3 &lt;b&gt;fracturado&lt;/b&gt; &amp; húmedo")
+
+    def test_eliminar_exige_post(self):
+        self.registrar()
+        registro = RegistroProduccion.objects.get()
+        url = reverse("eliminar_produccion", args=[registro.id])
+        self.assertEqual(self.client.get(url).status_code, 405)
+        self.client.post(url)
+        self.assertEqual(RegistroProduccion.objects.count(), 0)
+
+
+class PruebasDeNavegacion(BaseConSesion):
+    """Ningun enlace del menu puede quedar apuntando a "#"."""
+
+    def test_el_menu_no_tiene_enlaces_muertos(self):
+        self.iniciar_sesion()
+        for nombre in ["dashboard", "clientes", "empleados", "productos",
+                       "proveedores", "ventas", "produccion", "reportes"]:
+            with self.subTest(pantalla=nombre):
+                html = self.client.get(reverse(nombre)).content.decode()
+                self.assertNotIn('href="#"', html)
+                self.assertIn(reverse("produccion"), html)
+                self.assertIn(reverse("reportes"), html)

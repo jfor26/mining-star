@@ -5,6 +5,18 @@
 
 Django==6.0.7
 
+# API REST (GA7-AA5): serializadores, vistas y enrutamiento
+djangorestframework==3.18.1
+
+# Autenticacion por tokens JWT para la API
+djangorestframework-simplejwt==5.5.1
+
+# Filtros de consulta (?categoria=..., ?estado=...) sobre los listados
+django-filter==26.1
+
+# Documentacion OpenAPI 3 y consola Swagger en /api/docs/
+drf-spectacular==0.30.0
+
 # Exportacion de reportes
 openpyxl==3.1.5          # Archivos Excel (.xlsx)
 reportlab==4.2.5         # Archivos PDF

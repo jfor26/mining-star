@@ -16,7 +16,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from .models import Cliente, Producto, Proveedor
+from .models import Cliente, Producto, Proveedor, Venta
 
 
 class BaseAPI(APITestCase):
@@ -292,6 +292,30 @@ class PruebasDeVentasAPI(BaseAPI):
         self.assertEqual(segunda.status_code, status.HTTP_400_BAD_REQUEST)
         self.producto.refresh_from_db()
         self.assertEqual(self.producto.stock, 10)  # no 14
+
+    def test_no_se_puede_crear_una_venta_sin_pasar_por_registrar(self):
+        """Un POST directo a /ventas/ crearia una venta sin detalle y sin
+        descontar inventario. Solo /ventas/registrar/ puede crear ventas."""
+        respuesta = self.client.post(reverse("api-ventas-list"), {
+            "cliente": self.cliente.id, "estado": "Completada",
+        }, format="json")
+        self.assertEqual(respuesta.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(Venta.objects.count(), 0)
+
+    def test_eliminar_venta_devuelve_el_inventario(self):
+        """Borrar una venta vigente tiene que devolver sus unidades al stock,
+        igual que en la aplicacion web."""
+        creada = self.client.post(reverse("api-ventas-registrar"), {
+            "cliente": self.cliente.id, "producto": self.producto.id, "cantidad": 4,
+        }, format="json")
+        venta_id = creada.data["venta"]["id"]
+
+        respuesta = self.client.delete(reverse("api-ventas-detail", args=[venta_id]))
+        self.assertEqual(respuesta.status_code, status.HTTP_204_NO_CONTENT)
+
+        self.producto.refresh_from_db()
+        self.assertEqual(self.producto.stock, 10)
+        self.assertFalse(Venta.objects.filter(pk=venta_id).exists())
 
 
 class PruebasDeResumen(BaseAPI):

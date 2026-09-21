@@ -15,15 +15,22 @@ from django.contrib.auth import authenticate
 from django.db.models import F
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import OpenApiExample, extend_schema
-from rest_framework import filters, status, viewsets
+from rest_framework import filters, mixins, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from ..models import Cliente, Empleado, Producto, Proveedor, Venta
-from ..servicios import StockInsuficiente, anular_venta, registrar_venta, total_vendido
+from ..servicios import (
+    StockInsuficiente,
+    anular_venta,
+    eliminar_venta,
+    registrar_venta,
+    total_vendido,
+)
 from .serializers import (
     ClienteSerializer,
     EmpleadoSerializer,
@@ -50,6 +57,7 @@ from .serializers import (
         "contrasena cumpla las reglas de seguridad de Django."
     ),
     responses={201: UsuarioSerializer},
+    auth=[],
 )
 class RegistroView(APIView):
     """Servicio de registro. Es el unico endpoint abierto junto al login."""
@@ -94,6 +102,7 @@ class RegistroView(APIView):
             request_only=True,
         )
     ],
+    auth=[],
 )
 class LoginView(APIView):
     """Servicio de inicio de sesion.
@@ -165,6 +174,28 @@ class PerfilView(APIView):
         return Response(UsuarioSerializer(request.user).data)
 
 
+@extend_schema(
+    tags=["Autenticacion"],
+    summary="Renovar el token de acceso",
+    description=(
+        "Recibe el token de refresco y devuelve un token de acceso nuevo, "
+        "para no pedir usuario y contrasena cada dos horas."
+    ),
+    auth=[],
+)
+class RefrescarTokenView(TokenRefreshView):
+    pass
+
+
+@extend_schema(
+    tags=["Autenticacion"],
+    summary="Verificar si un token sigue siendo valido",
+    auth=[],
+)
+class VerificarTokenView(TokenVerifyView):
+    pass
+
+
 # ==========================================================
 # MODULOS DEL PROYECTO — evidencia GA7-220501096-AA5-EV03
 # ==========================================================
@@ -226,21 +257,37 @@ class EmpleadoViewSet(BaseViewSet):
 
 
 @extend_schema(tags=["Ventas"])
-class VentaViewSet(BaseViewSet):
+class VentaViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
     """Modulo de ventas.
 
-    A diferencia de los demas, no admite creacion directa por el
-    serializador: registrar una venta descuenta inventario y eso debe pasar
-    por el servicio de dominio. La creacion se expone en /registrar/.
+    A diferencia de los demas modulos, no hereda de ModelViewSet: una venta
+    no se crea ni se edita con un POST o un PUT generico, porque eso la
+    guardaria sin detalle y sin descontar inventario. Se exponen solo:
+
+    - listar y consultar;
+    - registrar (/registrar/) y anular (/{id}/anular/), que pasan por el
+      servicio de dominio;
+    - eliminar, que tambien pasa por el servicio para devolver el stock.
     """
 
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
     queryset = Venta.objects.select_related("cliente", "empleado").prefetch_related(
         "detalles__producto"
     )
     serializer_class = VentaSerializer
     filterset_fields = ["estado", "cliente"]
     ordering_fields = ["fecha", "total"]
-    http_method_names = ["get", "post", "delete", "head", "options"]
+
+    def perform_destroy(self, venta):
+        # El borrado generico de DRF solo haria venta.delete() y las
+        # unidades vendidas se perderian del inventario.
+        eliminar_venta(venta)
 
     @extend_schema(
         summary="Registrar una venta descontando inventario",

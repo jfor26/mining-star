@@ -8,7 +8,6 @@ primera, que es la razon por la que se incluye desde el principio.
 
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import TokenRefreshView, TokenVerifyView
 
 from .views import (
     ClienteViewSet,
@@ -17,9 +16,11 @@ from .views import (
     PerfilView,
     ProductoViewSet,
     ProveedorViewSet,
+    RefrescarTokenView,
     RegistroView,
     ResumenView,
     VentaViewSet,
+    VerificarTokenView,
 )
 
 router = DefaultRouter()
@@ -33,8 +34,8 @@ urlpatterns = [
     # Autenticacion (evidencia AA5-EV01)
     path("auth/registro/", RegistroView.as_view(), name="api-registro"),
     path("auth/login/", LoginView.as_view(), name="api-login"),
-    path("auth/refrescar/", TokenRefreshView.as_view(), name="api-refrescar"),
-    path("auth/verificar/", TokenVerifyView.as_view(), name="api-verificar"),
+    path("auth/refrescar/", RefrescarTokenView.as_view(), name="api-refrescar"),
+    path("auth/verificar/", VerificarTokenView.as_view(), name="api-verificar"),
     path("auth/perfil/", PerfilView.as_view(), name="api-perfil"),
 
     # Panel

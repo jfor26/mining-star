@@ -207,6 +207,24 @@ class PruebasDeClientes(BaseAPI):
             self.client.delete(url).status_code, status.HTTP_204_NO_CONTENT
         )
 
+    def test_no_se_borra_un_cliente_con_ventas(self):
+        """on_delete=PROTECT impide borrarlo. La API debe responder 409 con un
+        mensaje claro, no un error 500 del servidor."""
+        self.client.post(reverse("api-ventas-registrar"), {
+            "cliente": self.cliente.id, "producto": self.producto.id, "cantidad": 1,
+        }, format="json")
+        respuesta = self.client.delete(reverse("api-clientes-detail", args=[self.cliente.id]))
+        self.assertEqual(respuesta.status_code, status.HTTP_409_CONFLICT)
+        self.assertIn("mensaje", respuesta.data)
+        self.assertTrue(Cliente.objects.filter(pk=self.cliente.id).exists())
+
+    def test_no_se_borra_un_proveedor_con_productos(self):
+        respuesta = self.client.delete(
+            reverse("api-proveedores-detail", args=[self.proveedor.id])
+        )
+        self.assertEqual(respuesta.status_code, status.HTTP_409_CONFLICT)
+        self.assertTrue(Proveedor.objects.filter(pk=self.proveedor.id).exists())
+
 
 class PruebasDeProductos(BaseAPI):
 

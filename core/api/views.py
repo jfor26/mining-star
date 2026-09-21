@@ -12,7 +12,7 @@ movil, donde no existe una cookie de sesion.
 """
 
 from django.contrib.auth import authenticate
-from django.db.models import F
+from django.db.models import F, ProtectedError
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import OpenApiExample, extend_schema
 from rest_framework import filters, mixins, status, viewsets
@@ -210,6 +210,31 @@ class BaseViewSet(viewsets.ModelViewSet):
 
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+
+    def destroy(self, request, *args, **kwargs):
+        """Borra el registro, salvo que otros dependan de el.
+
+        Los modelos usan on_delete=PROTECT: no se puede borrar un cliente con
+        ventas, un proveedor con productos ni un producto ya vendido, porque
+        se perderia el historico. Sin este control, Django lanza
+        ProtectedError y la API responde con un error 500.
+        """
+        objeto = self.get_object()
+        try:
+            objeto.delete()
+        except ProtectedError as error:
+            dependientes = sorted({str(o._meta.verbose_name_plural) for o in error.protected_objects})
+            return Response(
+                {
+                    "mensaje": (
+                        f"No se puede eliminar {objeto}: tiene registros asociados en "
+                        f"{', '.join(dependientes)}."
+                    ),
+                    "dependientes": dependientes,
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @extend_schema(tags=["Clientes"])

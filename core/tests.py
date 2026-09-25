@@ -440,3 +440,58 @@ class PruebasDeNavegacion(BaseConSesion):
                 self.assertNotIn('href="#"', html)
                 self.assertIn(reverse("produccion"), html)
                 self.assertIn(reverse("reportes"), html)
+
+
+class PruebasDelTablero(BaseConSesion):
+    """El tablero debe mostrar las cifras reales de la base, no numeros
+    escritos a mano en la plantilla.
+
+    Antes las tarjetas anunciaban 128 empleados, 580 clientes y $28 M en
+    ventas sin importar el contenido de la base. Una evidencia que evalua
+    "la aplicacion funciona correctamente" no puede apoyarse en datos
+    inventados.
+    """
+
+    def _crear_venta(self):
+        self.empleado = Empleado.objects.create(
+            documento="1085999888",
+            nombres="Laura",
+            apellidos="Gomez",
+            correo="laura@mining.co",
+            telefono="3001112233",
+            cargo="Vendedora",
+            area="Comercial",
+        )
+        venta = Venta.objects.create(
+            cliente=self.cliente,
+            empleado=self.empleado,
+            total=Decimal("150000.00"),
+        )
+        return venta
+
+    def test_las_tarjetas_no_traen_cifras_inventadas(self):
+        self.iniciar_sesion()
+        html = self.client.get(reverse("dashboard")).content.decode()
+        for inventado in ["128", "580", ">94<", ">21<", "$28 M",
+                          "+12 este mes", "+25 nuevos", "+18% este mes"]:
+            with self.subTest(cifra=inventado):
+                self.assertNotIn(inventado, html)
+
+    def test_las_tarjetas_muestran_los_totales_reales(self):
+        self._crear_venta()
+        self.iniciar_sesion()
+        html = self.client.get(reverse("dashboard")).content.decode()
+        # setUp deja 1 cliente, 1 proveedor, 1 producto; aqui 1 empleado y
+        # 1 venta de 150000.
+        self.assertIn(">1<", html)                 # conteos reales de a uno
+        self.assertIn("150", html)                 # el total vendido real
+        self.assertNotIn(">0<", html.split("dashboard-grid")[1][:1200]
+                         if "dashboard-grid" in html else "")
+
+    def test_el_total_vendido_sale_de_las_ventas(self):
+        self._crear_venta()
+        Venta.objects.create(cliente=self.cliente, total=Decimal("50000.00"))
+        self.iniciar_sesion()
+        respuesta = self.client.get(reverse("dashboard"))
+        # 150000 + 50000 = 200000 debe reflejarse en el contexto.
+        self.assertEqual(respuesta.context["total_vendido"], Decimal("200000.00"))

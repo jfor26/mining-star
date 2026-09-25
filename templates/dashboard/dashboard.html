@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static humanize %}
 
 {% block titulo %}Dashboard | Mining Star ERP{% endblock %}
 
@@ -153,39 +153,34 @@
 
         <div class="topbar-right">
 
-            <button class="icon-btn">
+            <a href="{% url 'productos' %}" class="icon-btn"
+               title="Productos con stock bajo">
 
                 <i class="fa-regular fa-bell"></i>
 
-                <span class="badge">3</span>
+                {% if productos_stock_bajo %}
+                <span class="badge">{{ productos_stock_bajo }}</span>
+                {% endif %}
 
-            </button>
+            </a>
 
-            <button class="icon-btn">
-
-                <i class="fa-regular fa-envelope"></i>
-
-                <span class="badge">5</span>
-
-            </button>
-
-            <button class="icon-btn">
+            <a href="{% url 'admin:index' %}" class="icon-btn" title="Configuración">
 
                 <i class="fa-solid fa-gear"></i>
 
-            </button>
+            </a>
 
             <div class="perfil">
 
                 <img
         src="{% static 'img/logo.png' %}"
-        alt="Administrador">
+        alt="{{ request.user.get_username }}">
 
                 <div>
 
-                    <strong>Administrador</strong>
+                    <strong>{{ request.user.get_full_name|default:request.user.get_username }}</strong>
 
-                    <small>Administrador General</small>
+                    <small>{% if request.user.is_superuser %}Administrador General{% else %}Usuario del sistema{% endif %}</small>
 
                 </div>
 
@@ -204,7 +199,7 @@
 
         <div class="welcome-info">
 
-            <h1>
+            <h1 data-nombre="{{ request.user.get_short_name|default:request.user.get_username }}">
 
                 ¡Bienvenido nuevamente!
 
@@ -287,9 +282,9 @@
 
                 <h3>Empleados</h3>
 
-                <span id="totalEmpleados">128</span>
+                <span id="totalEmpleados">{{ total_empleados }}</span>
 
-                <small>▲ +12 este mes</small>
+                <small>{{ empleados_activos }} activo{{ empleados_activos|pluralize }}</small>
 
             </div>
 
@@ -308,9 +303,9 @@
 
                 <h3>Clientes</h3>
 
-                <span id="totalClientes">580</span>
+                <span id="totalClientes">{{ total_clientes }}</span>
 
-                <small>▲ +25 nuevos</small>
+                <small>registrado{{ total_clientes|pluralize }}</small>
 
             </div>
 
@@ -329,9 +324,9 @@
 
                 <h3>Productos</h3>
 
-                <span id="totalProductos">94</span>
+                <span id="totalProductos">{{ total_productos }}</span>
 
-                <small>Stock actualizado</small>
+                <small>{{ productos_stock_bajo }} con stock bajo</small>
 
             </div>
 
@@ -350,9 +345,9 @@
 
                 <h3>Proveedores</h3>
 
-                <span id="totalProveedores">21</span>
+                <span id="totalProveedores">{{ total_proveedores }}</span>
 
-                <small>Todos activos</small>
+                <small>registrado{{ total_proveedores|pluralize }}</small>
 
             </div>
 
@@ -371,9 +366,9 @@
 
                 <h3>Ventas</h3>
 
-                <span id="totalVentas">$28 M</span>
+                <span id="totalVentas">${{ total_vendido|floatformat:0|intcomma }}</span>
 
-                <small>▲ +18% este mes</small>
+                <small>{{ total_ventas }} venta{{ total_ventas|pluralize }} registrada{{ total_ventas|pluralize }}</small>
 
             </div>
 
@@ -411,7 +406,8 @@
 
         </div>
 
-        <canvas id="graficoVentas"></canvas>
+        <canvas id="graficoVentas"
+                data-ventas="{{ ventas_por_mes_json }}"></canvas>
 
     </div>
 

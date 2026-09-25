@@ -42,25 +42,29 @@ document.addEventListener("DOMContentLoaded", function () {
         );
  
     if (titulo) {
- 
+
+        // El nombre real del usuario viene del servidor en data-nombre.
+        const nombre =
+            titulo.dataset.nombre || "Usuario";
+
         const hora =
             new Date().getHours();
- 
+
         if (hora < 12) {
- 
+
             titulo.textContent =
-                "☀️ Buenos días, Administrador";
- 
+                "☀️ Buenos días, " + nombre;
+
         } else if (hora < 18) {
- 
+
             titulo.textContent =
-                "🌤️ Buenas tardes, Administrador";
- 
+                "🌤️ Buenas tardes, " + nombre;
+
         } else {
- 
+
             titulo.textContent =
-                "🌙 Buenas noches, Administrador";
- 
+                "🌙 Buenas noches, " + nombre;
+
         }
     }
  
@@ -70,17 +74,26 @@ document.addEventListener("DOMContentLoaded", function () {
     // =====================================================
  
     function animarContador(
-        id,
-        valor
+        id
     ) {
- 
+
         const contador =
             document.getElementById(id);
- 
+
         if (!contador) {
             return;
         }
- 
+
+        // El valor final es el que el servidor ya escribio en la tarjeta
+        // (la cifra real de la base). Antes venia fijo por parametro, y por
+        // eso el tablero siempre "subia" hasta numeros inventados.
+        const valor =
+            parseInt(contador.textContent, 10);
+
+        if (isNaN(valor)) {
+            return;
+        }
+
         let inicio = 0;
  
         const duracion = 1000;
@@ -112,25 +125,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
  
  
-    animarContador(
-        "totalEmpleados",
-        128
-    );
- 
-    animarContador(
-        "totalClientes",
-        580
-    );
- 
-    animarContador(
-        "totalProductos",
-        94
-    );
- 
-    animarContador(
-        "totalProveedores",
-        21
-    );
+    animarContador("totalEmpleados");
+    animarContador("totalClientes");
+    animarContador("totalProductos");
+    animarContador("totalProveedores");
  
  
     // =====================================================
@@ -147,15 +145,31 @@ document.addEventListener("DOMContentLoaded", function () {
         canvas &&
         typeof Chart !== "undefined"
     ) {
- 
+
+        // La serie real de ventas por mes viene del servidor en el atributo
+        // data-ventas del canvas. Si no llega, se usa una serie en cero.
+        let serieVentas;
+
+        try {
+            serieVentas =
+                JSON.parse(canvas.dataset.ventas || "[]");
+        } catch (e) {
+            serieVentas = [];
+        }
+
+        if (!Array.isArray(serieVentas) || serieVentas.length === 0) {
+            serieVentas =
+                [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        }
+
         new Chart(
             canvas,
             {
- 
+
                 type: "bar",
- 
+
                 data: {
- 
+
                     labels: [
                         "Ene",
                         "Feb",
@@ -170,28 +184,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         "Nov",
                         "Dic"
                     ],
- 
+
                     datasets: [
- 
+
                         {
- 
+
                             label: "Ventas",
- 
-                            data: [
-                                12,
-                                18,
-                                14,
-                                22,
-                                25,
-                                27,
-                                30,
-                                28,
-                                32,
-                                35,
-                                40,
-                                45
-                            ],
- 
+
+                            data: serieVentas,
+
                             backgroundColor:
                                 "#2563eb",
  

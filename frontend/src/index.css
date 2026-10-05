@@ -1,0 +1,143 @@
+/*
+ * Estilos del front-end de Mining Star.
+ * Paleta y formas tomadas del prototipo aprobado y de la aplicacion web:
+ * menu lateral azul oscuro, tarjetas blancas con esquinas redondeadas.
+ */
+:root {
+  --azul-oscuro: #0f1f4b;
+  --azul: #1d4ed8;
+  --azul-claro: #e8efff;
+  --verde: #10b981;
+  --naranja: #f59e0b;
+  --morado: #7c3aed;
+  --rojo: #dc2626;
+  --texto: #0f172a;
+  --texto-suave: #64748b;
+  --borde: #e2e8f0;
+  --fondo: #f1f5f9;
+  --radio: 14px;
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  color: var(--texto);
+  background: var(--fondo);
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+h1, h2, h3 { margin: 0; }
+
+/* ---------- Marco ---------- */
+.marco { display: flex; min-height: 100vh; }
+.menu-lateral {
+  width: 250px; flex-shrink: 0; padding: 24px 18px;
+  display: flex; flex-direction: column; gap: 24px;
+  background: linear-gradient(180deg, var(--azul-oscuro), var(--azul));
+  color: #fff;
+}
+.marca { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; }
+.marca img { border-radius: 12px; margin-bottom: 6px; }
+.marca small { opacity: .75; font-size: 12px; }
+.menu-lateral nav { display: flex; flex-direction: column; gap: 4px; }
+.menu-lateral nav a {
+  color: #dbe4ff; text-decoration: none; padding: 11px 14px; border-radius: 10px;
+  display: flex; gap: 12px; align-items: center; font-size: 15px;
+}
+.menu-lateral nav a:hover { background: rgba(255,255,255,.1); }
+.menu-lateral nav a.activo { background: #fff; color: var(--azul); font-weight: 600; }
+.icono { width: 18px; text-align: center; }
+.boton-salir {
+  margin-top: auto; background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.4);
+  border-radius: 10px; padding: 10px; cursor: pointer; font: inherit;
+}
+.area { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.barra-superior {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 32px; background: #fff; border-bottom: 1px solid var(--borde); color: var(--texto-suave);
+}
+.usuario-actual { font-weight: 600; color: var(--texto); }
+.contenido { padding: 28px 32px; display: flex; flex-direction: column; gap: 22px; }
+
+/* ---------- Bloques ---------- */
+.encabezado { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; }
+.encabezado h1 { font-size: 28px; }
+.encabezado p { margin: 6px 0 0; color: var(--texto-suave); }
+.tarjeta { background: #fff; border-radius: var(--radio); padding: 22px; box-shadow: 0 2px 10px rgba(15,23,42,.06); }
+.tarjeta h2 { font-size: 18px; margin-bottom: 16px; }
+.dos-columnas { display: grid; grid-template-columns: minmax(300px, 380px) 1fr; gap: 22px; align-items: start; }
+.rejilla-indicadores { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; }
+.indicador { background: #fff; border-radius: var(--radio); padding: 20px; border-top: 5px solid var(--azul); box-shadow: 0 2px 10px rgba(15,23,42,.06); }
+.indicador.verde { border-color: var(--verde); }
+.indicador.naranja { border-color: var(--naranja); }
+.indicador.morado { border-color: var(--morado); }
+.indicador h3 { font-size: 15px; color: var(--texto-suave); font-weight: 600; }
+.indicador .valor { display: block; font-size: 28px; font-weight: 700; margin: 8px 0 4px; }
+.indicador small { color: var(--texto-suave); }
+
+/* ---------- Formularios ---------- */
+form { display: flex; flex-direction: column; gap: 14px; }
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo label { font-size: 13px; font-weight: 600; }
+.campo input, .campo select, .campo textarea, .barra-filtros input {
+  font: inherit; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fff;
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus, .barra-filtros input:focus {
+  outline: 2px solid var(--azul-claro); border-color: var(--azul);
+}
+.campo.con-error input, .campo.con-error select, .campo.con-error textarea { border-color: var(--rojo); }
+.campo .error { color: var(--rojo); font-size: 12px; }
+.fila-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.boton {
+  display: inline-block; text-align: center; text-decoration: none; cursor: pointer; font: inherit;
+  font-weight: 600; padding: 10px 16px; border-radius: 10px; border: 1px solid var(--borde);
+  background: #fff; color: var(--texto);
+}
+.boton.primario { background: var(--azul); border-color: var(--azul); color: #fff; }
+.boton.primario:disabled { opacity: .6; cursor: wait; }
+.boton.pequeno { padding: 5px 10px; font-size: 13px; }
+.resumen-venta { display: grid; grid-template-columns: 1fr auto; gap: 6px; margin: 0; padding: 12px; background: var(--fondo); border-radius: 10px; }
+.resumen-venta dd { margin: 0; text-align: right; }
+
+/* ---------- Avisos y tablas ---------- */
+.aviso { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; border-radius: 10px; font-size: 14px; }
+.aviso.exito { background: #dcfce7; color: #166534; }
+.aviso.error { background: #fee2e2; color: #991b1b; }
+.aviso button { background: none; border: none; font-size: 18px; cursor: pointer; color: inherit; }
+.barra-filtros { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.barra-filtros input { flex: 1; max-width: 420px; }
+.barra-filtros small { color: var(--texto-suave); }
+.tabla-contenedor { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-size: 12px; text-transform: uppercase; color: var(--texto-suave); padding: 10px; border-bottom: 1px solid var(--borde); }
+td { padding: 12px 10px; border-bottom: 1px solid var(--borde); }
+td.vacio { text-align: center; color: var(--texto-suave); padding: 28px; }
+.pie-tabla { color: var(--texto-suave); font-size: 13px; margin: 10px 0 0; }
+.etiqueta { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.etiqueta.normal { background: #dcfce7; color: #166534; }
+.etiqueta.alerta { background: #fef3c7; color: #92400e; }
+.lista-alertas { margin: 0 0 16px; padding-left: 20px; line-height: 1.8; }
+.cargando { color: var(--texto-suave); }
+
+/* ---------- Inicio de sesion ---------- */
+.pantalla-login {
+  min-height: 100vh; display: grid; place-items: center; padding: 16px;
+  background: linear-gradient(135deg, var(--azul-oscuro), var(--azul));
+}
+.tarjeta-login {
+  width: 100%; max-width: 380px; background: #fff; border-radius: 18px; padding: 32px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.25); text-align: center;
+}
+.tarjeta-login img { align-self: center; border-radius: 16px; }
+.tarjeta-login p { margin: 0; color: var(--texto-suave); }
+.tarjeta-login .campo { text-align: left; }
+
+/* ---------- Pantallas pequenas ---------- */
+@media (max-width: 900px) {
+  .marco { flex-direction: column; }
+  .menu-lateral { width: 100%; }
+  .menu-lateral nav { flex-direction: row; flex-wrap: wrap; }
+  .dos-columnas { grid-template-columns: 1fr; }
+  .contenido { padding: 20px 16px; }
+}
+
+/* Los campos dentro de una fila de dos columnas no deben desbordarla. */
+.fila-campos > .campo { min-width: 0; }
+.campo input, .campo select, .campo textarea { width: 100%; }

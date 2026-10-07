@@ -110,11 +110,15 @@ class Producto(models.Model):
 
 class Empleado(models.Model):
 
+    # Los cargos coinciden con los roles de core/permisos.py: el cargo de un
+    # empleado determina que puede hacer cuando usa el sistema.
     CARGOS = [
+        ("Gerente", "Gerente"),
         ("Administrador", "Administrador"),
         ("Supervisor", "Supervisor"),
-        ("Operario", "Operario"),
+        ("Comercial", "Comercial"),
         ("Contador", "Contador"),
+        ("Operario", "Operario"),
         ("Auxiliar", "Auxiliar"),
     ]
 
@@ -125,6 +129,8 @@ class Empleado(models.Model):
         ("Seguridad Industrial", "Seguridad Industrial"),
         ("Finanzas", "Finanzas"),
         ("Logística", "Logística"),
+        ("Comercial", "Comercial"),
+        ("Gestión Ambiental", "Gestión Ambiental"),
     ]
 
     ESTADOS = [
@@ -151,6 +157,17 @@ class Empleado(models.Model):
 
     # Esta si es automatica: marca cuando se creo el registro.
     fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    # Cuenta con la que el empleado entra al sistema. Es opcional: un
+    # operario puede no usar el aplicativo. Si se borra el usuario, el
+    # empleado se conserva (SET_NULL) porque tiene historial laboral.
+    usuario = models.OneToOneField(
+        "auth.User",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="empleado",
+    )
 
     class Meta:
         ordering = ["nombres", "apellidos"]
@@ -206,6 +223,9 @@ class Venta(models.Model):
         ordering = ["-fecha"]
         verbose_name = "venta"
         verbose_name_plural = "ventas"
+        # El panel agrupa ventas por mes y filtra por estado: sin indice,
+        # cada consulta recorre la tabla completa.
+        indexes = [models.Index(fields=["estado", "fecha"], name="venta_estado_fecha_idx")]
 
     def __str__(self):
         return f"Venta #{self.pk} - {self.cliente.nombre}"
@@ -350,3 +370,341 @@ class RegistroProduccion(models.Model):
         super().clean()
         if self.fecha and self.fecha > timezone.localdate():
             raise ValidationError({"fecha": "La fecha de producción no puede ser posterior a hoy."})
+
+
+# ==========================================================
+# SEGURIDAD: REGISTRO DE ACCESOS
+# ==========================================================
+
+class RegistroAcceso(models.Model):
+    """Bitacora de cada intento de ingreso al sistema.
+
+    Cada vez que un empleado inicia sesion se emite un token de acceso (JWT)
+    y aqui queda constancia de quien, cuando, desde donde y con que token
+    (su identificador jti, nunca el token completo). Los intentos fallidos
+    tambien se guardan: son la base del bloqueo por fuerza bruta.
+    """
+
+    EVENTOS = [
+        ("ingreso", "Ingreso exitoso"),
+        ("fallido", "Intento fallido"),
+        ("bloqueado", "Bloqueado por intentos"),
+        ("salida", "Cierre de sesión"),
+    ]
+
+    usuario = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="accesos",
+    )
+    # Se guarda el nombre escrito aunque no exista el usuario: asi se ven los
+    # intentos contra cuentas inventadas.
+    nombre_usuario = models.CharField(max_length=150)
+    evento = models.CharField(max_length=10, choices=EVENTOS)
+    fecha = models.DateTimeField(auto_now_add=True, db_index=True)
+    ip = models.GenericIPAddressField(null=True, blank=True)
+    navegador = models.CharField(max_length=255, blank=True)
+    token_jti = models.CharField("identificador del token", max_length=64, blank=True)
+
+    class Meta:
+        ordering = ["-fecha"]
+        verbose_name = "registro de acceso"
+        verbose_name_plural = "registros de acceso"
+        indexes = [models.Index(fields=["nombre_usuario", "evento", "fecha"], name="acceso_usuario_idx")]
+
+    def __str__(self):
+        return f"{self.nombre_usuario} - {self.get_evento_display()} - {self.fecha:%d/%m/%Y %H:%M}"
+
+
+# ==========================================================
+# CRM: OPORTUNIDADES E INTERACCIONES CON CLIENTES
+# ==========================================================
+
+class Oportunidad(models.Model):
+    """Negocio posible con un cliente, desde el primer contacto hasta el cierre."""
+
+    ETAPAS = [
+        ("Prospecto", "Prospecto"),
+        ("Contactado", "Contactado"),
+        ("Cotizacion", "Cotización enviada"),
+        ("Negociacion", "Negociación"),
+        ("Ganada", "Ganada"),
+        ("Perdida", "Perdida"),
+    ]
+
+    # Probabilidad de cierre sugerida por etapa, para el valor ponderado.
+    PROBABILIDAD_POR_ETAPA = {
+        "Prospecto": 10, "Contactado": 25, "Cotizacion": 50,
+        "Negociacion": 75, "Ganada": 100, "Perdida": 0,
+    }
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT, related_name="oportunidades")
+    titulo = models.CharField(max_length=150)
+    etapa = models.CharField(max_length=12, choices=ETAPAS, default="Prospecto", db_index=True)
+    valor_estimado = models.DecimalField(
+        max_digits=14, decimal_places=2, validators=[MinValueValidator(Decimal("0"))],
+    )
+    responsable = models.ForeignKey(
+        Empleado, on_delete=models.SET_NULL, null=True, blank=True, related_name="oportunidades",
+    )
+    fecha_cierre_estimada = models.DateField(null=True, blank=True)
+    notas = models.TextField(blank=True)
+    creado = models.DateTimeField(auto_now_add=True)
+    actualizado = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-actualizado"]
+        verbose_name = "oportunidad"
+        verbose_name_plural = "oportunidades"
+
+    def __str__(self):
+        return f"{self.titulo} ({self.cliente})"
+
+    @property
+    def probabilidad(self):
+        return self.PROBABILIDAD_POR_ETAPA[self.etapa]
+
+    @property
+    def valor_ponderado(self):
+        return (self.valor_estimado * self.probabilidad / 100).quantize(Decimal("0.01"))
+
+
+class Interaccion(models.Model):
+    """Contacto registrado con un cliente: llamada, visita, correo..."""
+
+    TIPOS = [
+        ("Llamada", "Llamada"),
+        ("Correo", "Correo"),
+        ("Visita", "Visita"),
+        ("Reunion", "Reunión"),
+        ("WhatsApp", "WhatsApp"),
+    ]
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="interacciones")
+    oportunidad = models.ForeignKey(
+        Oportunidad, on_delete=models.SET_NULL, null=True, blank=True, related_name="interacciones",
+    )
+    tipo = models.CharField(max_length=10, choices=TIPOS)
+    fecha = models.DateTimeField(default=timezone.now)
+    descripcion = models.CharField(max_length=500)
+    proxima_accion = models.CharField("próxima acción", max_length=200, blank=True)
+    registrado_por = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="interacciones",
+    )
+
+    class Meta:
+        ordering = ["-fecha"]
+        verbose_name = "interacción"
+        verbose_name_plural = "interacciones"
+
+    def __str__(self):
+        return f"{self.get_tipo_display()} con {self.cliente} - {self.fecha:%d/%m/%Y}"
+
+
+# ==========================================================
+# TIENDA: PEDIDOS DEL CARRITO Y PAGOS CON STRIPE
+# ==========================================================
+
+class Pedido(models.Model):
+    """Pedido armado en el carrito de compras.
+
+    No descuenta inventario al crearse: un carrito abandonado no debe
+    bloquear existencias. El descuento ocurre al confirmarse el pago, cuando
+    el pedido se convierte en una Venta (ver servicios.confirmar_pago).
+    """
+
+    ESTADOS = [
+        ("Pendiente", "Pendiente de pago"),
+        ("Pagado", "Pagado"),
+        ("Cancelado", "Cancelado"),
+        ("Fallido", "Pago fallido"),
+    ]
+
+    METODOS = [
+        ("stripe", "Stripe (tarjeta)"),
+        ("simulado", "Pago simulado (demostración)"),
+    ]
+
+    cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT, related_name="pedidos")
+    estado = models.CharField(max_length=10, choices=ESTADOS, default="Pendiente", db_index=True)
+    total = models.DecimalField(max_digits=14, decimal_places=2, default=Decimal("0"))
+    metodo_pago = models.CharField(max_length=10, choices=METODOS, blank=True)
+    referencia_pago = models.CharField(
+        "referencia de la pasarela", max_length=255, blank=True, db_index=True,
+    )
+    venta = models.OneToOneField(
+        Venta, on_delete=models.SET_NULL, null=True, blank=True, related_name="pedido",
+    )
+    creado_por = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="pedidos",
+    )
+    creado = models.DateTimeField(auto_now_add=True)
+    pagado_en = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-creado"]
+        verbose_name = "pedido"
+        verbose_name_plural = "pedidos"
+
+    def __str__(self):
+        return f"Pedido #{self.pk} - {self.cliente}"
+
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name="items")
+    producto = models.ForeignKey(Producto, on_delete=models.PROTECT, related_name="items_pedido")
+    cantidad = models.PositiveIntegerField(validators=[MinValueValidator(1)])
+    # El precio se congela al crear el pedido: si luego cambia el catalogo,
+    # el cliente paga lo que vio en el carrito.
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        ordering = ["id"]
+        verbose_name = "ítem de pedido"
+        verbose_name_plural = "ítems de pedido"
+        constraints = [
+            models.UniqueConstraint(fields=["pedido", "producto"], name="producto_unico_por_pedido"),
+        ]
+
+    def __str__(self):
+        return f"{self.producto} x {self.cantidad}"
+
+    @property
+    def subtotal(self):
+        return self.precio_unitario * self.cantidad
+
+
+# ==========================================================
+# REPOSITORIO DE REQUISITOS MINEROS Y AMBIENTALES
+# ==========================================================
+
+class RequisitoNormativo(models.Model):
+    """Obligacion legal que la empresa debe cumplir y su estado.
+
+    Reune en un solo lugar lo que exigen la autoridad minera (ANM), la
+    autoridad ambiental (CORTOLIMA) y las demas entidades, con su
+    vencimiento, para que nada se venza sin que alguien lo sepa.
+    """
+
+    AUTORIDADES = [
+        ("ANM", "Agencia Nacional de Minería (ANM)"),
+        ("CORTOLIMA", "CORTOLIMA (autoridad ambiental regional)"),
+        ("MinEnergia", "Ministerio de Minas y Energía"),
+        ("MinAmbiente", "Ministerio de Ambiente"),
+        ("MinTrabajo", "Ministerio del Trabajo"),
+        ("DIAN", "DIAN"),
+        ("Municipio", "Alcaldía municipal"),
+        ("SIC", "Superintendencia de Industria y Comercio"),
+    ]
+
+    CATEGORIAS = [
+        ("Minero", "Minero"),
+        ("Ambiental", "Ambiental"),
+        ("SST", "Seguridad y salud en el trabajo"),
+        ("Tributario", "Tributario"),
+        ("Datos", "Protección de datos"),
+    ]
+
+    ESTADOS = [
+        ("Cumplido", "Cumplido"),
+        ("EnTramite", "En trámite"),
+        ("Pendiente", "Pendiente"),
+        ("Vencido", "Vencido"),
+    ]
+
+    autoridad = models.CharField(max_length=12, choices=AUTORIDADES)
+    categoria = models.CharField(max_length=12, choices=CATEGORIAS, db_index=True)
+    nombre = models.CharField(max_length=200)
+    norma = models.CharField("norma de referencia", max_length=200)
+    descripcion = models.TextField()
+    periodicidad = models.CharField(max_length=60, blank=True)
+    fecha_vencimiento = models.DateField(null=True, blank=True)
+    estado = models.CharField(max_length=10, choices=ESTADOS, default="Pendiente", db_index=True)
+    responsable = models.ForeignKey(
+        Empleado, on_delete=models.SET_NULL, null=True, blank=True, related_name="requisitos",
+    )
+    evidencia = models.CharField("evidencia o radicado", max_length=300, blank=True)
+    actualizado = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["fecha_vencimiento", "nombre"]
+        verbose_name = "requisito normativo"
+        verbose_name_plural = "requisitos normativos"
+
+    def __str__(self):
+        return self.nombre
+
+    @property
+    def dias_para_vencer(self):
+        if not self.fecha_vencimiento:
+            return None
+        return (self.fecha_vencimiento - timezone.localdate()).days
+
+    @property
+    def alerta(self):
+        """'vencido', 'proximo' (30 dias o menos) u 'ok'."""
+        if self.estado == "Cumplido":
+            return "ok"
+        dias = self.dias_para_vencer
+        if dias is None:
+            return "ok"
+        if dias < 0:
+            return "vencido"
+        return "proximo" if dias <= 30 else "ok"
+
+
+# ==========================================================
+# MEJORA CONTINUA (CICLO PHVA)
+# ==========================================================
+
+class AccionMejora(models.Model):
+    """Accion del sistema de mejora continua, organizada por el ciclo PHVA
+    (Planear, Hacer, Verificar, Actuar)."""
+
+    ORIGENES = [
+        ("Auditoria", "Auditoría"),
+        ("Cliente", "Queja o reclamo de cliente"),
+        ("SST", "Incidente de SST"),
+        ("Ambiental", "Hallazgo ambiental"),
+        ("Empleado", "Sugerencia de empleado"),
+        ("Indicador", "Indicador fuera de meta"),
+    ]
+
+    TIPOS = [
+        ("Correctiva", "Correctiva"),
+        ("Preventiva", "Preventiva"),
+        ("Mejora", "Oportunidad de mejora"),
+    ]
+
+    FASES = [
+        ("Planear", "Planear"),
+        ("Hacer", "Hacer"),
+        ("Verificar", "Verificar"),
+        ("Actuar", "Actuar"),
+        ("Cerrada", "Cerrada"),
+    ]
+
+    titulo = models.CharField(max_length=150)
+    origen = models.CharField(max_length=10, choices=ORIGENES)
+    tipo = models.CharField(max_length=10, choices=TIPOS, default="Mejora")
+    descripcion = models.TextField("situación encontrada")
+    causa_raiz = models.TextField("causa raíz", blank=True)
+    plan_accion = models.TextField("plan de acción", blank=True)
+    fase = models.CharField(max_length=10, choices=FASES, default="Planear", db_index=True)
+    responsable = models.ForeignKey(
+        Empleado, on_delete=models.SET_NULL, null=True, blank=True, related_name="acciones_mejora",
+    )
+    fecha_compromiso = models.DateField(null=True, blank=True)
+    resultado = models.TextField("verificación de eficacia", blank=True)
+    creado_por = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="acciones_mejora",
+    )
+    creado = models.DateTimeField(auto_now_add=True)
+    actualizado = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-creado"]
+        verbose_name = "acción de mejora"
+        verbose_name_plural = "acciones de mejora"
+
+    def __str__(self):
+        return self.titulo

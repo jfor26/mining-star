@@ -99,3 +99,77 @@ class RegistroProduccionAdmin(admin.ModelAdmin):
     list_filter = ("material", "turno", "fecha")
     search_fields = ("observaciones",)
     date_hierarchy = "fecha"
+
+
+# ==========================================================
+# MODULOS AGREGADOS PARA EL PRODUCTO MINIMO VIABLE
+# ==========================================================
+
+from .models import (  # noqa: E402
+    AccionMejora,
+    Interaccion,
+    ItemPedido,
+    Oportunidad,
+    Pedido,
+    RegistroAcceso,
+    RequisitoNormativo,
+)
+
+
+@admin.register(RegistroAcceso)
+class RegistroAccesoAdmin(admin.ModelAdmin):
+    """Solo lectura: una bitacora de seguridad que se puede editar no sirve
+    como evidencia."""
+
+    list_display = ("fecha", "nombre_usuario", "evento", "ip", "token_jti")
+    list_filter = ("evento", "fecha")
+    search_fields = ("nombre_usuario", "ip")
+    date_hierarchy = "fecha"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(Oportunidad)
+class OportunidadAdmin(admin.ModelAdmin):
+    list_display = ("titulo", "cliente", "etapa", "valor_estimado", "responsable", "fecha_cierre_estimada")
+    list_filter = ("etapa",)
+    search_fields = ("titulo", "cliente__nombre")
+    list_select_related = ("cliente", "responsable")
+
+
+@admin.register(Interaccion)
+class InteraccionAdmin(admin.ModelAdmin):
+    list_display = ("fecha", "cliente", "tipo", "descripcion", "registrado_por")
+    list_filter = ("tipo",)
+    search_fields = ("cliente__nombre", "descripcion")
+
+
+class ItemPedidoInline(admin.TabularInline):
+    model = ItemPedido
+    extra = 0
+
+
+@admin.register(Pedido)
+class PedidoAdmin(admin.ModelAdmin):
+    list_display = ("id", "cliente", "estado", "total", "metodo_pago", "creado", "pagado_en")
+    list_filter = ("estado", "metodo_pago")
+    search_fields = ("cliente__nombre", "referencia_pago")
+    inlines = [ItemPedidoInline]
+
+
+@admin.register(RequisitoNormativo)
+class RequisitoNormativoAdmin(admin.ModelAdmin):
+    list_display = ("nombre", "autoridad", "categoria", "estado", "fecha_vencimiento", "responsable")
+    list_filter = ("autoridad", "categoria", "estado")
+    search_fields = ("nombre", "norma")
+
+
+@admin.register(AccionMejora)
+class AccionMejoraAdmin(admin.ModelAdmin):
+    list_display = ("titulo", "origen", "tipo", "fase", "responsable", "fecha_compromiso")
+    list_filter = ("fase", "origen", "tipo")
+    search_fields = ("titulo", "descripcion")

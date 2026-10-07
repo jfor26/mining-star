@@ -10,16 +10,29 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
+    AccionMejoraViewSet,
     ClienteViewSet,
+    ConfigPagosView,
+    DashboardView,
     EmpleadoViewSet,
+    InteraccionViewSet,
     LoginView,
+    LogoutView,
+    MatrizAccesoView,
+    OportunidadViewSet,
+    PedidoViewSet,
     PerfilView,
     ProduccionViewSet,
     ProductoViewSet,
     ProveedorViewSet,
     RefrescarTokenView,
+    RegistroAccesoViewSet,
     RegistroView,
+    RequisitoNormativoViewSet,
+    RespaldoView,
     ResumenView,
+    StripeWebhookView,
+    UsuarioViewSet,
     VentaViewSet,
     VerificarTokenView,
 )
@@ -31,6 +44,13 @@ router.register("productos", ProductoViewSet, basename="api-productos")
 router.register("empleados", EmpleadoViewSet, basename="api-empleados")
 router.register("ventas", VentaViewSet, basename="api-ventas")
 router.register("produccion", ProduccionViewSet, basename="api-produccion")
+router.register("crm/oportunidades", OportunidadViewSet, basename="api-oportunidades")
+router.register("crm/interacciones", InteraccionViewSet, basename="api-interacciones")
+router.register("pedidos", PedidoViewSet, basename="api-pedidos")
+router.register("normativa", RequisitoNormativoViewSet, basename="api-normativa")
+router.register("mejora", AccionMejoraViewSet, basename="api-mejora")
+router.register("seguridad/usuarios", UsuarioViewSet, basename="api-usuarios")
+router.register("seguridad/accesos", RegistroAccesoViewSet, basename="api-accesos")
 
 urlpatterns = [
     # Autenticacion (evidencia AA5-EV01)
@@ -39,6 +59,14 @@ urlpatterns = [
     path("auth/refrescar/", RefrescarTokenView.as_view(), name="api-refrescar"),
     path("auth/verificar/", VerificarTokenView.as_view(), name="api-verificar"),
     path("auth/perfil/", PerfilView.as_view(), name="api-perfil"),
+    path("auth/logout/", LogoutView.as_view(), name="api-logout"),
+
+    # Seguridad, pagos y tablero
+    path("seguridad/matriz/", MatrizAccesoView.as_view(), name="api-matriz"),
+    path("seguridad/respaldos/", RespaldoView.as_view(), name="api-respaldos"),
+    path("pagos/config/", ConfigPagosView.as_view(), name="api-pagos-config"),
+    path("pagos/webhook/", StripeWebhookView.as_view(), name="api-stripe-webhook"),
+    path("dashboard/", DashboardView.as_view(), name="api-dashboard"),
 
     # Panel
     path("resumen/", ResumenView.as_view(), name="api-resumen"),

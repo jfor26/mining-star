@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from ..exportadores import Columna, exportar_excel, exportar_pdf
 from ..forms import ClienteForm
 from ..models import Cliente
-from ._comunes import es_ajax, respuesta_error, respuesta_ok
+from ._comunes import es_ajax, requiere_modulo, respuesta_error, respuesta_ok
 
 COLUMNAS = [
     Columna("Documento", lambda c: c.documento, 80),
@@ -21,6 +21,7 @@ COLUMNAS = [
 
 
 @login_required
+@requiere_modulo("clientes")
 def clientes(request):
     if request.method == "POST":
         # ANTES: Cliente.objects.create(documento=request.POST.get(...), ...)
@@ -51,6 +52,7 @@ def clientes(request):
 
 
 @login_required
+@requiere_modulo("clientes", "editar")
 def editar_cliente(request, id):
     cliente = get_object_or_404(Cliente, pk=id)
 
@@ -71,6 +73,7 @@ def editar_cliente(request, id):
 
 
 @login_required
+@requiere_modulo("clientes", "eliminar")
 @require_POST
 def eliminar_cliente(request, id):
     # @require_POST rechaza los GET. Antes bastaba con abrir la URL
@@ -89,10 +92,12 @@ def eliminar_cliente(request, id):
 
 
 @login_required
+@requiere_modulo("clientes", "ver")
 def exportar_clientes_excel(request):
     return exportar_excel(Cliente.objects.all(), COLUMNAS, "Clientes", "Clientes")
 
 
 @login_required
+@requiere_modulo("clientes", "ver")
 def exportar_clientes_pdf(request):
     return exportar_pdf(Cliente.objects.all(), COLUMNAS, "Listado de Clientes", "Clientes")

@@ -11,9 +11,11 @@ from django.utils import timezone
 
 from ..forms import ClienteForm, EmpleadoForm, ProductoForm, ProveedorForm
 from ..models import Cliente, Empleado, Producto, Proveedor, Venta
+from ._comunes import requiere_modulo
 
 
 @login_required
+@requiere_modulo("panel")
 def dashboard(request):
     # select_related trae el proveedor en la MISMA consulta.
     # Sin el, la plantilla dispara una consulta por cada producto

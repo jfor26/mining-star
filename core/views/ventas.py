@@ -17,7 +17,7 @@ from ..models import Venta
 from ..servicios import StockInsuficiente
 from ..servicios import eliminar_venta as _eliminar_venta
 from ..servicios import registrar_venta as _registrar_venta
-from ._comunes import es_ajax, respuesta_error, respuesta_ok
+from ._comunes import es_ajax, requiere_modulo, respuesta_error, respuesta_ok
 
 # La logica de registro y anulacion vive en core/servicios.py porque la
 # comparten esta vista y la API REST. Duplicarla seria la forma mas rapida
@@ -25,6 +25,7 @@ from ._comunes import es_ajax, respuesta_error, respuesta_ok
 
 
 @login_required
+@requiere_modulo("ventas")
 def ventas(request):
     if request.method == "POST":
         formulario = VentaRapidaForm(request.POST)
@@ -69,6 +70,7 @@ def ventas(request):
 
 
 @login_required
+@requiere_modulo("ventas", "eliminar")
 @require_POST
 def eliminar_venta(request, id):
     # BUG ORIGINAL: esta funcion no terminaba con un return, asi que Django

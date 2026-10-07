@@ -9,20 +9,29 @@ Las reglas de validacion se derivan del modelo siempre que es posible, para
 que no existan dos definiciones del mismo limite que puedan divergir.
 """
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.password_validation import validate_password
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from ..models import (
+    AccionMejora,
     Cliente,
     DetalleVenta,
     Empleado,
+    Interaccion,
+    ItemPedido,
+    Oportunidad,
+    Pedido,
     Producto,
     Proveedor,
+    RegistroAcceso,
     RegistroProduccion,
+    RequisitoNormativo,
     Venta,
 )
+from ..permisos import ROLES, permisos_de, rol_de
 
 # ==========================================================
 # AUTENTICACION
@@ -47,10 +56,22 @@ class RegistroSerializer(serializers.ModelSerializer):
         help_text="Repeticion de la contrasena.",
     )
     email = serializers.EmailField(required=True)
+    rol = serializers.ChoiceField(
+        choices=ROLES, write_only=True,
+        help_text="Cargo con el que el usuario entra al sistema; define sus permisos.",
+    )
+    empleado = serializers.PrimaryKeyRelatedField(
+        queryset=Empleado.objects.filter(usuario__isnull=True),
+        required=False, allow_null=True, write_only=True,
+        help_text="Empleado al que se le asigna esta cuenta (opcional).",
+    )
 
     class Meta:
         model = User
-        fields = ["username", "email", "first_name", "last_name", "password", "password2"]
+        fields = [
+            "username", "email", "first_name", "last_name",
+            "password", "password2", "rol", "empleado",
+        ]
 
     def validate_username(self, valor):
         if User.objects.filter(username__iexact=valor).exists():
@@ -74,17 +95,48 @@ class RegistroSerializer(serializers.ModelSerializer):
 
     def create(self, datos):
         datos.pop("password2")
+        rol = datos.pop("rol")
+        empleado = datos.pop("empleado", None)
         # create_user aplica el hash a la contrasena. Nunca se guarda en claro.
-        return User.objects.create_user(**datos)
+        usuario = User.objects.create_user(**datos)
+        usuario.groups.add(Group.objects.get_or_create(name=rol)[0])
+        if empleado:
+            empleado.usuario = usuario
+            empleado.save(update_fields=["usuario"])
+        return usuario
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
-    """Representacion publica de un usuario. No expone la contrasena."""
+    """Representacion publica de un usuario. No expone la contrasena.
+
+    Incluye el cargo y la matriz de permisos: el front-end la usa para
+    mostrar solo los menus y botones que el cargo puede usar.
+    """
+
+    rol = serializers.SerializerMethodField()
+    permisos = serializers.SerializerMethodField()
+    empleado = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ["id", "username", "email", "first_name", "last_name", "date_joined"]
+        fields = [
+            "id", "username", "email", "first_name", "last_name", "date_joined",
+            "last_login", "is_active", "rol", "permisos", "empleado",
+        ]
         read_only_fields = fields
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_rol(self, usuario):
+        return rol_de(usuario)
+
+    @extend_schema_field(serializers.DictField(child=serializers.ListField(child=serializers.CharField())))
+    def get_permisos(self, usuario):
+        return permisos_de(usuario)
+
+    @extend_schema_field(serializers.CharField(allow_null=True))
+    def get_empleado(self, usuario):
+        empleado = getattr(usuario, "empleado", None)
+        return empleado.nombre_completo if empleado else None
 
 
 class LoginSerializer(serializers.Serializer):
@@ -289,3 +341,157 @@ class StockMateriaPrimaSerializer(serializers.Serializer):
     material_nombre = serializers.CharField()
     unidad = serializers.CharField()
     total = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+
+# ==========================================================
+# SEGURIDAD
+# ==========================================================
+
+class RegistroAccesoSerializer(serializers.ModelSerializer):
+    evento_nombre = serializers.CharField(source="get_evento_display", read_only=True)
+
+    class Meta:
+        model = RegistroAcceso
+        fields = ["id", "nombre_usuario", "evento", "evento_nombre", "fecha", "ip", "navegador", "token_jti"]
+        read_only_fields = fields
+
+
+class CambiarRolSerializer(serializers.Serializer):
+    rol = serializers.ChoiceField(choices=ROLES)
+
+
+# ==========================================================
+# CRM
+# ==========================================================
+
+class OportunidadSerializer(serializers.ModelSerializer):
+    cliente_nombre = serializers.CharField(source="cliente.nombre", read_only=True)
+    responsable_nombre = serializers.CharField(
+        source="responsable.nombre_completo", read_only=True, default=None
+    )
+    etapa_nombre = serializers.CharField(source="get_etapa_display", read_only=True)
+    probabilidad = serializers.IntegerField(read_only=True)
+    valor_ponderado = serializers.DecimalField(max_digits=14, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = Oportunidad
+        fields = [
+            "id", "cliente", "cliente_nombre", "titulo", "etapa", "etapa_nombre",
+            "valor_estimado", "probabilidad", "valor_ponderado",
+            "responsable", "responsable_nombre", "fecha_cierre_estimada", "notas",
+            "creado", "actualizado",
+        ]
+        read_only_fields = ["creado", "actualizado"]
+
+
+class InteraccionSerializer(serializers.ModelSerializer):
+    cliente_nombre = serializers.CharField(source="cliente.nombre", read_only=True)
+    tipo_nombre = serializers.CharField(source="get_tipo_display", read_only=True)
+    registrado_por = serializers.CharField(source="registrado_por.username", read_only=True, default=None)
+
+    class Meta:
+        model = Interaccion
+        fields = [
+            "id", "cliente", "cliente_nombre", "oportunidad", "tipo", "tipo_nombre",
+            "fecha", "descripcion", "proxima_accion", "registrado_por",
+        ]
+
+    def validate(self, datos):
+        oportunidad = datos.get("oportunidad")
+        cliente = datos.get("cliente", getattr(self.instance, "cliente", None))
+        if oportunidad and cliente and oportunidad.cliente_id != cliente.pk:
+            raise serializers.ValidationError(
+                {"oportunidad": "La oportunidad pertenece a otro cliente."}
+            )
+        return datos
+
+
+# ==========================================================
+# TIENDA Y PAGOS
+# ==========================================================
+
+class ItemPedidoSerializer(serializers.ModelSerializer):
+    producto_nombre = serializers.CharField(source="producto.nombre", read_only=True)
+    subtotal = serializers.DecimalField(max_digits=14, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = ItemPedido
+        fields = ["id", "producto", "producto_nombre", "cantidad", "precio_unitario", "subtotal"]
+        read_only_fields = ["precio_unitario"]
+
+
+class PedidoSerializer(serializers.ModelSerializer):
+    cliente_nombre = serializers.CharField(source="cliente.nombre", read_only=True)
+    estado_nombre = serializers.CharField(source="get_estado_display", read_only=True)
+    items = ItemPedidoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Pedido
+        fields = [
+            "id", "cliente", "cliente_nombre", "estado", "estado_nombre", "total",
+            "metodo_pago", "venta", "creado", "pagado_en", "items",
+        ]
+        read_only_fields = fields
+
+
+class LineaCarritoSerializer(serializers.Serializer):
+    producto = serializers.PrimaryKeyRelatedField(queryset=Producto.objects.all())
+    cantidad = serializers.IntegerField(min_value=1, max_value=10000)
+
+
+class CrearPedidoSerializer(serializers.Serializer):
+    cliente = serializers.PrimaryKeyRelatedField(queryset=Cliente.objects.all())
+    items = LineaCarritoSerializer(many=True, allow_empty=False)
+
+
+# ==========================================================
+# NORMATIVA Y MEJORA CONTINUA
+# ==========================================================
+
+class RequisitoNormativoSerializer(serializers.ModelSerializer):
+    autoridad_nombre = serializers.CharField(source="get_autoridad_display", read_only=True)
+    categoria_nombre = serializers.CharField(source="get_categoria_display", read_only=True)
+    estado_nombre = serializers.CharField(source="get_estado_display", read_only=True)
+    responsable_nombre = serializers.CharField(
+        source="responsable.nombre_completo", read_only=True, default=None
+    )
+    dias_para_vencer = serializers.IntegerField(read_only=True)
+    alerta = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = RequisitoNormativo
+        fields = [
+            "id", "autoridad", "autoridad_nombre", "categoria", "categoria_nombre",
+            "nombre", "norma", "descripcion", "periodicidad", "fecha_vencimiento",
+            "estado", "estado_nombre", "responsable", "responsable_nombre",
+            "evidencia", "dias_para_vencer", "alerta", "actualizado",
+        ]
+        read_only_fields = ["actualizado"]
+
+
+class AccionMejoraSerializer(serializers.ModelSerializer):
+    origen_nombre = serializers.CharField(source="get_origen_display", read_only=True)
+    responsable_nombre = serializers.CharField(
+        source="responsable.nombre_completo", read_only=True, default=None
+    )
+    creado_por = serializers.CharField(source="creado_por.username", read_only=True, default=None)
+
+    class Meta:
+        model = AccionMejora
+        fields = [
+            "id", "titulo", "origen", "origen_nombre", "tipo", "descripcion",
+            "causa_raiz", "plan_accion", "fase", "responsable", "responsable_nombre",
+            "fecha_compromiso", "resultado", "creado_por", "creado", "actualizado",
+        ]
+        read_only_fields = ["creado", "actualizado"]
+
+    def validate(self, datos):
+        # No se cierra una accion sin verificar que funciono: es el paso que
+        # convierte una lista de tareas en mejora continua de verdad.
+        fase = datos.get("fase", getattr(self.instance, "fase", "Planear"))
+        resultado = datos.get("resultado", getattr(self.instance, "resultado", ""))
+        if fase == "Cerrada" and not (resultado or "").strip():
+            raise serializers.ValidationError(
+                {"resultado": "Para cerrar la acción registre la verificación de su eficacia."}
+            )
+        return datos

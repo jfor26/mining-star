@@ -68,6 +68,9 @@ INSTALLED_APPS = [
 
     # Terceros: API REST
     "rest_framework",
+    # Lista negra de tokens: al cerrar sesion el token de refresco queda
+    # invalidado en el servidor y no puede reutilizarse.
+    "rest_framework_simplejwt.token_blacklist",
     "django_filters",
     "drf_spectacular",
 
@@ -100,11 +103,24 @@ REST_FRAMEWORK = {
 
 # Vida util de los tokens. Corta para el de acceso porque viaja en cada
 # peticion; larga para el de refresco, que solo viaja al renovar.
+# El token de acceso se emite cada vez que un empleado entra al aplicativo.
+# Rotacion: cada renovacion entrega un token de refresco nuevo y el anterior
+# pasa a la lista negra, de modo que un token robado deja de servir pronto.
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=int(os.getenv("JWT_ACCESS_MINUTOS", "30"))),
+    "REFRESH_TOKEN_LIFETIME": timedelta(hours=int(os.getenv("JWT_REFRESH_HORAS", "8"))),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+    "UPDATE_LAST_LOGIN": True,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+# Bloqueo por fuerza bruta: tras INTENTOS_MAXIMOS fallidos seguidos para un
+# mismo usuario (o desde una misma IP) dentro de la ventana, se rechaza el
+# ingreso hasta que pase la ventana.
+LOGIN_INTENTOS_MAXIMOS = int(os.getenv("LOGIN_INTENTOS_MAXIMOS", "5"))
+LOGIN_INTENTOS_MAXIMOS_POR_IP = int(os.getenv("LOGIN_INTENTOS_MAXIMOS_POR_IP", "20"))
+LOGIN_VENTANA_MINUTOS = int(os.getenv("LOGIN_VENTANA_MINUTOS", "15"))
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "API REST de Mining Star",
@@ -115,7 +131,9 @@ SPECTACULAR_SETTINGS = {
     ),
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
     "COMPONENT_SPLIT_REQUEST": True,
+    "ENUM_NAME_OVERRIDES": {"CargoEnum": "core.models.Empleado.CARGOS"},
 }
 
 MIDDLEWARE = [
@@ -205,6 +223,33 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+
+# ==========================================================
+# PASARELA DE PAGOS (STRIPE)
+# ==========================================================
+# Sin STRIPE_SECRET_KEY el carrito funciona en modo "simulado" (ver
+# core/pagos.py). Para pagos de prueba reales use llaves sk_test_...
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY", "").strip()
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "").strip()
+STRIPE_MONEDA = os.getenv("STRIPE_MONEDA", "cop").strip().lower()
+# Direccion del front-end a la que Stripe devuelve al cliente.
+FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5173").rstrip("/")
+
+
+# ==========================================================
+# RESPALDOS
+# ==========================================================
+RESPALDOS_DIR = Path(os.getenv("RESPALDOS_DIR", BASE_DIR / "respaldos"))
+
+
+# ==========================================================
+# CABECERAS DE SEGURIDAD (tambien en desarrollo)
+# ==========================================================
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_REFERRER_POLICY = "same-origin"
+X_FRAME_OPTIONS = "DENY"
+SESSION_COOKIE_HTTPONLY = True
 
 
 # ==========================================================

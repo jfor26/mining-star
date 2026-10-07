@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from ..exportadores import Columna, exportar_excel, exportar_pdf
 from ..forms import ProveedorForm
 from ..models import Proveedor
-from ._comunes import es_ajax, respuesta_error, respuesta_ok
+from ._comunes import es_ajax, requiere_modulo, respuesta_error, respuesta_ok
 
 COLUMNAS = [
     Columna("NIT", lambda p: p.nit, 80),
@@ -22,6 +22,7 @@ COLUMNAS = [
 
 
 @login_required
+@requiere_modulo("proveedores")
 def proveedores(request):
     if request.method == "POST":
         formulario = ProveedorForm(request.POST)
@@ -47,6 +48,7 @@ def proveedores(request):
 
 
 @login_required
+@requiere_modulo("proveedores", "editar")
 def editar_proveedor(request, id):
     proveedor = get_object_or_404(Proveedor, pk=id)
 
@@ -67,6 +69,7 @@ def editar_proveedor(request, id):
 
 
 @login_required
+@requiere_modulo("proveedores", "eliminar")
 @require_POST
 def eliminar_proveedor(request, id):
     proveedor = get_object_or_404(Proveedor, pk=id)
@@ -82,6 +85,7 @@ def eliminar_proveedor(request, id):
 
 
 @login_required
+@requiere_modulo("proveedores", "ver")
 def exportar_proveedores_excel(request):
     return exportar_excel(
         Proveedor.objects.all(), COLUMNAS, "Proveedores", "Proveedores"
@@ -89,6 +93,7 @@ def exportar_proveedores_excel(request):
 
 
 @login_required
+@requiere_modulo("proveedores", "ver")
 def exportar_proveedores_pdf(request):
     return exportar_pdf(
         Proveedor.objects.all(), COLUMNAS, "Listado de Proveedores", "Proveedores"

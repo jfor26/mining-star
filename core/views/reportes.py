@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from ..models import Cliente, Empleado, Producto, Proveedor, RegistroProduccion, Venta
+from ._comunes import requiere_modulo
 
 REPORTES = [
     # (titulo, icono, modelo, url Excel, url PDF, url de la pantalla)
@@ -20,6 +21,7 @@ REPORTES = [
 
 
 @login_required
+@requiere_modulo("panel")
 def reportes(request):
     tarjetas = [
         {"titulo": t, "icono": i, "total": m.objects.count(), "excel": x, "pdf": p, "pantalla": v}

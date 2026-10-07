@@ -16,6 +16,7 @@ from django.views.decorators.http import require_POST
 from ..forms import ProduccionForm
 from ..models import RegistroProduccion
 from ..servicios import reporte_diario, stock_materia_prima
+from ._comunes import requiere_modulo
 
 
 def _fecha_consultada(request):
@@ -27,6 +28,7 @@ def _fecha_consultada(request):
 
 
 @login_required
+@requiere_modulo("produccion")
 def produccion(request):
     if request.method == "POST":
         formulario = ProduccionForm(request.POST)
@@ -57,6 +59,7 @@ def produccion(request):
 
 
 @login_required
+@requiere_modulo("produccion", "eliminar")
 @require_POST
 def eliminar_produccion(request, id):
     registro = get_object_or_404(RegistroProduccion, pk=id)

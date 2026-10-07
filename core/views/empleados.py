@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST
 from ..exportadores import Columna, exportar_excel, exportar_pdf
 from ..forms import EmpleadoForm
 from ..models import Empleado
-from ._comunes import es_ajax, respuesta_error, respuesta_ok
+from ._comunes import es_ajax, requiere_modulo, respuesta_error, respuesta_ok
 
 COLUMNAS = [
     Columna("Documento", lambda e: e.documento, 75),
@@ -26,6 +26,7 @@ COLUMNAS = [
 
 
 @login_required
+@requiere_modulo("empleados")
 def empleados(request):
     if request.method == "POST":
         formulario = EmpleadoForm(request.POST)
@@ -60,6 +61,7 @@ def empleados(request):
 
 
 @login_required
+@requiere_modulo("empleados", "editar")
 def editar_empleado(request, id):
     empleado = get_object_or_404(Empleado, pk=id)
 
@@ -80,6 +82,7 @@ def editar_empleado(request, id):
 
 
 @login_required
+@requiere_modulo("empleados", "eliminar")
 @require_POST
 def eliminar_empleado(request, id):
     empleado = get_object_or_404(Empleado, pk=id)
@@ -95,11 +98,13 @@ def eliminar_empleado(request, id):
 
 
 @login_required
+@requiere_modulo("empleados", "ver")
 def exportar_empleados_excel(request):
     return exportar_excel(Empleado.objects.all(), COLUMNAS, "Empleados", "Empleados")
 
 
 @login_required
+@requiere_modulo("empleados", "ver")
 def exportar_empleados_pdf(request):
     return exportar_pdf(
         Empleado.objects.all(), COLUMNAS, "Listado de Empleados", "Empleados"

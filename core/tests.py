@@ -11,7 +11,7 @@ Ejecutar con:  python manage.py test
 from datetime import timedelta
 from decimal import Decimal
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -34,6 +34,9 @@ class BaseConSesion(TestCase):
         self.usuario = User.objects.create_user(
             username="operario", password="clave-de-prueba-123"
         )
+        # Las pruebas de los modulos se hacen con un cargo que tiene acceso
+        # total; las restricciones por cargo se prueban en tests_seguridad.py.
+        self.usuario.groups.add(Group.objects.get(name="Administrador"))
         self.cliente = Cliente.objects.create(
             documento="1085123456",
             nombre="Constructora Nariño",

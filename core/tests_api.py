@@ -12,7 +12,7 @@ rechazar. Una API que devuelve 200 siempre es facil de escribir y no sirve.
 from datetime import timedelta
 from decimal import Decimal
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group, User
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
@@ -28,6 +28,9 @@ class BaseAPI(APITestCase):
         self.usuario = User.objects.create_user(
             username="operario", email="operario@miningstar.co", password="Marmol2026*"
         )
+        # Las pruebas de los modulos se hacen con un cargo que tiene acceso
+        # total; las restricciones por cargo se prueban en tests_seguridad.py.
+        self.usuario.groups.add(Group.objects.get(name="Administrador"))
         respuesta = self.client.post(
             reverse("api-login"),
             {"username": "operario", "password": "Marmol2026*"},
@@ -58,28 +61,43 @@ class BaseAPI(APITestCase):
 # ==========================================================
 
 class PruebasDeRegistro(APITestCase):
+    """El registro de usuarios lo hace un Administrador: ya no es publico."""
+
+    def setUp(self):
+        admin = User.objects.create_user(username="admin.prueba", password="Calizas2026*Admin")
+        admin.groups.add(Group.objects.get(name="Administrador"))
+        self.client.force_authenticate(admin)
+
+    def test_registro_anonimo_es_rechazado(self):
+        self.client.force_authenticate(None)
+        respuesta = self.client.post(reverse("api-registro"), {
+            "username": "intruso", "email": "intruso@miningstar.co",
+            "password": "Calizas2026*", "password2": "Calizas2026*", "rol": "Administrador",
+        }, format="json")
+        self.assertEqual(respuesta.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertFalse(User.objects.filter(username="intruso").exists())
 
     def test_registro_valido_crea_el_usuario_y_devuelve_token(self):
         respuesta = self.client.post(reverse("api-registro"), {
             "username": "nuevo.usuario", "email": "nuevo@miningstar.co",
-            "password": "Calizas2026*", "password2": "Calizas2026*",
+            "password": "Calizas2026*", "password2": "Calizas2026*", "rol": "Comercial",
         }, format="json")
         self.assertEqual(respuesta.status_code, status.HTTP_201_CREATED)
         self.assertEqual(respuesta.data["mensaje"], "Registro satisfactorio.")
-        self.assertIn("access", respuesta.data)
+        self.assertEqual(respuesta.data["usuario"]["rol"], "Comercial")
         self.assertTrue(User.objects.filter(username="nuevo.usuario").exists())
 
     def test_la_contrasena_nunca_viaja_en_la_respuesta(self):
         respuesta = self.client.post(reverse("api-registro"), {
             "username": "otro.usuario", "email": "otro@miningstar.co",
-            "password": "Calizas2026*", "password2": "Calizas2026*",
+            "password": "Calizas2026*", "password2": "Calizas2026*", "rol": "Operario",
         }, format="json")
         self.assertNotIn("password", str(respuesta.data))
 
     def test_contrasenas_distintas_son_rechazadas(self):
         respuesta = self.client.post(reverse("api-registro"), {
             "username": "fallido", "email": "fallido@miningstar.co",
-            "password": "Calizas2026*", "password2": "Otra2026*",
+            "password": "Calizas2026*", "password2": "Otra2026*", "rol": "Operario",
         }, format="json")
         self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("password2", respuesta.data["errores"])
@@ -87,7 +105,7 @@ class PruebasDeRegistro(APITestCase):
     def test_contrasena_debil_es_rechazada(self):
         respuesta = self.client.post(reverse("api-registro"), {
             "username": "debil", "email": "debil@miningstar.co",
-            "password": "12345678", "password2": "12345678",
+            "password": "12345678", "password2": "12345678", "rol": "Operario",
         }, format="json")
         self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -95,7 +113,7 @@ class PruebasDeRegistro(APITestCase):
         User.objects.create_user(username="repetido", email="r@miningstar.co", password="Calizas2026*")
         respuesta = self.client.post(reverse("api-registro"), {
             "username": "repetido", "email": "distinto@miningstar.co",
-            "password": "Calizas2026*", "password2": "Calizas2026*",
+            "password": "Calizas2026*", "password2": "Calizas2026*", "rol": "Operario",
         }, format="json")
         self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("username", respuesta.data["errores"])

@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from ..exportadores import Columna, exportar_excel, exportar_pdf
 from ..forms import ProductoForm
 from ..models import Producto
-from ._comunes import es_ajax, respuesta_error, respuesta_ok
+from ._comunes import es_ajax, requiere_modulo, respuesta_error, respuesta_ok
 
 COLUMNAS = [
     Columna("Código", lambda p: p.codigo, 70),
@@ -29,6 +29,7 @@ def _consulta_base():
 
 
 @login_required
+@requiere_modulo("productos")
 def productos(request):
     lista = _consulta_base()
     return render(request, "productos/productos.html", {
@@ -39,6 +40,7 @@ def productos(request):
 
 
 @login_required
+@requiere_modulo("productos")
 def nuevo_producto(request):
     if request.method == "POST":
         formulario = ProductoForm(request.POST)
@@ -62,6 +64,7 @@ def nuevo_producto(request):
 
 
 @login_required
+@requiere_modulo("productos", "editar")
 def editar_producto(request, id):
     producto = get_object_or_404(_consulta_base(), pk=id)
 
@@ -83,6 +86,7 @@ def editar_producto(request, id):
 
 
 @login_required
+@requiere_modulo("productos", "eliminar")
 @require_POST
 def eliminar_producto(request, id):
     producto = get_object_or_404(Producto, pk=id)
@@ -98,11 +102,13 @@ def eliminar_producto(request, id):
 
 
 @login_required
+@requiere_modulo("productos", "ver")
 def exportar_productos_excel(request):
     return exportar_excel(_consulta_base(), COLUMNAS, "Productos", "Productos")
 
 
 @login_required
+@requiere_modulo("productos", "ver")
 def exportar_productos_pdf(request):
     return exportar_pdf(
         _consulta_base(), COLUMNAS, "Listado de Productos", "Productos"

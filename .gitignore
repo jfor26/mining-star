@@ -62,3 +62,6 @@ catalogo_mining_star.xlsx
 
 # Salidas generadas por asistentes
 Claude outputs/
+
+# Copias de seguridad de la base de datos (contienen datos personales)
+respaldos/

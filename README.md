@@ -1,9 +1,17 @@
 # Mining Star ERP
 
-Sistema de gestión para operación minera: clientes, proveedores, productos,
-empleados y ventas, con exportación de reportes a Excel y PDF.
+Sistema de gestión de **Mining Star Services and Products** (Ortega Espinosa y
+Cía. S.A.S.), cantera de mármol y caliza en Payandé, San Luis (Tolima).
+Producto mínimo viable del Tecnólogo en Análisis y Desarrollo de Software — SENA.
 
-Construido con **Django 6.0** y **SQLite**.
+Módulos: producción de la mina, inventario, clientes, ventas, **CRM**, **tienda con
+carrito y pagos Stripe**, **repositorio normativo minero y ambiental**, **mejora
+continua (PHVA)**, **dashboard con gráficas**, **seguridad por cargo con token de
+acceso** y **respaldos**.
+
+Construido con **Django 6 + Django REST Framework** (API) y **React 19 + Vite** (interfaz).
+
+📘 **Documentación completa en [`docs/`](docs/README.md)** · 🎤 **[Guía de presentación](docs/00-guia-presentacion.md)**
 
 ---
 
@@ -51,6 +59,17 @@ y el panel de administración en <http://127.0.0.1:8000/admin/>
 
 ---
 
+## Datos de demostración y front-end
+
+```bash
+python manage.py cargar_demo --clave "Demo*Mina2026"   # 7 usuarios, uno por cargo
+cd frontend && npm install && npm run dev               # http://localhost:5173
+```
+
+En Windows también: `scripts\preparar_demo.bat`, `scripts\iniciar_backend.bat` y `scripts\iniciar_frontend.bat`.
+
+---
+
 ## Variables de entorno
 
 Se definen en `.env`, que **no se sube a Git**. Ver `.env.example`.
@@ -60,6 +79,10 @@ Se definen en `.env`, que **no se sube a Git**. Ver `.env.example`.
 | `DJANGO_SECRET_KEY` | Clave criptográfica de firmas y sesiones. Única por instalación. |
 | `DJANGO_DEBUG` | `True` en desarrollo, `False` siempre en producción. |
 | `DJANGO_ALLOWED_HOSTS` | Dominios autorizados, separados por coma. |
+| `JWT_ACCESS_MINUTOS` / `JWT_REFRESH_HORAS` | Vida de los tokens de acceso (30 min) y refresco (8 h). |
+| `LOGIN_INTENTOS_MAXIMOS` | Intentos fallidos antes del bloqueo (5). |
+| `STRIPE_SECRET_KEY` | Llave de prueba `sk_test_…`. Vacía = pago simulado. |
+| `STRIPE_WEBHOOK_SECRET` | Firma del webhook de Stripe (opcional). |
 
 ---
 
@@ -75,7 +98,7 @@ Mining Star/
 │   ├── forms.py            Validación de todos los datos de entrada
 │   ├── admin.py            Los 6 modelos registrados en /admin/
 │   ├── exportadores.py     Generadores de Excel y PDF reutilizables
-│   ├── tests.py            18 pruebas automatizadas
+│   ├── tests*.py           112 pruebas automatizadas
 │   └── views/              Un módulo por dominio
 │       ├── autenticacion.py
 │       ├── panel.py
@@ -95,7 +118,8 @@ Mining Star/
 ## Comandos útiles
 
 ```bash
-python manage.py test                  # Ejecutar las 18 pruebas
+python manage.py test core             # Ejecutar las 112 pruebas del backend
+python manage.py respaldar_bd          # Copia de seguridad de la base de datos
 python manage.py check                 # Revisión de configuración
 python manage.py check --deploy        # Revisión previa a producción
 python manage.py makemigrations        # Generar migraciones tras cambiar modelos

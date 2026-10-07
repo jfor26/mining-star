@@ -23,3 +23,6 @@ reportlab==4.2.5         # Archivos PDF
 
 # Configuracion por variables de entorno
 python-dotenv==1.0.1
+
+# Pasarela de pagos (carrito de compras)
+stripe==16.0.0

@@ -147,3 +147,88 @@ def reporte_diario(fecha):
     totales = registros.values("material", "unidad").annotate(total=Sum("cantidad")).order_by("material")
     nombres = dict(RegistroProduccion.MATERIALES)
     return registros, [{**t, "material_nombre": nombres[t["material"]]} for t in totales]
+
+
+# ==========================================================
+# TIENDA: PEDIDOS Y CONFIRMACION DE PAGO
+# ==========================================================
+
+class PedidoInvalido(Exception):
+    """El carrito trae datos que no se pueden convertir en pedido."""
+
+
+@transaction.atomic
+def crear_pedido(cliente, items, usuario=None):
+    """Crea un pedido pendiente de pago a partir del carrito.
+
+    items: lista de tuplas (producto, cantidad). Si el mismo producto viene
+    dos veces se suman las cantidades. Se valida el stock para dar un
+    mensaje claro, pero NO se descuenta: eso ocurre al confirmar el pago.
+    """
+    from .models import ItemPedido, Pedido
+
+    if not items:
+        raise PedidoInvalido("El carrito está vacío.")
+
+    agrupado = {}
+    for producto, cantidad in items:
+        if cantidad < 1:
+            raise PedidoInvalido("Las cantidades deben ser mayores que cero.")
+        agrupado[producto.pk] = (producto, agrupado.get(producto.pk, (producto, 0))[1] + cantidad)
+
+    for producto, cantidad in agrupado.values():
+        if cantidad > producto.stock:
+            raise PedidoInvalido(f"Solo hay {producto.stock} unidades de {producto.nombre}.")
+
+    pedido = Pedido.objects.create(cliente=cliente, creado_por=usuario)
+    total = Decimal("0")
+    for producto, cantidad in agrupado.values():
+        ItemPedido.objects.create(
+            pedido=pedido, producto=producto, cantidad=cantidad,
+            precio_unitario=producto.precio_venta,
+        )
+        total += producto.precio_venta * cantidad
+    pedido.total = total
+    pedido.save(update_fields=["total"])
+    return pedido
+
+
+@transaction.atomic
+def confirmar_pago(pedido, metodo, referencia=""):
+    """Marca el pedido como pagado y lo convierte en una venta.
+
+    Es idempotente: Stripe puede avisar el mismo pago dos veces (webhook y
+    redireccion del navegador) y el inventario solo debe descontarse una.
+    Se bloquea la fila del pedido (select_for_update) para que dos avisos
+    simultaneos no lo procesen a la vez.
+    """
+    from django.utils import timezone
+
+    from .models import Pedido
+
+    pedido = Pedido.objects.select_for_update().get(pk=pedido.pk)
+    if pedido.estado == "Pagado":
+        return pedido
+    if pedido.estado == "Cancelado":
+        raise PedidoInvalido("El pedido fue cancelado y no puede pagarse.")
+
+    venta = Venta.objects.create(cliente=pedido.cliente, total=0)
+    for item in pedido.items.select_related("producto"):
+        DetalleVenta.objects.create(
+            venta=venta, producto=item.producto, cantidad=item.cantidad,
+            precio_unitario=item.precio_unitario, subtotal=0,
+        )
+        filas = Producto.objects.filter(
+            pk=item.producto_id, stock__gte=item.cantidad
+        ).update(stock=F("stock") - item.cantidad)
+        if filas == 0:
+            raise StockInsuficiente(item.producto.nombre)
+    venta.recalcular_total()
+
+    pedido.estado = "Pagado"
+    pedido.metodo_pago = metodo
+    pedido.referencia_pago = referencia or pedido.referencia_pago
+    pedido.venta = venta
+    pedido.pagado_en = timezone.now()
+    pedido.save()
+    return pedido

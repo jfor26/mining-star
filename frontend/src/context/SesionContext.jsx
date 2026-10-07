@@ -3,6 +3,10 @@
  *
  * Un contexto evita pasar el usuario por props de componente en componente:
  * cualquier pantalla lo obtiene con useSesion().
+ *
+ * puede(modulo, operacion) consulta la matriz de permisos del cargo que
+ * envia el servidor al iniciar sesion. Sirve para OCULTAR menus y botones;
+ * la proteccion real esta en la API, que responde 403 de todas formas.
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 
@@ -19,18 +23,23 @@ export function ProveedorSesion({ children }) {
     return datos
   }, [])
 
-  const cerrarSesion = useCallback(() => {
-    sesion.cerrar()
+  const cerrarSesion = useCallback(async () => {
+    await sesion.cerrar()
     setUsuario(null)
   }, [])
+
+  const puede = useCallback(
+    (modulo, operacion = 'ver') => Boolean(usuario?.permisos?.[modulo]?.includes(operacion)),
+    [usuario],
+  )
 
   // Si el token de refresco tambien vencio, el cliente HTTP avisa y aqui se
   // cierra la sesion; la ruta protegida redirige entonces al inicio de sesion.
   useEffect(() => { cuandoExpireLaSesion(() => setUsuario(null)) }, [])
 
   const valor = useMemo(
-    () => ({ usuario, iniciarSesion, cerrarSesion }),
-    [usuario, iniciarSesion, cerrarSesion],
+    () => ({ usuario, iniciarSesion, cerrarSesion, puede }),
+    [usuario, iniciarSesion, cerrarSesion, puede],
   )
   return <SesionContext.Provider value={valor}>{children}</SesionContext.Provider>
 }

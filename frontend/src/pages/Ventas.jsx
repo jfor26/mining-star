@@ -12,6 +12,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { obtenerTodos, peticion } from '../api/cliente.js'
 import { Aviso, Campo, Cargando, Encabezado, Tabla, erroresDeLaAPI } from '../components/Comunes.jsx'
+import { useSesion } from '../context/SesionContext.jsx'
 import { fecha, moneda } from '../utils/formato.js'
 import { enteroEntre, requerido, validar } from '../utils/validaciones.js'
 
@@ -28,6 +29,7 @@ async function obtenerDatos() {
 }
 
 export default function Ventas() {
+  const { puede } = useSesion()
   const [clientes, setClientes] = useState([])
   const [productos, setProductos] = useState([])
   const [ventas, setVentas] = useState(null)
@@ -102,8 +104,8 @@ export default function Ventas() {
     { clave: 'estado', titulo: 'Estado', celda: (v) => <span className={`etiqueta ${v.estado === 'Anulada' ? 'alerta' : 'normal'}`}>{v.estado}</span> },
     {
       clave: 'acciones', titulo: '',
-      celda: (v) => v.estado !== 'Anulada' && (
-        <button type="button" className="boton pequeno" onClick={() => anular(v.id)}>Anular</button>
+      celda: (v) => v.estado !== 'Anulada' && puede('ventas', 'editar') && (
+        <button type="button" className="boton peligro pequeno" onClick={() => anular(v.id)}>Anular</button>
       ),
     },
   ]
@@ -112,31 +114,33 @@ export default function Ventas() {
     <>
       <Encabezado titulo="Ventas" descripcion="Registre ventas descontando el inventario y consulte el historial." />
       <Aviso tipo={aviso.tipo} alCerrar={() => setAviso({ tipo: '', texto: '' })}>{aviso.texto}</Aviso>
-      <div className="dos-columnas">
-        <section className="tarjeta">
-          <h2>Nueva venta</h2>
-          <form onSubmit={registrar} noValidate>
-            <Campo como="select" etiqueta="Cliente" nombre="cliente" value={datos.cliente} onChange={cambiar} error={errores.cliente}>
-              <option value="">Seleccione un cliente</option>
-              {clientes.map((c) => <option key={c.id} value={c.id}>{c.nombre} — {c.empresa}</option>)}
-            </Campo>
-            <Campo como="select" etiqueta="Producto" nombre="producto" value={datos.producto} onChange={cambiar} error={errores.producto}>
-              <option value="">Seleccione un producto</option>
-              {productos.map((p) => (
-                <option key={p.id} value={p.id} disabled={p.stock === 0}>
-                  {p.nombre} ({p.stock} disponibles)
-                </option>
-              ))}
-            </Campo>
-            <Campo etiqueta="Cantidad" nombre="cantidad" type="number" min="1" max={producto?.stock}
-              value={datos.cantidad} onChange={cambiar} error={errores.cantidad} />
-            <dl className="resumen-venta">
-              <dt>Precio unitario</dt><dd>{moneda(producto?.precio_venta)}</dd>
-              <dt>Total</dt><dd><strong>{moneda(total)}</strong></dd>
-            </dl>
-            <button type="submit" className="boton primario">Registrar venta</button>
-          </form>
-        </section>
+      <div className={puede('ventas', 'crear') ? 'dos-columnas' : 'una-columna'}>
+        {puede('ventas', 'crear') && (
+          <section className="tarjeta">
+            <h2>Nueva venta</h2>
+            <form onSubmit={registrar} noValidate>
+              <Campo como="select" etiqueta="Cliente" nombre="cliente" value={datos.cliente} onChange={cambiar} error={errores.cliente}>
+                <option value="">Seleccione un cliente</option>
+                {clientes.map((c) => <option key={c.id} value={c.id}>{c.nombre} — {c.empresa}</option>)}
+              </Campo>
+              <Campo como="select" etiqueta="Producto" nombre="producto" value={datos.producto} onChange={cambiar} error={errores.producto}>
+                <option value="">Seleccione un producto</option>
+                {productos.map((p) => (
+                  <option key={p.id} value={p.id} disabled={p.stock === 0}>
+                    {p.nombre} ({p.stock} disponibles)
+                  </option>
+                ))}
+              </Campo>
+              <Campo etiqueta="Cantidad" nombre="cantidad" type="number" min="1" max={producto?.stock}
+                value={datos.cantidad} onChange={cambiar} error={errores.cantidad} />
+              <dl className="resumen-venta">
+                <dt>Precio unitario</dt><dd>{moneda(producto?.precio_venta)}</dd>
+                <dt>Total</dt><dd><strong>{moneda(total)}</strong></dd>
+              </dl>
+              <button type="submit" className="boton primario">Registrar venta</button>
+            </form>
+          </section>
+        )}
         <section className="tarjeta">
           <h2>Historial</h2>
           {ventas ? <Tabla columnas={columnas} filas={ventas} vacio="Aún no hay ventas." /> : <Cargando />}

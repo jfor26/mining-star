@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { obtenerTodos, peticion } from '../api/cliente.js'
 import { Aviso, Campo, Cargando, Encabezado, Indicador, Tabla, erroresDeLaAPI } from '../components/Comunes.jsx'
+import { useSesion } from '../context/SesionContext.jsx'
 import { cantidad, fecha, hoyISO } from '../utils/formato.js'
 import { decimalEntre, fechaNoFutura, longitudMaxima, requerido, validar } from '../utils/validaciones.js'
 
@@ -40,6 +41,7 @@ async function obtenerDatos() {
 }
 
 export default function Produccion() {
+  const { puede } = useSesion()
   const [datos, setDatos] = useState(nuevo)
   const [errores, setErrores] = useState({})
   const [aviso, setAviso] = useState({ tipo: '', texto: '' })
@@ -55,11 +57,12 @@ export default function Produccion() {
     obtenerDatos()
       .then((d) => { if (vigente) aplicar(d) })
       .catch(() => { if (vigente) setAviso({ tipo: 'error', texto: 'No fue posible cargar la producción.' }) })
-    obtenerTodos('/empleados/?estado=Activo&ordering=nombres')
+    // El operario no tiene acceso a empleados: no se pide para evitar un 403.
+    if (puede('empleados')) obtenerTodos('/empleados/?estado=Activo&ordering=nombres')
       .then((lista) => { if (vigente) setSupervisores(lista) })
       .catch(() => {})
     return () => { vigente = false }
-  }, [aplicar])
+  }, [aplicar, puede])
 
   const cambiar = (e) => setDatos({ ...datos, [e.target.name]: e.target.value })
 
@@ -107,35 +110,37 @@ export default function Produccion() {
       </section>
 
       <Aviso tipo={aviso.tipo} alCerrar={() => setAviso({ tipo: '', texto: '' })}>{aviso.texto}</Aviso>
-      <div className="dos-columnas">
-        <section className="tarjeta">
-          <h2>Registrar producción del turno</h2>
-          <form onSubmit={guardar} noValidate>
-            <Campo etiqueta="Fecha" nombre="fecha" type="date" max={hoyISO()} value={datos.fecha} onChange={cambiar} error={errores.fecha} />
-            <Campo como="select" etiqueta="Turno" nombre="turno" value={datos.turno} onChange={cambiar} error={errores.turno}>
-              <option value="">Seleccione el turno</option>
-              {TURNOS.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
-            </Campo>
-            <Campo como="select" etiqueta="Material" nombre="material" value={datos.material} onChange={cambiar} error={errores.material}>
-              <option value="">Seleccione el material</option>
-              {MATERIALES.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
-            </Campo>
-            <div className="fila-campos">
-              <Campo etiqueta="Cantidad" nombre="cantidad" inputMode="decimal" placeholder="Ej. 35.50"
-                value={datos.cantidad} onChange={cambiar} error={errores.cantidad} />
-              <Campo como="select" etiqueta="Unidad" nombre="unidad" value={datos.unidad} onChange={cambiar} error={errores.unidad}>
-                {UNIDADES.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
+      <div className={puede('produccion', 'crear') ? 'dos-columnas' : 'una-columna'}>
+        {puede('produccion', 'crear') && (
+          <section className="tarjeta">
+            <h2>Registrar producción del turno</h2>
+            <form onSubmit={guardar} noValidate>
+              <Campo etiqueta="Fecha" nombre="fecha" type="date" max={hoyISO()} value={datos.fecha} onChange={cambiar} error={errores.fecha} />
+              <Campo como="select" etiqueta="Turno" nombre="turno" value={datos.turno} onChange={cambiar} error={errores.turno}>
+                <option value="">Seleccione el turno</option>
+                {TURNOS.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
               </Campo>
-            </div>
-            <Campo como="select" etiqueta="Supervisor" nombre="supervisor" value={datos.supervisor} onChange={cambiar} error={errores.supervisor}>
-              <option value="">Sin asignar</option>
-              {supervisores.map((s) => <option key={s.id} value={s.id}>{s.nombre_completo}</option>)}
-            </Campo>
-            <Campo como="textarea" etiqueta="Observaciones" nombre="observaciones" rows="2" maxLength={300}
-              value={datos.observaciones} onChange={cambiar} error={errores.observaciones} />
-            <button type="submit" className="boton primario">Guardar registro</button>
-          </form>
-        </section>
+              <Campo como="select" etiqueta="Material" nombre="material" value={datos.material} onChange={cambiar} error={errores.material}>
+                <option value="">Seleccione el material</option>
+                {MATERIALES.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
+              </Campo>
+              <div className="fila-campos">
+                <Campo etiqueta="Cantidad" nombre="cantidad" inputMode="decimal" placeholder="Ej. 35.50"
+                  value={datos.cantidad} onChange={cambiar} error={errores.cantidad} />
+                <Campo como="select" etiqueta="Unidad" nombre="unidad" value={datos.unidad} onChange={cambiar} error={errores.unidad}>
+                  {UNIDADES.map(([v, t]) => <option key={v} value={v}>{t}</option>)}
+                </Campo>
+              </div>
+              <Campo como="select" etiqueta="Supervisor" nombre="supervisor" value={datos.supervisor} onChange={cambiar} error={errores.supervisor}>
+                <option value="">Sin asignar</option>
+                {supervisores.map((s) => <option key={s.id} value={s.id}>{s.nombre_completo}</option>)}
+              </Campo>
+              <Campo como="textarea" etiqueta="Observaciones" nombre="observaciones" rows="2" maxLength={300}
+                value={datos.observaciones} onChange={cambiar} error={errores.observaciones} />
+              <button type="submit" className="boton primario">Guardar registro</button>
+            </form>
+          </section>
+        )}
         <section className="tarjeta">
           <h2>Últimos registros</h2>
           <Tabla columnas={columnas} filas={registros} vacio="Todavía no hay producción registrada." />

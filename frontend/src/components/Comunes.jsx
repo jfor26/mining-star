@@ -111,3 +111,37 @@ export function erroresDeLaAPI(error) {
   }
   return salida
 }
+
+/** Mensaje para quien entra por URL a una pantalla que su cargo no puede ver. */
+export function SinPermiso({ modulo }) {
+  return (
+    <section className="tarjeta sin-permiso" role="alert">
+      <h2>Acceso restringido</h2>
+      <p>Su cargo no tiene permiso para el módulo <strong>{modulo}</strong>. Si lo necesita, solicítelo al Administrador.</p>
+    </section>
+  )
+}
+
+/** Etiqueta de estado. Lleva icono y texto: el color nunca va solo. */
+const ICONOS_ESTADO = { bien: '✓', aviso: '!', serio: '▲', critico: '✕', neutro: '•' }
+export function Estado({ tono = 'neutro', children }) {
+  return (
+    <span className={`estado ${tono}`}>
+      <span aria-hidden="true">{ICONOS_ESTADO[tono]}</span> {children}
+    </span>
+  )
+}
+
+/** Pestanas accesibles (role="tablist"). */
+export function Pestanas({ pestanas, activa, alCambiar }) {
+  return (
+    <div className="pestanas" role="tablist">
+      {pestanas.map(([clave, texto]) => (
+        <button key={clave} type="button" role="tab" aria-selected={activa === clave}
+          className={activa === clave ? 'activa' : undefined} onClick={() => alCambiar(clave)}>
+          {texto}
+        </button>
+      ))}
+    </div>
+  )
+}

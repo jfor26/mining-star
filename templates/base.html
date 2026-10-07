@@ -26,6 +26,15 @@
 
 {% block contenido %}{% endblock %}
 
+{# Sello institucional del proyecto formativo #}
+<a class="sello-sena" href="https://www.sena.edu.co" target="_blank" rel="noopener"
+   style="position:fixed;right:14px;bottom:14px;display:flex;gap:8px;align-items:center;background:#fff;
+          border:1px solid #dfe5ef;border-radius:10px;padding:6px 10px;font:12px 'Segoe UI',Arial,sans-serif;
+          color:#334155;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.08);z-index:50">
+    <img src="{% static 'img/logo-sena.svg' %}" alt="SENA" width="26" height="26">
+    Proyecto formativo SENA · ADSO
+</a>
+
 {% block js %}{% endblock %}
 
 </body>

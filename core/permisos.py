@@ -32,7 +32,7 @@ MODULOS = {
     "empleados": "Empleados",
     "ventas": "Ventas",
     "pedidos": "Tienda, carrito y pagos",
-    "produccion": "Produccion de la mina",
+    "produccion": "Producción de la mina",
     "normativa": "Requisitos mineros y ambientales",
     "mejora": "Mejora continua (PHVA)",
     "seguridad": "Seguridad: usuarios, accesos y respaldos",

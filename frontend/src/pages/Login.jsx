@@ -44,18 +44,25 @@ export default function Login() {
 
   return (
     <div className="pantalla-login">
+      <div className="login-banner" aria-hidden="true">
+        <img src="/banner-login.jpg" alt="" />
+      </div>
       <form className="tarjeta-login" onSubmit={enviar} noValidate>
-        <img src="/logo.png" alt="Mining Star" width="96" height="96" />
-        <h1>Mining Star ERP</h1>
-        <p>Ingrese con su usuario y contraseña</p>
+        <img src="/logo.png" alt="Mining Star ERP" width="150" height="100" className="logo-login" />
+        <h1>Bienvenido</h1>
+        <p>Ingrese con el usuario que le asignó el Administrador. Cada ingreso genera un token de acceso personal.</p>
         <Aviso tipo="error">{mensaje}</Aviso>
         <Campo etiqueta="Usuario" nombre="username" value={datos.username}
           onChange={cambiar} error={errores.username} autoComplete="username" autoFocus />
         <Campo etiqueta="Contraseña" nombre="password" type="password" value={datos.password}
           onChange={cambiar} error={errores.password} autoComplete="current-password" />
-        <button type="submit" className="boton primario" disabled={enviando}>
+        <button type="submit" className="boton primario grande" disabled={enviando}>
           {enviando ? 'Verificando…' : 'Iniciar sesión'}
         </button>
+        <footer className="pie-login">
+          <img src="/logo-sena.svg" alt="SENA" width="34" height="34" />
+          <small>Proyecto formativo · Tecnólogo en Análisis y Desarrollo de Software · SENA</small>
+        </footer>
       </form>
     </div>
   )

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { peticion } from '../api/cliente.js'
 import { Aviso, Campo, Cargando, Encabezado, Tabla, erroresDeLaAPI } from '../components/Comunes.jsx'
+import { useSesion } from '../context/SesionContext.jsx'
 import {
   correo, longitudMaxima, requerido, soloDigitos, telefono, validar,
 } from '../utils/validaciones.js'
@@ -22,6 +23,7 @@ const REGLAS = {
 }
 
 export default function Clientes() {
+  const { puede } = useSesion()
   const [lista, setLista] = useState(null)
   const [busqueda, setBusqueda] = useState('')
   const [datos, setDatos] = useState(VACIO)
@@ -69,24 +71,26 @@ export default function Clientes() {
   return (
     <>
       <Encabezado titulo="Clientes" descripcion="Constructoras, marmolerías y personas que compran el material." />
-      <div className="dos-columnas">
-        <section className="tarjeta">
-          <h2>Registrar cliente</h2>
-          <Aviso tipo={aviso.tipo} alCerrar={() => setAviso({ tipo: '', texto: '' })}>{aviso.texto}</Aviso>
-          <form onSubmit={guardar} noValidate>
-            <Campo etiqueta="Documento" nombre="documento" value={datos.documento} onChange={cambiar}
-              error={errores.documento} inputMode="numeric" maxLength={20} />
-            <Campo etiqueta="Nombre" nombre="nombre" value={datos.nombre} onChange={cambiar}
-              error={errores.nombre} maxLength={150} />
-            <Campo etiqueta="Correo" nombre="correo" type="email" value={datos.correo} onChange={cambiar}
-              error={errores.correo} />
-            <Campo etiqueta="Teléfono" nombre="telefono" value={datos.telefono} onChange={cambiar}
-              error={errores.telefono} inputMode="tel" maxLength={15} />
-            <Campo etiqueta="Empresa" nombre="empresa" value={datos.empresa} onChange={cambiar}
-              error={errores.empresa} maxLength={150} />
-            <button type="submit" className="boton primario">Guardar cliente</button>
-          </form>
-        </section>
+      <div className={puede('clientes', 'crear') ? 'dos-columnas' : 'una-columna'}>
+        {puede('clientes', 'crear') && (
+          <section className="tarjeta">
+            <h2>Registrar cliente</h2>
+            <Aviso tipo={aviso.tipo} alCerrar={() => setAviso({ tipo: '', texto: '' })}>{aviso.texto}</Aviso>
+            <form onSubmit={guardar} noValidate>
+              <Campo etiqueta="Documento" nombre="documento" value={datos.documento} onChange={cambiar}
+                error={errores.documento} inputMode="numeric" maxLength={20} />
+              <Campo etiqueta="Nombre" nombre="nombre" value={datos.nombre} onChange={cambiar}
+                error={errores.nombre} maxLength={150} />
+              <Campo etiqueta="Correo" nombre="correo" type="email" value={datos.correo} onChange={cambiar}
+                error={errores.correo} />
+              <Campo etiqueta="Teléfono" nombre="telefono" value={datos.telefono} onChange={cambiar}
+                error={errores.telefono} inputMode="tel" maxLength={15} />
+              <Campo etiqueta="Empresa" nombre="empresa" value={datos.empresa} onChange={cambiar}
+                error={errores.empresa} maxLength={150} />
+              <button type="submit" className="boton primario">Guardar cliente</button>
+            </form>
+          </section>
+        )}
 
         <section className="tarjeta">
           <div className="barra-filtros">

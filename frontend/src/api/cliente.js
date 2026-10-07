@@ -48,8 +48,11 @@ async function renovarToken() {
     body: JSON.stringify({ refresh }),
   })
   if (!respuesta.ok) return false
-  const { access } = await respuesta.json()
+  // El servidor rota el token de refresco: cada renovacion entrega uno
+  // nuevo y el anterior queda invalidado en la lista negra.
+  const { access, refresh: nuevoRefresh } = await respuesta.json()
   almacen.guardar('access', access)
+  if (nuevoRefresh) almacen.guardar('refresh', nuevoRefresh)
   return true
 }
 
@@ -108,7 +111,23 @@ export const sesion = {
     almacen.guardar('usuario', JSON.stringify(datos.usuario))
     return datos
   },
-  cerrar: almacen.borrar,
+  /** Avisa al servidor para que invalide el token de refresco y borra todo. */
+  async cerrar() {
+    const refresh = almacen.leer('refresh')
+    try {
+      if (refresh) await peticion('/auth/logout/', { metodo: 'POST', datos: { refresh }, reintento: false })
+    } catch { /* aunque falle la red, la sesion local se cierra igual */ }
+    almacen.borrar()
+  },
+  /** Momento en que vence el token de acceso actual (lo lleva dentro, en "exp"). */
+  venceElToken() {
+    const token = almacen.leer('access')
+    if (!token) return null
+    try {
+      const carga = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+      return new Date(carga.exp * 1000)
+    } catch { return null }
+  },
   usuarioGuardado() {
     const texto = almacen.leer('usuario')
     return texto && almacen.leer('access') ? JSON.parse(texto) : null

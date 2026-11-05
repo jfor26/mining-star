@@ -1,5 +1,30 @@
 # Mining Star ERP
 
+> 🇺🇸 **English overview** · 🇨🇴 Documentación en español más abajo.
+
+## English overview
+
+**Mining Star ERP** is a full-stack management system for a marble and limestone quarry in Tolima, Colombia. It is the MVP of my Software Analysis and Development technology program (SENA), built with AI-assisted development (Claude).
+
+**Modules:** daily mine production, inventory, customers, sales, CRM, online store with cart and Stripe payments, mining and environmental regulations repository, continuous improvement (PDCA), dashboard with charts, role-based access control and database backups.
+
+| Layer | Technology |
+|---|---|
+| Backend | Python 3.12, Django 6, Django REST Framework, JWT authentication (SimpleJWT) |
+| API docs | OpenAPI 3 with drf-spectacular (Swagger at `/api/docs/`) |
+| Frontend | React 19, React Router 7, Recharts, Vite |
+| Data | SQLite (PostgreSQL-ready), Excel and PDF exports (openpyxl, ReportLab) |
+| Payments | Stripe Checkout with signed webhooks (simulated mode without keys) |
+| Quality | 112 backend tests (Django unittest) and 16 frontend tests (Vitest), Ruff and Oxlint |
+| Workflow | Git feature branches and pull requests |
+
+**Quick start:** `pip install -r requirements.txt` → `python manage.py migrate` → `python manage.py cargar_demo --clave "Demo*Mina2026"` → `python manage.py runserver`; then `cd frontend && npm install && npm run dev`.
+
+Screenshots: [`docs/capturas/`](docs/capturas/) · Full documentation (Spanish): [`docs/`](docs/README.md)
+
+---
+
+
 Sistema de gestión de **Mining Star Services and Products** (Ortega Espinosa y
 Cía. S.A.S.), cantera de mármol y caliza en Payandé, San Luis (Tolima).
 Producto mínimo viable del Tecnólogo en Análisis y Desarrollo de Software — SENA.

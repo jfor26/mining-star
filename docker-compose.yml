@@ -1,0 +1,24 @@
+# Base de datos PostgreSQL para desarrollo local.
+#   docker compose up -d      -> la crea y la deja corriendo
+#   docker compose down       -> la detiene (los datos se conservan en el volumen)
+# Usuario, clave y base coinciden con DATABASE_URL_LOCAL de config/settings.py.
+# Son credenciales SOLO para el equipo local; produccion usa las de Railway.
+services:
+  postgres:
+    image: postgres:16
+    container_name: miningstar-postgres
+    environment:
+      POSTGRES_USER: miningstar
+      POSTGRES_PASSWORD: miningstar
+      POSTGRES_DB: miningstar
+    ports:
+      - "5432:5432"
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U miningstar"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  datos_postgres:

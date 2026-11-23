@@ -8,6 +8,7 @@ fuerza bruta), porque eso es lo que falla en silencio si nadie lo prueba.
 Ejecutar solo estas pruebas:  python manage.py test core.tests_mvp
 """
 
+import json
 import shutil
 import tempfile
 from datetime import timedelta
@@ -18,6 +19,7 @@ from unittest import mock
 
 from django.contrib.auth.models import Group, User
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -381,17 +383,35 @@ class PruebasDeRespaldo(TestCase):
         self.addCleanup(parche.stop)
         self.addCleanup(shutil.rmtree, self.carpeta, ignore_errors=True)
 
-    def test_el_comando_crea_respaldo_sqlite_y_json(self):
-        call_command("respaldar_bd", stdout=StringIO())
-        archivos = list(self.carpeta.glob("*.sqlite3"))
+    def test_el_comando_crea_respaldo_json(self):
+        call_command("respaldar_bd", "--sin-pg-dump", stdout=StringIO())
+        archivos = list(self.carpeta.glob("*.json"))
         self.assertEqual(len(archivos), 1)
-        self.assertTrue(archivos[0].with_suffix(".json").exists())
+        datos = json.loads(archivos[0].read_text(encoding="utf-8"))
+        self.assertTrue(any(r["model"] == "auth.group" for r in datos))
 
     def test_solo_conserva_los_ultimos_respaldos(self):
         from .respaldos import crear_respaldo
         for _ in range(4):
-            crear_respaldo(conservar=2, con_json=False)
-        self.assertEqual(len(list(self.carpeta.glob("*.sqlite3"))), 2)
+            crear_respaldo(conservar=2, con_pg_dump=False)
+        self.assertEqual(len(list(self.carpeta.glob("*.json"))), 2)
+
+    def test_restaurar_devuelve_los_datos_del_respaldo(self):
+        from .respaldos import crear_respaldo
+        Cliente.objects.create(documento="555", nombre="Antes", correo="a@b.co",
+                               telefono="3000000000", empresa="X")
+        ruta = crear_respaldo(con_pg_dump=False)
+        Cliente.objects.create(documento="556", nombre="Despues", correo="c@d.co",
+                               telefono="3000000001", empresa="Y")
+        call_command("restaurar_bd", str(ruta), "--si", stdout=StringIO())
+        self.assertTrue(Cliente.objects.filter(documento="555").exists())
+        self.assertFalse(Cliente.objects.filter(documento="556").exists())
+
+    def test_restaurar_rechaza_un_archivo_danado(self):
+        malo = self.carpeta / "malo.json"
+        malo.write_text("{no es json", encoding="utf-8")
+        with self.assertRaises(CommandError):
+            call_command("restaurar_bd", str(malo), "--si", stdout=StringIO())
 
     def test_solo_seguridad_lista_respaldos_por_api(self):
         usuario = crear_usuario("op", "Operario")

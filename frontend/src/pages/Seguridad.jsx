@@ -164,7 +164,7 @@ function Respaldos() {
   return (
     <section className="tarjeta">
       <div className="barra-filtros">
-        <p className="descripcion">Copia consistente de SQLite + exportación JSON en la carpeta <code>respaldos/</code>. Se conservan los 10 más recientes.</p>
+        <p className="descripcion">Exportación JSON de todos los datos de PostgreSQL (y copia <code>.dump</code> si el servidor tiene <code>pg_dump</code>) en la carpeta <code>respaldos/</code>. Se conservan los 10 más recientes.</p>
         {puede('seguridad', 'crear') && (
           <button type="button" className="boton primario" onClick={crear} disabled={ocupado}>
             {ocupado ? 'Respaldando…' : 'Crear respaldo ahora'}
@@ -177,7 +177,7 @@ function Respaldos() {
           { clave: 'archivo', titulo: 'Archivo', celda: (r) => <code>{r.archivo}</code> },
           { clave: 'fecha', titulo: 'Fecha', celda: (r) => `${fecha(r.fecha)} ${r.fecha.slice(11, 16)}` },
           { clave: 'tamano_kb', titulo: 'Tamaño', celda: (r) => `${r.tamano_kb} KB` },
-          { clave: 'con_json', titulo: 'JSON', celda: (r) => (r.con_json ? 'Sí' : 'No') },
+          { clave: 'con_pg_dump', titulo: 'Copia .dump', celda: (r) => (r.con_pg_dump ? 'Sí' : 'No') },
         ]} />
       )}
     </section>

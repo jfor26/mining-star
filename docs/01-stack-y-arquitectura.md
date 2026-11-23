@@ -13,7 +13,7 @@
 | Pagos | stripe (SDK oficial) | 16.0.0 | Stripe Checkout y verificación de webhooks |
 | Reportes | openpyxl / reportlab | 3.1.5 / 4.2.5 | Exportación a Excel y PDF |
 | Configuración | python-dotenv | 1.0.1 | Secretos en `.env`, fuera de Git |
-| Base de datos | SQLite | 3 | Desarrollo y demostración (PostgreSQL para producción) |
+| Base de datos | PostgreSQL | 16 | Desarrollo, pruebas y producción (Railway) |
 | Frontend | React | 19 | Interfaz de una sola página (SPA) |
 | Enrutador | React Router | 7 | Navegación y rutas protegidas |
 | Gráficas | Recharts | 3 | Dashboard |
@@ -30,7 +30,7 @@ flowchart LR
   N[Navegador<br/>React + Vite :5173] -- "/api/v1 + JWT" --> A[Django REST Framework :8000]
   A --> P{Permiso por cargo<br/>core/permisos.py}
   P --> S[Servicios de dominio<br/>core/servicios.py]
-  S --> BD[(SQLite<br/>db.sqlite3)]
+  S --> BD[(PostgreSQL)]
   A -- Checkout --> ST[Stripe]
   ST -- webhook firmado --> A
   W[Plantillas Django<br/>/clientes, /ventas...] --> P

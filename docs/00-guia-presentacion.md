@@ -21,7 +21,7 @@ Producto mínimo viable (MVP) de **Mining Star ERP**, el sistema de gestión de 
 
 ## 2. Stack que debe saber nombrar
 
-**Backend:** Python 3.12 · Django 6 · Django REST Framework · JWT (simplejwt) · SQLite · Stripe SDK · drf-spectacular (Swagger).
+**Backend:** Python 3.12 · Django 6 · Django REST Framework · JWT (simplejwt) · PostgreSQL · Stripe SDK · drf-spectacular (Swagger).
 **Frontend:** React 19 · React Router 7 · Recharts · Vite 8.
 **Calidad y versiones:** pruebas de Django y Vitest · Ruff y Oxlint · Git y GitHub con ramas y pull requests.
 Detalle en [01-stack-y-arquitectura.md](01-stack-y-arquitectura.md).
@@ -167,7 +167,7 @@ Pestaña de **GitHub**: la rama `feature/mvp-presentacion`, sus commits y el **p
 | ¿Por qué JWT y no sesión? | La API la consumen React y a futuro la app móvil, donde no hay cookie de sesión. |
 | ¿Qué pasa si roban el token? | El de acceso dura 30 min; el de refresco rota en cada uso y se invalida al cerrar sesión. |
 | ¿Cómo se sincroniza el frontend con el backend? | React solo habla con la API REST (`/api/v1`); en desarrollo Vite reenvía `/api` a Django. Toda escritura queda en la base de datos y las pantallas leen de ella. |
-| ¿Por qué SQLite? | Es suficiente para el MVP y un solo equipo; el código no depende de SQLite y migrar a PostgreSQL es cambiar `DATABASES`. |
+| ¿Por qué PostgreSQL? | Es el mismo motor en desarrollo, pruebas y producción (Railway), soporta varios usuarios a la vez y evita errores que solo aparecen al publicar. Empezamos con SQLite en el MVP y migramos (docs/12-postgresql.md). |
 | ¿Cómo evitan vender lo que no hay? | Descuento condicional en una sola instrucción SQL dentro de una transacción. |
 | ¿Stripe cobra de verdad? | No. Se usa modo prueba o modo simulado; nunca llaves reales en desarrollo. |
 | ¿De dónde salen Porter, Canvas y EDT? | Del estudio de mercado y del plan de reactivación del título 15834, resumidos sin datos confidenciales. |
@@ -179,7 +179,7 @@ Pestaña de **GitHub**: la rama `feature/mvp-presentacion`, sus commits y el **p
 | Si falla… | Hacer |
 |---|---|
 | `npm run dev` | Mostrar la interfaz Django en <http://127.0.0.1:8000> (también aplica los permisos por cargo). |
-| La base de datos | `python manage.py restaurar_bd respaldos\<último archivo>.sqlite3` |
+| La base de datos | `python manage.py restaurar_bd respaldos\<último archivo>.json` |
 | Olvidó la clave demo | `python manage.py cargar_demo --clave "OtraClave*2026"` (no duplica datos). |
 | Un usuario quedó bloqueado | Esperar 15 minutos o entrar con otro usuario. |
 | No hay internet | Todo funciona en local; solo Stripe real y GitHub necesitan conexión. |

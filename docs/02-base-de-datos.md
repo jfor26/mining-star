@@ -1,6 +1,6 @@
 # Base de datos
 
-Motor: SQLite en desarrollo (`db.sqlite3`). El código no usa nada específico de SQLite salvo el respaldo binario, así que migrar a PostgreSQL es cambiar `DATABASES` en `settings.py`.
+Motor: PostgreSQL 16 en todos los ambientes (ver `docs/12-postgresql.md`). El MVP empezó con SQLite y se migró en la versión 1.1.
 
 ## Modelo entidad-relación
 
@@ -49,7 +49,7 @@ erDiagram
 4. **Precios congelados**: `ItemPedido.precio_unitario` y `DetalleVenta.precio_unitario` guardan el precio del momento de la compra.
 5. **Transacciones atómicas** en ventas y pagos, con descuento condicional de stock (`UPDATE … WHERE stock >= n`) que evita vender dos veces la misma unidad.
 6. **Idempotencia del pago**: confirmar dos veces el mismo pedido no duplica la venta ni descuenta dos veces (bloqueo `select_for_update`).
-7. **Respaldo** consistente con la API de backup de SQLite + exportación JSON (ver documento 10).
+7. **Respaldo** con exportación JSON (dumpdata) y copia nativa `.dump` si hay `pg_dump` (ver documentos 10 y 12).
 
 ## Comandos
 

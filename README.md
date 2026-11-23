@@ -13,7 +13,7 @@
 | Backend | Python 3.12, Django 6, Django REST Framework, JWT authentication (SimpleJWT) |
 | API docs | OpenAPI 3 with drf-spectacular (Swagger at `/api/docs/`) |
 | Frontend | React 19, React Router 7, Recharts, Vite |
-| Data | SQLite (PostgreSQL-ready), Excel and PDF exports (openpyxl, ReportLab) |
+| Data | PostgreSQL 16 (all environments), Excel and PDF exports (openpyxl, ReportLab) |
 | Payments | Stripe Checkout with signed webhooks (simulated mode without keys) |
 | Quality | 112 backend tests (Django unittest) and 16 frontend tests (Vitest), Ruff and Oxlint |
 | Workflow | Git feature branches and pull requests |
@@ -162,5 +162,5 @@ ruff format .                          # Formatear el código
 2. `DJANGO_SECRET_KEY` **distinta** a la de desarrollo.
 3. `DJANGO_ALLOWED_HOSTS` con el dominio real.
 4. `python manage.py collectstatic`.
-5. Cambiar SQLite por PostgreSQL si va a haber varios usuarios simultáneos.
+5. Base de datos: PostgreSQL en todos los ambientes (ver docs/12-postgresql.md).
 6. Servir siempre por HTTPS.

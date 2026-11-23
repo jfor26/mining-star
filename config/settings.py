@@ -12,6 +12,7 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+import dj_database_url
 from dotenv import load_dotenv
 
 # ==========================================================
@@ -188,19 +189,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 # BASE DE DATOS
 # ==========================================================
 
+# Mining Star usa PostgreSQL en todos los ambientes (desarrollo, pruebas y
+# produccion) para que el sistema se comporte igual en todos lados.
+# La conexion llega en DATABASE_URL; en desarrollo, si no se define, se usa
+# la base local que crea docker-compose.yml (ver docs/12-postgresql.md).
+DATABASE_URL_LOCAL = "postgres://miningstar:miningstar@localhost:5432/miningstar"
+
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": dj_database_url.config(
+        default=DATABASE_URL_LOCAL, conn_max_age=600, conn_health_checks=True
+    )
 }
-
-# En produccion (Railway) la base de datos es PostgreSQL y llega en la
-# variable DATABASE_URL. Si no existe, se sigue usando SQLite.
-if os.getenv("DATABASE_URL"):
-    import dj_database_url
-
-    DATABASES["default"] = dj_database_url.config(conn_max_age=600, conn_health_checks=True)
 
 
 # ==========================================================

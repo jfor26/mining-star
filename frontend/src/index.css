@@ -352,3 +352,12 @@ table.matriz th[scope="row"] { text-transform: none; font-size: 13.5px; color: v
 }
 .tarjeta-kanban .estado { align-self: flex-start; }
 form > .boton:not(.grande) { align-self: flex-start; }
+
+/* Empleados y cargos */
+.acciones-fila { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.acciones-fila .boton { padding: 4px 10px; font-size: 13px; }
+form .acciones-fila .boton { padding: 9px 16px; font-size: 14px; }
+.barra-filtros + .chips { margin: -4px 0 14px; }
+.confirmacion { border: 1px solid #f2b8b8; margin-bottom: 16px; }
+.confirmacion h2 { color: var(--rojo); }
+td .acciones-fila { flex-wrap: nowrap; }

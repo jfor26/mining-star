@@ -12,6 +12,7 @@ import RequierePermiso from './components/RequierePermiso.jsx'
 import RutaProtegida from './components/RutaProtegida.jsx'
 import Clientes from './pages/Clientes.jsx'
 import Crm from './pages/Crm.jsx'
+import Empleados from './pages/Empleados.jsx'
 import Empresa from './pages/Empresa.jsx'
 import Inventario from './pages/Inventario.jsx'
 import Login from './pages/Login.jsx'
@@ -42,6 +43,7 @@ export default function App() {
         <Route path="tienda" element={conPermiso('pedidos', <Tienda />)} />
         <Route path="tienda/carrito" element={conPermiso('pedidos', <Carrito />)} />
         <Route path="tienda/resultado" element={conPermiso('pedidos', <ResultadoPago />)} />
+        <Route path="empleados" element={conPermiso('empleados', <Empleados />)} />
         <Route path="produccion" element={conPermiso('produccion', <Produccion />)} />
         <Route path="normativa" element={conPermiso('normativa', <Normativa />)} />
         <Route path="mejora" element={conPermiso('mejora', <Mejora />)} />

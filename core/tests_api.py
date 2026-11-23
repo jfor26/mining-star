@@ -426,3 +426,50 @@ class PruebasDeProduccionAPI(BaseAPI):
         self.crear()
         respuesta = self.client.get(reverse("api-produccion-list"), {"fecha": self.hoy})
         self.assertEqual(respuesta.data["count"], 1)
+
+
+class PruebasDeEmpleadosAPI(BaseAPI):
+    """Modulo Empleados y cargos: filtro por cargo, orden por antiguedad y eliminacion."""
+
+    def setUp(self):
+        super().setUp()
+        hoy = timezone.localdate()
+        self.antiguo = Empleado.objects.create(
+            documento="2001", nombres="Zoila", apellidos="Mora", correo="z@ms.co", telefono="3001000000",
+            cargo="Auxiliar", area="Logística", fecha_ingreso=hoy - timedelta(days=3000),
+        )
+        self.nuevo = Empleado.objects.create(
+            documento="2002", nombres="Abel", apellidos="Paz", correo="a@ms.co", telefono="3001000001",
+            cargo="Operario", area="Operaciones", fecha_ingreso=hoy - timedelta(days=30),
+        )
+        self.url = reverse("api-empleados-list")
+
+    def nombres(self, respuesta):
+        return [e["nombres"] for e in respuesta.data["results"]]
+
+    def test_orden_alfabetico_y_por_tiempo_laborado(self):
+        self.assertEqual(self.nombres(self.client.get(self.url, {"ordering": "nombres"})), ["Abel", "Zoila"])
+        self.assertEqual(self.nombres(self.client.get(self.url, {"ordering": "fecha_ingreso"})), ["Zoila", "Abel"])
+
+    def test_filtro_por_cargo(self):
+        self.assertEqual(self.nombres(self.client.get(self.url, {"cargo": "Auxiliar"})), ["Zoila"])
+
+    def test_fecha_de_ingreso_futura_es_rechazada(self):
+        manana = (timezone.localdate() + timedelta(days=1)).isoformat()
+        respuesta = self.client.patch(reverse("api-empleados-detail", args=[self.nuevo.id]),
+                                      {"fecha_ingreso": manana}, format="json")
+        self.assertEqual(respuesta.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("fecha_ingreso", respuesta.data)
+
+    def test_no_se_elimina_un_empleado_con_produccion(self):
+        RegistroProduccion.objects.create(
+            fecha=timezone.localdate(), turno="Manana", material="Marmol", unidad="t",
+            cantidad=Decimal("10"), supervisor=self.antiguo,
+        )
+        respuesta = self.client.delete(reverse("api-empleados-detail", args=[self.antiguo.id]))
+        self.assertEqual(respuesta.status_code, status.HTTP_409_CONFLICT)
+        self.assertTrue(Empleado.objects.filter(id=self.antiguo.id).exists())
+
+    def test_eliminar_empleado_sin_registros(self):
+        respuesta = self.client.delete(reverse("api-empleados-detail", args=[self.nuevo.id]))
+        self.assertEqual(respuesta.status_code, status.HTTP_204_NO_CONTENT)

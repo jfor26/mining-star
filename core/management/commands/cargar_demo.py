@@ -55,6 +55,14 @@ EMPLEADOS = [
     (None, "1110000009", "Óscar", "Vargas", "Operario", "Operaciones"),
 ]
 
+# Dias de antiguedad de cada empleado de demostracion, para que el orden por
+# tiempo laborado del modulo Empleados muestre diferencias reales.
+ANTIGUEDAD_DIAS = {
+    "1110000001": 2900, "1110000002": 1500, "1110000003": 2300, "1110000004": 700,
+    "1110000005": 1100, "1110000006": 950, "1110000007": 120, "1110000008": 400,
+    "1110000009": 45,
+}
+
 PROVEEDORES = [
     ("901000001", "Trituradora Andina S.A.S.", "Mario Pérez", "Ibagué"),
     ("901000002", "Empaques del Tolima Ltda.", "Sandra Díaz", "Espinal"),
@@ -189,7 +197,7 @@ class Command(BaseCommand):
             emp, _ = Empleado.objects.get_or_create(documento=doc, defaults={
                 "nombres": nombres, "apellidos": apellidos, "cargo": cargo, "area": area,
                 "correo": f"{(usuario or nombres).lower().replace('.', '')}@miningstar.example",
-                "telefono": "3000000000", "fecha_ingreso": hoy - timedelta(days=400),
+                "telefono": "3000000000", "fecha_ingreso": hoy - timedelta(days=ANTIGUEDAD_DIAS.get(doc, 400)),
             })
             empleados[doc] = emp
             if usuario:

@@ -223,6 +223,12 @@ class EmpleadoSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["fecha_creacion"]
 
+    def validate_fecha_ingreso(self, valor):
+        # El tiempo laborado se calcula desde esta fecha: no puede ser futura.
+        if valor > timezone.localdate():
+            raise serializers.ValidationError("La fecha de ingreso no puede ser posterior a hoy.")
+        return valor
+
 
 class DetalleVentaSerializer(serializers.ModelSerializer):
 

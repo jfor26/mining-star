@@ -26,3 +26,10 @@ python-dotenv==1.0.1
 
 # Pasarela de pagos (carrito de compras)
 stripe==16.0.0
+
+# Despliegue en produccion (Railway u otro PaaS)
+gunicorn==27.0.1         # Servidor WSGI de produccion
+whitenoise==6.12.0       # Archivos estaticos sin servidor aparte
+dj-database-url==3.1.2   # Lee DATABASE_URL (PostgreSQL)
+psycopg[binary]==3.3.9   # Controlador de PostgreSQL
+django-cors-headers==4.9.0  # CORS para la interfaz React en otro dominio

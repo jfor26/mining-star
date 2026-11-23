@@ -41,9 +41,20 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Origenes de confianza para formularios con CSRF (por ejemplo, el dominio
+# publico de Railway). Lista separada por comas con https://.
+CSRF_TRUSTED_ORIGINS = [
+    origen.strip()
+    for origen in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origen.strip()
+]
+
 # Endurecimiento adicional que solo aplica en produccion (DEBUG = False).
 if not DEBUG:
-    SECURE_SSL_REDIRECT = True
+    # En Railway (y otros PaaS) el HTTPS termina en el proxy; esta cabecera
+    # le indica a Django que la peticion original ya era segura.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = os.getenv("DJANGO_SSL_REDIRECT", "True").strip().lower() == "true"
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_HSTS_SECONDS = 31_536_000          # 1 anio
@@ -65,6 +76,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+
+    # Terceros: CORS para que la interfaz React publicada en otro dominio
+    # pueda consumir la API (solo los origenes de DJANGO_CORS_ORIGINS).
+    "corsheaders",
 
     # Terceros: API REST
     "rest_framework",
@@ -138,7 +153,10 @@ SPECTACULAR_SETTINGS = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    # Sirve los archivos estaticos en produccion sin un servidor aparte.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -176,6 +194,13 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# En produccion (Railway) la base de datos es PostgreSQL y llega en la
+# variable DATABASE_URL. Si no existe, se sigue usando SQLite.
+if os.getenv("DATABASE_URL"):
+    import dj_database_url
+
+    DATABASES["default"] = dj_database_url.config(conn_max_age=600, conn_health_checks=True)
 
 
 # ==========================================================
@@ -220,6 +245,19 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Destino de "collectstatic" al desplegar.
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# WhiteNoise comprime los estaticos al ejecutar collectstatic.
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+}
+
+# Interfaz React publicada en otro dominio (por ejemplo, Railway).
+CORS_ALLOWED_ORIGINS = [
+    origen.strip()
+    for origen in os.getenv("DJANGO_CORS_ORIGINS", "").split(",")
+    if origen.strip()
+]
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

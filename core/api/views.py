@@ -993,3 +993,24 @@ class NotificacionesView(APIView):
                 return Response({"claves": ["Envie una lista de claves."]}, status=status.HTTP_400_BAD_REQUEST)
         marcar_leidas(request.user, claves)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@extend_schema(
+    tags=["Asistente"],
+    summary="Preguntar al asistente",
+    description=(
+        "Chatbot por reglas: responde con datos consultados en el momento y "
+        "solo de los modulos que el cargo puede ver. Body: {\"pregunta\": \"...\"}."
+    ),
+)
+class AsistenteView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        from ..asistente import responder
+        from ..permisos import ROL_CLIENTE, rol_de
+
+        if rol_de(request.user) == ROL_CLIENTE:
+            return Response({"detail": "El asistente es para el personal de la empresa."}, status=status.HTTP_403_FORBIDDEN)
+        pregunta = str(request.data.get("pregunta", ""))[:300]
+        return Response(responder(request.user, pregunta))

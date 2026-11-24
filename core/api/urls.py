@@ -13,6 +13,7 @@ from .publico import ConsultarPqrsView, ContactoView, MensajeContactoViewSet, Pq
 from .portal import CatalogoPortalView, ComprobantePortalView, CotizacionPortalView, ResumenPortalView
 from .views import (
     AccionMejoraViewSet,
+    AsistenteView,
     ClienteViewSet,
     ConfigPagosView,
     DashboardView,
@@ -73,6 +74,7 @@ urlpatterns = [
     path("pagos/webhook/", StripeWebhookView.as_view(), name="api-stripe-webhook"),
     path("dashboard/", DashboardView.as_view(), name="api-dashboard"),
     path("notificaciones/", NotificacionesView.as_view(), name="api-notificaciones"),
+    path("asistente/", AsistenteView.as_view(), name="api-asistente"),
     path("publico/pqrs/", RadicarPqrsView.as_view(), name="api-publico-pqrs"),
     path("publico/pqrs/<str:radicado>/", ConsultarPqrsView.as_view(), name="api-publico-pqrs-consulta"),
     path("publico/contacto/", ContactoView.as_view(), name="api-publico-contacto"),

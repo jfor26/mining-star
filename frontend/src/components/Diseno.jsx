@@ -10,6 +10,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 
 import { sesion } from '../api/cliente.js'
 import { BotonVolver, SelectorTema } from './Barra.jsx'
+import Asistente from './Asistente.jsx'
 import Campana from './Campana.jsx'
 import { useCarrito } from '../context/CarritoContext.jsx'
 import { useSesion } from '../context/SesionContext.jsx'
@@ -136,6 +137,7 @@ export default function Diseno() {
           <Outlet />
         </main>
       </div>
+      <Asistente />
     </div>
   )
 }

@@ -4,7 +4,7 @@
  * y la aplicacion lleva a cada uno a su interfaz.
  */
 import { useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Link, Navigate, useLocation, useSearchParams } from 'react-router-dom'
 
 import { Aviso, Campo } from '../components/Comunes.jsx'
 import { esCliente } from '../components/RutaProtegida.jsx'
@@ -37,7 +37,8 @@ const VENTAJAS = [
 export default function Login() {
   const { usuario, iniciarSesion } = useSesion()
   const ubicacion = useLocation()
-  const [modo, setModo] = useState('personal')
+  const [parametros] = useSearchParams()
+  const [modo, setModo] = useState(parametros.get('modo') === 'cliente' ? 'cliente' : 'personal')
   const [datos, setDatos] = useState({ username: '', password: '' })
   const [errores, setErrores] = useState({})
   const [mensaje, setMensaje] = useState('')
@@ -131,6 +132,7 @@ export default function Login() {
             {enviando ? 'Verificando…' : t.boton}
           </button>
           <p className="ayuda-login">{t.ayuda}</p>
+          <Link to="/sitio" className="volver-sitio">← Ir al sitio de la empresa</Link>
         </form>
       </section>
     </div>

@@ -9,6 +9,7 @@ primera, que es la razon por la que se incluye desde el principio.
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from .publico import ConsultarPqrsView, ContactoView, MensajeContactoViewSet, PqrsViewSet, RadicarPqrsView
 from .portal import CatalogoPortalView, ComprobantePortalView, CotizacionPortalView, ResumenPortalView
 from .views import (
     AccionMejoraViewSet,
@@ -53,6 +54,8 @@ router.register("normativa", RequisitoNormativoViewSet, basename="api-normativa"
 router.register("mejora", AccionMejoraViewSet, basename="api-mejora")
 router.register("seguridad/usuarios", UsuarioViewSet, basename="api-usuarios")
 router.register("seguridad/accesos", RegistroAccesoViewSet, basename="api-accesos")
+router.register("pqrs", PqrsViewSet, basename="api-pqrs")
+router.register("contactos", MensajeContactoViewSet, basename="api-contactos")
 
 urlpatterns = [
     # Autenticacion (evidencia AA5-EV01)
@@ -70,6 +73,9 @@ urlpatterns = [
     path("pagos/webhook/", StripeWebhookView.as_view(), name="api-stripe-webhook"),
     path("dashboard/", DashboardView.as_view(), name="api-dashboard"),
     path("notificaciones/", NotificacionesView.as_view(), name="api-notificaciones"),
+    path("publico/pqrs/", RadicarPqrsView.as_view(), name="api-publico-pqrs"),
+    path("publico/pqrs/<str:radicado>/", ConsultarPqrsView.as_view(), name="api-publico-pqrs-consulta"),
+    path("publico/contacto/", ContactoView.as_view(), name="api-publico-contacto"),
     path("portal/resumen/", ResumenPortalView.as_view(), name="api-portal-resumen"),
     path("portal/catalogo/", CatalogoPortalView.as_view(), name="api-portal-catalogo"),
     path("portal/cotizaciones/", CotizacionPortalView.as_view(), name="api-portal-cotizaciones"),

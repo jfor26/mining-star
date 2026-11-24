@@ -10,6 +10,7 @@ import { Route, Routes } from 'react-router-dom'
 import Diseno from './components/Diseno.jsx'
 import RequierePermiso from './components/RequierePermiso.jsx'
 import RutaProtegida from './components/RutaProtegida.jsx'
+import Atencion from './pages/Atencion.jsx'
 import Clientes from './pages/Clientes.jsx'
 import Crm from './pages/Crm.jsx'
 import Empleados from './pages/Empleados.jsx'
@@ -22,6 +23,7 @@ import NoEncontrada from './pages/NoEncontrada.jsx'
 import Normativa from './pages/Normativa.jsx'
 import Panel from './pages/Panel.jsx'
 import Portal from './pages/Portal.jsx'
+import Sitio from './pages/sitio/Sitio.jsx'
 import Produccion from './pages/Produccion.jsx'
 import Seguridad from './pages/Seguridad.jsx'
 import Carrito from './pages/tienda/Carrito.jsx'
@@ -34,6 +36,7 @@ const conPermiso = (modulo, pagina) => <RequierePermiso modulo={modulo}>{pagina}
 export default function App() {
   return (
     <Routes>
+      <Route path="/sitio" element={<Sitio />} />
       <Route path="/login" element={<Login />} />
       <Route path="/portal" element={<RutaProtegida paraClientes><Portal /></RutaProtegida>} />
       <Route element={<RutaProtegida><Diseno /></RutaProtegida>}>
@@ -47,6 +50,7 @@ export default function App() {
         <Route path="tienda" element={conPermiso('pedidos', <Tienda />)} />
         <Route path="tienda/carrito" element={conPermiso('pedidos', <Carrito />)} />
         <Route path="tienda/resultado" element={conPermiso('pedidos', <ResultadoPago />)} />
+        <Route path="atencion" element={conPermiso('pqrs', <Atencion />)} />
         <Route path="empleados" element={conPermiso('empleados', <Empleados />)} />
         <Route path="produccion" element={conPermiso('produccion', <Produccion />)} />
         <Route path="normativa" element={conPermiso('normativa', <Normativa />)} />

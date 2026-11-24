@@ -7,7 +7,8 @@ recibe solo los de los modulos que puede ver (matriz de core/permisos.py):
 - inventario  (productos): productos con stock en el minimo o por debajo;
 - normativa   (normativa): requisitos vencidos o que vencen en 30 dias o menos;
 - tienda      (pedidos):   pedidos pagados en los ultimos 7 dias;
-- crm         (crm):       oportunidades abiertas con 7 dias o mas sin contacto.
+- crm         (crm):       oportunidades abiertas con 7 dias o mas sin contacto;
+- pqrs        (pqrs):      PQRS sin responder y mensajes de contacto sin atender.
 
 Cada aviso lleva una clave que cambia si cambia la situacion, para que un
 aviso leido vuelva a aparecer cuando hay algo nuevo que contar.
@@ -18,7 +19,7 @@ from datetime import timedelta
 from django.db.models import F, Max
 from django.utils import timezone
 
-from .models import NotificacionLeida, Oportunidad, Pedido, Producto, RequisitoNormativo
+from .models import MensajeContacto, NotificacionLeida, Oportunidad, Pedido, Pqrs, Producto, RequisitoNormativo
 from .permisos import VER, puede, rol_de
 
 DIAS_SIN_CONTACTO = 7
@@ -105,8 +106,33 @@ def _crm(usuario):
         }
 
 
+def _atencion():
+    hoy = timezone.now()
+    for q in Pqrs.objects.filter(estado__in=["Recibida", "EnTramite"]):
+        dias = (hoy - q.creada).days
+        yield {
+            "clave": f"pqrs:{q.id}:{q.estado}",
+            "tipo": "pqrs",
+            "titulo": f"{q.get_tipo_display()} sin responder",
+            "texto": f"{q.radicado} de {q.nombre}" + (f" · radicada hace {dias} {'día' if dias == 1 else 'días'}." if dias else " · radicada hoy."),
+            "fecha": _iso(q.creada),
+            "ruta": "/atencion",
+            "prioridad": 1 if dias >= 5 else 2,
+        }
+    for m in MensajeContacto.objects.filter(atendido=False):
+        yield {
+            "clave": f"contacto:{m.id}",
+            "tipo": "pqrs",
+            "titulo": "Mensaje de contacto",
+            "texto": f"{m.nombre} escribió desde el sitio web.",
+            "fecha": _iso(m.creado),
+            "ruta": "/atencion",
+            "prioridad": 2,
+        }
+
+
 FUENTES = [("productos", lambda u: _inventario()), ("normativa", lambda u: _normativa()),
-           ("pedidos", lambda u: _tienda()), ("crm", _crm)]
+           ("pedidos", lambda u: _tienda()), ("crm", _crm), ("pqrs", lambda u: _atencion())]
 
 
 def avisos_de(usuario):

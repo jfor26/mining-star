@@ -36,6 +36,7 @@ MODULOS = {
     "normativa": "Requisitos mineros y ambientales",
     "mejora": "Mejora continua (PHVA)",
     "seguridad": "Seguridad: usuarios, accesos y respaldos",
+    "pqrs": "Atención al cliente (PQRS y mensajes de contacto)",
 }
 
 # Fila = cargo. Columna = modulo. Un modulo ausente significa "sin acceso".
@@ -54,6 +55,7 @@ MATRIZ_DE_ACCESO = {
         "normativa": frozenset({VER, CREAR, EDITAR}),
         "mejora": frozenset({VER, CREAR, EDITAR}),
         "seguridad": LECTURA,
+        "pqrs": frozenset({VER, EDITAR}),
     },
     "Supervisor": {
         "panel": LECTURA,
@@ -71,6 +73,7 @@ MATRIZ_DE_ACCESO = {
         "ventas": frozenset({VER, CREAR}),
         "pedidos": frozenset({VER, CREAR}),
         "mejora": frozenset({VER, CREAR}),
+        "pqrs": frozenset({VER, EDITAR}),
     },
     "Contador": {
         "panel": LECTURA,

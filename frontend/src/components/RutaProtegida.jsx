@@ -15,6 +15,9 @@ export default function RutaProtegida({ children, paraClientes = false }) {
   const ubicacion = useLocation()
 
   if (!usuario) {
+    // Un visitante que llega a la raiz ve el sitio publico; el resto de
+    // rutas internas piden iniciar sesion.
+    if (ubicacion.pathname === '/') return <Navigate to="/sitio" replace />
     return <Navigate to="/login" replace state={{ desde: ubicacion.pathname }} />
   }
   if (esCliente(usuario) !== paraClientes) {

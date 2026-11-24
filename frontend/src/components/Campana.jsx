@@ -12,6 +12,7 @@ const TIPOS = {
   normativa: { texto: 'Normativa', icono: 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M9 13h6M9 17h4' },
   inventario: { texto: 'Inventario', icono: 'M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8' },
   tienda: { texto: 'Tienda', icono: 'M6 6h15l-2 9H8zM6 6 5 3H2M9 20h.01M18 20h.01' },
+  pqrs: { texto: 'PQRS', icono: 'M4 4h16v16H4zM4 7l8 6 8-6' },
   crm: { texto: 'CRM', icono: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M22 11h-6' },
 }
 const INTERVALO_MS = 120000

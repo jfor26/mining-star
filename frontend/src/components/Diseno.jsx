@@ -41,6 +41,7 @@ const SECCIONES = [
   {
     titulo: 'Gestión',
     opciones: [
+      { ruta: '/atencion', texto: 'Atención al cliente (PQRS)', icono: '✉', modulo: 'pqrs' },
       { ruta: '/empleados', texto: 'Empleados y cargos', icono: '👷', modulo: 'empleados' },
       { ruta: '/normativa', texto: 'Normativa minera y ambiental', icono: '§', modulo: 'normativa' },
       { ruta: '/mejora', texto: 'Mejora continua', icono: '↻', modulo: 'mejora' },

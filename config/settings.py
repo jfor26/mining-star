@@ -115,6 +115,9 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    # Los formularios publicos (PQRS y contacto) limitan cuantas solicitudes
+    # puede enviar una misma IP, para frenar el spam.
+    "DEFAULT_THROTTLE_RATES": {"publico": os.getenv("LIMITE_FORMULARIOS_PUBLICOS", "20/hour")},
 }
 
 # Vida util de los tokens. Corta para el de acceso porque viaja en cada

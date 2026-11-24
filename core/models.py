@@ -744,3 +744,68 @@ class NotificacionLeida(models.Model):
 
     def __str__(self):
         return f"{self.usuario} · {self.clave}"
+
+
+# ==========================================================
+# ATENCION AL CLIENTE: PQRS Y MENSAJES DE CONTACTO
+# ==========================================================
+
+class Pqrs(models.Model):
+    """Peticion, queja, reclamo o sugerencia radicada desde el sitio publico
+    o el portal. Se identifica con un radicado PQRS-AAAA-NNNN."""
+
+    TIPOS = [("Peticion", "Petición"), ("Queja", "Queja"), ("Reclamo", "Reclamo"), ("Sugerencia", "Sugerencia")]
+    ESTADOS = [("Recibida", "Recibida"), ("EnTramite", "En trámite"), ("Respondida", "Respondida"), ("Cerrada", "Cerrada")]
+
+    radicado = models.CharField(max_length=20, unique=True, editable=False)
+    tipo = models.CharField(max_length=10, choices=TIPOS)
+    nombre = models.CharField(max_length=150)
+    documento = models.CharField(max_length=20)
+    correo = models.EmailField()
+    telefono = models.CharField(max_length=20, blank=True)
+    detalle = models.TextField(max_length=2000)
+    autoriza_datos = models.BooleanField(default=False)
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True, related_name="pqrs")
+    estado = models.CharField(max_length=10, choices=ESTADOS, default="Recibida", db_index=True)
+    respuesta = models.TextField(blank=True)
+    respondida_por = models.ForeignKey(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="pqrs_respondidas",
+    )
+    creada = models.DateTimeField(auto_now_add=True)
+    actualizada = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-creada"]
+        verbose_name = "PQRS"
+        verbose_name_plural = "PQRS"
+
+    def __str__(self):
+        return self.radicado
+
+    def save(self, *args, **kwargs):
+        # El radicado se asigna al crear: PQRS-<año>-<consecutivo del año>.
+        if not self.radicado:
+            anio = timezone.localdate().year
+            ultimo = Pqrs.objects.filter(radicado__startswith=f"PQRS-{anio}-").order_by("-radicado").first()
+            siguiente = int(ultimo.radicado.rsplit("-", 1)[1]) + 1 if ultimo else 1
+            self.radicado = f"PQRS-{anio}-{siguiente:04d}"
+        super().save(*args, **kwargs)
+
+
+class MensajeContacto(models.Model):
+    """Mensaje del formulario de contacto del sitio publico."""
+
+    nombre = models.CharField(max_length=150)
+    correo = models.EmailField()
+    telefono = models.CharField(max_length=20, blank=True)
+    mensaje = models.TextField(max_length=2000)
+    atendido = models.BooleanField(default=False)
+    creado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-creado"]
+        verbose_name = "mensaje de contacto"
+        verbose_name_plural = "mensajes de contacto"
+
+    def __str__(self):
+        return f"{self.nombre} · {self.creado:%d/%m/%Y}"

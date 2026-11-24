@@ -18,6 +18,7 @@ Cada usuario pertenece a un grupo con el nombre de su cargo. Lo que cada cargo p
 | Normativa | VCEX | VCE | VCE | — | V | — | — |
 | Mejora continua | VCEX | VCE | VCE | VC | VC | VC | VC |
 | Seguridad | VCEX | V | — | — | — | — | — |
+| Atención al cliente (PQRS) (v1.1) | VCEX | VE | — | VE | — | — | — |
 
 V = ver, C = crear, E = editar, X = eliminar. Se consulta también en el aplicativo: *Seguridad → Accesibilidad por cargo*.
 
@@ -25,6 +26,19 @@ V = ver, C = crear, E = editar, X = eliminar. Se consulta también en el aplicat
 - El **registro de usuarios ya no es público**: antes cualquiera podía crearse una cuenta y leer datos personales. Ahora solo el Administrador crea usuarios y les asigna cargo.
 - Nadie puede cambiar su propio cargo ni desactivar su propia cuenta.
 - El menú oculta lo que el cargo no puede usar, pero **la protección real está en el servidor**: aunque alguien escriba la URL o llame a la API, recibe 403.
+
+### Rol Cliente y portal (versión 1.1)
+
+- Los clientes con acceso al portal pertenecen al grupo **Cliente**, que no está en la matriz: no ven ningún módulo interno (la API responde 403) y solo usan `/api/v1/portal/`.
+- El portal filtra todo por el cliente vinculado al usuario de la sesión, **nunca por un id que llegue en la petición**. Un cliente que cambie el número de una compra en la URL recibe 404 (prueba `test_no_puede_descargar_el_comprobante_de_otro_cliente`).
+- El acceso al portal lo dan o quitan los cargos que pueden editar clientes (`POST/DELETE /clientes/{id}/acceso-portal/`); la clave debe cumplir las reglas de contraseñas seguras.
+- La interfaz separa los dos mundos: un cliente que escribe una ruta interna es enviado al portal, y un empleado que abre `/portal` vuelve al sistema interno.
+
+### Formularios públicos (versión 1.1)
+
+- `POST /api/v1/publico/pqrs/` y `/publico/contacto/` no piden sesión, pero están **limitados por IP** (`LIMITE_FORMULARIOS_PUBLICOS`, por defecto 20 por hora) para frenar el spam; al pasarse responden 429.
+- Radicar una PQRS exige la **autorización de tratamiento de datos** (Ley 1581 de 2012).
+- La consulta de un radicado exige también el **documento** con que se radicó, para que nadie lea la respuesta de otra persona.
 
 ## 2. Token de acceso por ingreso
 

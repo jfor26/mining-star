@@ -16,3 +16,8 @@ Producto mínimo viable (MVP) del Tecnólogo en Análisis y Desarrollo de Softwa
 | 09 | [Plan de pruebas](09-plan-de-pruebas.md) | Estrategia, casos y resultados (Guía 9) |
 | 10 | [Respaldo y restauración](10-respaldo-y-restauracion.md) | Backup de la base de datos |
 | 11 | [Flujo Git y pull request](11-flujo-git-y-pull-request.md) | Integración de versiones |
+| 11 | [Despliegue en Railway](11-despliegue-railway.md) | Publicación en la nube (guía 10) |
+| 12 | [PostgreSQL](12-postgresql.md) | Instalación, migración desde SQLite y respaldos |
+| 13 | [Versión 1.1](13-version-1-1-requerimientos.md) | Requerimientos, casos de uso, API y pruebas nuevas |
+| 14 | [Evolución del proyecto](14-evolucion-del-proyecto.md) | Cómo llegamos al resultado (línea de tiempo y decisiones) |
+| 15 | [Guion de pruebas en vivo](15-guion-pruebas-en-vivo.md) | 16 pruebas para hacer frente al instructor |

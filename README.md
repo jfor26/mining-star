@@ -34,6 +34,12 @@ carrito y pagos Stripe**, **repositorio normativo minero y ambiental**, **mejora
 continua (PHVA)**, **dashboard con gráficas**, **seguridad por cargo con token de
 acceso** y **respaldos**.
 
+**Versión 1.1** (rama `mejoras`): sitio público con contacto y **PQRS con radicado**,
+**portal de clientes** con cotizaciones conectadas al CRM, **ficha del cliente**,
+**campana de notificaciones** por cargo, **asistente** (chatbot), módulo **Empleados y
+cargos**, tema claro/oscuro y PostgreSQL en todos los ambientes. Detalle en
+[`docs/13-version-1-1-requerimientos.md`](docs/13-version-1-1-requerimientos.md).
+
 Construido con **Django 6 + Django REST Framework** (API) y **React 19 + Vite** (interfaz).
 
 📘 **Documentación completa en [`docs/`](docs/README.md)** · 🎤 **[Guía de presentación](docs/00-guia-presentacion.md)**
@@ -44,6 +50,8 @@ Construido con **Django 6 + Django REST Framework** (API) y **React 19 + Vite** 
 
 - Python 3.12 o superior
 - pip
+- PostgreSQL 16 (con Docker: `docker compose up -d`; sin Docker: ver [`docs/12-postgresql.md`](docs/12-postgresql.md))
+- Node.js 20 o superior (interfaz React)
 
 ## Instalación
 
@@ -87,7 +95,7 @@ y el panel de administración en <http://127.0.0.1:8000/admin/>
 ## Datos de demostración y front-end
 
 ```bash
-python manage.py cargar_demo --clave "Demo*Mina2026"   # 7 usuarios, uno por cargo
+python manage.py cargar_demo --clave "<clave demo>"     # 7 usuarios (uno por cargo) y el cliente 900500001 en el portal
 cd frontend && npm install && npm run dev               # http://localhost:5173
 ```
 

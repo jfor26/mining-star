@@ -25,6 +25,10 @@ erDiagram
   EMPLEADO ||--o{ REGISTRO_PRODUCCION : "supervisa"
   EMPLEADO ||--o{ REQUISITO_NORMATIVO : "responsable"
   EMPLEADO ||--o{ ACCION_MEJORA : "responsable"
+  USER ||--o| CLIENTE : "accede al portal (v1.1)"
+  USER ||--o{ NOTIFICACION_LEIDA : "leyó (v1.1)"
+  CLIENTE ||--o{ PQRS : "radica (v1.1)"
+  USER ||--o{ PQRS : "responde (v1.1)"
 ```
 
 ## Tablas
@@ -40,6 +44,12 @@ erDiagram
 | **AccionMejora** | Mejora continua | Ciclo PHVA |
 | auth_group | Seguridad | Un grupo por cargo (migración de datos 0010) |
 | token_blacklist_* | Seguridad | Tokens de refresco invalidados |
+| **NotificacionLeida** (v1.1) | Notificaciones | Qué avisos de la campana leyó cada usuario (los avisos se calculan, no se guardan) |
+| **Pqrs** (v1.1) | Atención al cliente | Peticiones, quejas, reclamos y sugerencias con radicado PQRS-AAAA-NNNN |
+| **MensajeContacto** (v1.1) | Atención al cliente | Mensajes del formulario de contacto del sitio público |
+| Cliente.usuario (v1.1) | Portal de clientes | Cuenta del cliente (usuario = NIT) en el grupo «Cliente» |
+| Oportunidad.origen (v1.1) | CRM | «Interno» o «Portal» (cotización pedida por el cliente) |
+| Interaccion.tipo «Portal» (v1.1) | CRM | Solicitud registrada desde el portal |
 
 ## Mejoras aplicadas
 

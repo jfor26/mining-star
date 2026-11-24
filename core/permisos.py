@@ -99,6 +99,11 @@ MATRIZ_DE_ACCESO = {
 
 ROLES = list(MATRIZ_DE_ACCESO)
 
+# Los clientes que entran al portal tienen su propio rol. No esta en la
+# matriz porque no usan ningun modulo interno: solo la API /portal/, que
+# ademas filtra todo por el cliente vinculado a su usuario.
+ROL_CLIENTE = "Cliente"
+
 
 def rol_de(usuario):
     """Devuelve el cargo del usuario o None si no tiene ninguno asignado.
@@ -114,6 +119,8 @@ def rol_de(usuario):
     for rol in ROLES:  # orden de la matriz: el de mas privilegio gana
         if rol in nombres:
             return rol
+    if ROL_CLIENTE in nombres:
+        return ROL_CLIENTE
     return None
 
 
@@ -122,14 +129,14 @@ def permisos_de(usuario):
     rol = rol_de(usuario)
     if rol is None:
         return {}
-    return {modulo: sorted(ops) for modulo, ops in MATRIZ_DE_ACCESO[rol].items()}
+    return {modulo: sorted(ops) for modulo, ops in MATRIZ_DE_ACCESO.get(rol, {}).items()}
 
 
 def puede(usuario, modulo, operacion=VER):
     rol = rol_de(usuario)
     if rol is None:
         return False
-    return operacion in MATRIZ_DE_ACCESO[rol].get(modulo, frozenset())
+    return operacion in MATRIZ_DE_ACCESO.get(rol, {}).get(modulo, frozenset())
 
 
 # Accion de DRF -> operacion de la matriz.

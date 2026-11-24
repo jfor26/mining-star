@@ -366,6 +366,54 @@ class ClienteViewSet(BaseViewSet):
     serializer_class = ClienteSerializer
     search_fields = ["documento", "nombre", "empresa", "correo"]
     ordering_fields = ["nombre", "documento", "empresa"]
+    operaciones_por_accion = {"acceso_portal": EDITAR}
+
+    def get_queryset(self):
+        return super().get_queryset().select_related("usuario")
+
+    @extend_schema(
+        summary="Dar o quitar el acceso al portal de clientes",
+        description=(
+            "POST {\"clave\": \"...\"} crea o actualiza la cuenta del cliente para el "
+            "portal (usuario = su documento o NIT). DELETE desactiva el acceso. "
+            "La clave debe cumplir las reglas de contrasenas seguras."
+        ),
+    )
+    @action(detail=True, methods=["post", "delete"], url_path="acceso-portal")
+    def acceso_portal(self, request, pk=None):
+        from django.contrib.auth.password_validation import validate_password
+        from django.core.exceptions import ValidationError as ErrorDeValidacion
+
+        from ..permisos import ROL_CLIENTE
+
+        cliente = self.get_object()
+        if request.method == "DELETE":
+            if cliente.usuario_id:
+                cliente.usuario.is_active = False
+                cliente.usuario.save(update_fields=["is_active"])
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        clave = request.data.get("clave") or ""
+        usuario = cliente.usuario
+        if usuario is None:
+            if User.objects.filter(username=cliente.documento).exists():
+                return Response(
+                    {"clave": ["Ya existe un usuario con el documento de este cliente."]},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            usuario = User(username=cliente.documento, email=cliente.correo, first_name=cliente.nombre[:150])
+        try:
+            validate_password(clave, usuario)
+        except ErrorDeValidacion as error:
+            return Response({"clave": error.messages}, status=status.HTTP_400_BAD_REQUEST)
+        usuario.set_password(clave)
+        usuario.is_active = True
+        usuario.save()
+        usuario.groups.set([Group.objects.get_or_create(name=ROL_CLIENTE)[0]])
+        if cliente.usuario_id != usuario.id:
+            cliente.usuario = usuario
+            cliente.save(update_fields=["usuario"])
+        return Response({"usuario": usuario.username, "acceso_portal": True})
 
 
 @extend_schema(tags=["Proveedores"])

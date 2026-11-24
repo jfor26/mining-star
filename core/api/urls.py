@@ -9,6 +9,7 @@ primera, que es la razon por la que se incluye desde el principio.
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
+from .portal import CatalogoPortalView, ComprobantePortalView, CotizacionPortalView, ResumenPortalView
 from .views import (
     AccionMejoraViewSet,
     ClienteViewSet,
@@ -69,6 +70,10 @@ urlpatterns = [
     path("pagos/webhook/", StripeWebhookView.as_view(), name="api-stripe-webhook"),
     path("dashboard/", DashboardView.as_view(), name="api-dashboard"),
     path("notificaciones/", NotificacionesView.as_view(), name="api-notificaciones"),
+    path("portal/resumen/", ResumenPortalView.as_view(), name="api-portal-resumen"),
+    path("portal/catalogo/", CatalogoPortalView.as_view(), name="api-portal-catalogo"),
+    path("portal/cotizaciones/", CotizacionPortalView.as_view(), name="api-portal-cotizaciones"),
+    path("portal/compras/<int:pk>/comprobante/", ComprobantePortalView.as_view(), name="api-portal-comprobante"),
 
     # Panel
     path("resumen/", ResumenView.as_view(), name="api-resumen"),

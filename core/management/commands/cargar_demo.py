@@ -80,6 +80,9 @@ PRODUCTOS = [
     ("MAR-002", "Mármol travertino para enchape (m²)", "Mármol ornamental", 0, "55000", "98000", 12, 15),
 ]
 
+# Cliente con acceso al portal en la demo (Constructora Vias del Centro).
+CLIENTE_PORTAL_DEMO = "900500001"
+
 CLIENTES = [
     ("900500001", "Constructora Vías del Centro S.A.S.", "compras@viasdelcentro.example", "Obra civil y vías"),
     ("900500002", "Concretos y Prefabricados del Llano S.A.S.", "suministros@concretosllano.example", "Concreteras"),
@@ -243,6 +246,20 @@ class Command(BaseCommand):
             })
             clientes.append(c)
 
+        # Acceso al portal de clientes para un cliente de demostracion: entra
+        # con su NIT y la misma clave de los usuarios demo.
+        demo = Cliente.objects.get(documento=CLIENTE_PORTAL_DEMO)
+        cuenta, _ = User.objects.get_or_create(username=demo.documento, defaults={
+            "email": demo.correo, "first_name": demo.nombre[:150],
+        })
+        cuenta.set_password(op["clave"])
+        cuenta.is_active = True
+        cuenta.save()
+        cuenta.groups.set([Group.objects.get_or_create(name="Cliente")[0]])
+        if demo.usuario_id != cuenta.id:
+            demo.usuario = cuenta
+            demo.save(update_fields=["usuario"])
+
         for autoridad, cat, nombre, norma, desc, periodo, dias, estado in REQUISITOS:
             RequisitoNormativo.objects.get_or_create(nombre=nombre, defaults={
                 "autoridad": autoridad, "categoria": cat, "norma": norma, "descripcion": desc,
@@ -270,6 +287,7 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             "Datos de demostracion cargados. Usuarios: "
             + ", ".join(u for u, *_ in EMPLEADOS if u)
+            + f". Portal de clientes: {CLIENTE_PORTAL_DEMO}"
         ))
 
     def _transacciones(self, azar, hoy, clientes, productos, empleados):

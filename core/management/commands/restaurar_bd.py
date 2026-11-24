@@ -14,7 +14,7 @@ from pathlib import Path
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from django.db import transaction
+from django.db import connection, transaction
 
 from core.respaldos import crear_respaldo
 
@@ -49,6 +49,11 @@ class Command(BaseCommand):
         self.stdout.write(f"Estado actual guardado en {previo.name}")
 
         with transaction.atomic():
+            if connection.vendor == "postgresql":
+                # Las llaves foraneas de PostgreSQL se verifican al final de la
+                # transaccion; se fuerzan antes para que TRUNCATE no falle.
+                with connection.cursor() as cursor:
+                    cursor.execute("SET CONSTRAINTS ALL IMMEDIATE")
             call_command("flush", "--no-input", verbosity=0)
             call_command("loaddata", str(origen), verbosity=0)
         self.stdout.write(self.style.SUCCESS(

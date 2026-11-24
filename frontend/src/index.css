@@ -335,20 +335,39 @@ table.matriz th[scope="row"] { text-transform: none; font-size: 13.5px; color: v
 .edt-paquete ul { padding-left: 16px; margin: 6px 0 0; color: var(--texto-2); }
 
 /* ---------- Inicio de sesion ---------- */
-.pantalla-login {
-  min-height: 100vh; display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 480px);
-  background: radial-gradient(circle at 20% 20%, #13306f, var(--azul-noche) 70%);
+.pantalla-login { min-height: 100vh; display: flex; flex-wrap: wrap; background: var(--fondo); }
+.login-marca {
+  flex: 1 1 520px; min-width: 0; background: var(--azul-noche); color: #e6ebf5; padding: 48px 56px;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 36px;
 }
-.login-banner { display: flex; align-items: center; justify-content: center; padding: 32px; }
-.login-banner img { max-width: 100%; max-height: 82vh; border-radius: 20px; box-shadow: 0 30px 60px rgba(0, 0, 0, .45); }
+.login-logo { display: flex; align-items: center; gap: 14px; }
+.login-logo img { border-radius: 14px; object-fit: cover; }
+.login-logo div { display: flex; flex-direction: column; gap: 2px; }
+.login-logo strong { font-size: 19px; color: #fff; }
+.login-logo span { font-size: 13px; color: #a3b0c8; }
+.login-mensaje { display: flex; flex-direction: column; gap: 18px; max-width: 540px; }
+.login-mensaje h1 { margin: 0; font-size: clamp(30px, 3.4vw, 44px); line-height: 1.1; color: #fff; }
+.login-mensaje p { margin: 0; font-size: 17px; line-height: 1.6; color: #c6d0e2; }
+.login-mensaje ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.login-mensaje li { display: flex; align-items: center; gap: 12px; font-size: 15px; }
+.login-mensaje svg { color: #6fa0ff; flex: 0 0 auto; }
+.login-formulario { flex: 1 1 440px; min-width: 0; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
 .tarjeta-login {
-  background: var(--superficie); padding: 40px 36px; display: flex; flex-direction: column; justify-content: center; gap: 14px;
+  width: 100%; max-width: 420px; background: var(--superficie); border: 1px solid var(--borde-tarjeta); border-radius: 20px;
+  padding: 36px 32px; box-shadow: 0 10px 30px rgba(15, 23, 42, .08); display: flex; flex-direction: column; gap: 14px;
 }
-.tarjeta-login .logo-login { border-radius: 12px; object-fit: cover; align-self: flex-start; }
-.tarjeta-login h1 { font-size: 26px; }
-.tarjeta-login p { margin: 0; color: var(--texto-suave); font-size: 14px; }
-.pie-login { display: flex; gap: 10px; align-items: center; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--borde); }
-.pie-login small { color: var(--texto-suave); font-size: 12px; }
+.tarjeta-login h2 { font-size: 26px; margin: 4px 0 0; }
+.tarjeta-login p { margin: 0; color: var(--texto-suave); font-size: 14px; line-height: 1.5; }
+.pestanas-login { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: var(--superficie-3); }
+.pestanas-login button { font: inherit; font-size: 14px; min-height: 44px; border: 0; border-radius: 9px; background: transparent; color: var(--texto-suave); cursor: pointer; }
+.pestanas-login button.activa { background: var(--superficie); color: var(--texto); font-weight: 600; box-shadow: 0 1px 3px rgba(15, 23, 42, .12); }
+.campo-clave { position: relative; }
+.campo-clave input { padding-right: 52px; }
+.ver-clave { position: absolute; right: 4px; top: 25px; width: 44px; height: 40px; border: 0; background: transparent; color: var(--texto-suave); cursor: pointer; }
+.ayuda-login { font-size: 13px !important; }
+.pie-login { display: flex; gap: 10px; align-items: center; }
+.pie-login img { background: #fff; border-radius: 8px; padding: 4px; }
+.pie-login small { color: #a3b0c8; font-size: 13px; }
 
 /* ---------- Pantallas medianas y pequenas ---------- */
 @media (max-width: 1200px) {
@@ -366,8 +385,8 @@ table.matriz th[scope="row"] { text-transform: none; font-size: 13.5px; color: v
   .dos-columnas, .dos-columnas.invertido, .dos-iguales, .rejilla-graficas { grid-template-columns: 1fr; }
   .grafica.ancho-2 { grid-column: auto; }
   .contenido { padding: 18px 16px; }
-  .pantalla-login { grid-template-columns: 1fr; }
-  .login-banner { display: none; }
+  .login-marca { padding: 28px 24px; gap: 20px; }
+  .login-mensaje ul, .login-mensaje p { display: none; }
   .lineas-carrito li { grid-template-columns: 1fr; }
 }
 
@@ -431,3 +450,50 @@ td .acciones-fila { flex-wrap: nowrap; }
 .panel-avisos footer { padding: 10px 16px; font-size: 12px; color: var(--texto-suave); border-top: 1px solid var(--borde-tarjeta); }
 .panel-avisos .chips { margin-bottom: 6px; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- Portal de clientes ---------- */
+.portal { min-height: 100vh; background: var(--fondo); }
+.portal-contenedor { max-width: 1200px; margin: 0 auto; padding: 0 24px; box-sizing: border-box; }
+.portal-barra { background: var(--superficie); border-bottom: 1px solid var(--borde-tarjeta); }
+.portal-barra-fila { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding-top: 12px; padding-bottom: 12px; }
+.portal-marca { display: flex; align-items: center; gap: 12px; }
+.portal-marca img { border-radius: 10px; object-fit: cover; }
+.portal-marca div, .portal-nombre { display: flex; flex-direction: column; }
+.portal-marca strong { font-size: 16px; }
+.portal-marca span, .portal-cuenta span { font-size: 12px; color: var(--texto-suave); }
+.portal-menu { display: flex; flex-wrap: wrap; gap: 2px; }
+.portal-menu a { padding: 10px 8px; border-radius: 10px; color: var(--texto-2); text-decoration: none; font-size: 14px; }
+.portal-menu a:hover { background: var(--superficie-2); }
+.portal-cuenta { display: flex; align-items: center; gap: 10px; }
+.portal-marca strong, .portal-nombre strong { white-space: nowrap; }
+.portal-cuenta strong { font-size: 13px; }
+.portal-cuerpo { padding-top: 24px; padding-bottom: 48px; display: flex; flex-direction: column; gap: 20px; }
+.portal-bienvenida { background: var(--azul-noche); color: #fff; border-radius: 20px; padding: 26px 30px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; }
+.portal-bienvenida h1 { margin: 0 0 6px; font-size: 28px; color: #fff; }
+.portal-bienvenida p { margin: 0; color: #c6d0e2; max-width: 620px; line-height: 1.55; }
+.portal-bienvenida .portal-boton-claro { width: auto; padding-left: 22px; padding-right: 22px; background: #fff; color: var(--azul-oscuro); text-decoration: none; font-weight: 600; }
+.portal-columnas { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; align-items: start; }
+.formulario-cotizacion { display: flex; flex-direction: column; gap: 10px; }
+.fila-item { display: grid; grid-template-columns: minmax(0, 1fr) 110px auto; gap: 10px; align-items: end; }
+.quitar-item { margin-bottom: 6px; }
+.valor-estimado { margin: 0; font-size: 14px; color: var(--texto-2); }
+.lista-solicitudes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.lista-solicitudes li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--borde-tarjeta); }
+.lista-solicitudes li div { display: flex; flex-direction: column; gap: 2px; }
+.lista-solicitudes span { font-size: 13px; color: var(--texto-suave); }
+.portal-catalogo h2 { margin: 0 0 12px; }
+.portal-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.portal-producto { display: flex; flex-direction: column; gap: 6px; }
+.portal-producto .categoria { font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase; color: var(--azul); }
+.portal-producto small { color: var(--texto-suave); }
+.pie-producto { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; }
+@media (max-width: 600px) {
+  .portal-cuenta { flex-wrap: wrap; width: 100%; }
+  .portal-nombre { flex: 1 1 140px; min-width: 0; }
+  .portal-nombre strong { white-space: normal; }
+  .fila-item { grid-template-columns: 1fr 90px; }
+  .quitar-item { grid-column: 1 / -1; }
+  .portal-columnas { grid-template-columns: 1fr; }
+}
+.tabla-compras td:nth-child(1), .tabla-compras td:nth-child(2), .tabla-compras td:nth-child(4) { white-space: nowrap; }
+.portal .tarjeta > .descripcion { margin: -4px 0 12px; }

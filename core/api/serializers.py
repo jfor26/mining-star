@@ -156,7 +156,13 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cliente
-        fields = ["id", "documento", "nombre", "correo", "telefono", "empresa"]
+        fields = ["id", "documento", "nombre", "correo", "telefono", "empresa", "acceso_portal"]
+
+    acceso_portal = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_acceso_portal(self, cliente):
+        return bool(cliente.usuario_id and cliente.usuario.is_active)
 
     def validate_documento(self, valor):
         if not valor.strip().isdigit():

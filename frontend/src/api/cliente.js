@@ -88,6 +88,25 @@ export async function peticion(ruta, { metodo = 'GET', datos, conToken = true, r
   return cuerpo
 }
 
+/**
+ * Descarga un archivo protegido (PDF, Excel) con el token de la sesion.
+ * Un enlace <a href> normal no enviaria el token en la cabecera.
+ */
+export async function descargarArchivo(ruta, nombre, reintento = true) {
+  const token = almacen.leer('access')
+  const respuesta = await fetch(`${BASE}${ruta}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  if (respuesta.status === 401 && reintento && await renovarToken()) return descargarArchivo(ruta, nombre, false)
+  if (!respuesta.ok) throw new ErrorAPI(respuesta.status, await respuesta.json().catch(() => ({})))
+  const url = URL.createObjectURL(await respuesta.blob())
+  const enlace = document.createElement('a')
+  enlace.href = url
+  enlace.download = nombre
+  document.body.appendChild(enlace)
+  enlace.click()
+  enlace.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 1000)
+}
+
 /** Recorre todas las paginas de un listado paginado y devuelve los resultados. */
 export async function obtenerTodos(ruta) {
   const resultados = []

@@ -20,6 +20,7 @@ import Mejora from './pages/Mejora.jsx'
 import NoEncontrada from './pages/NoEncontrada.jsx'
 import Normativa from './pages/Normativa.jsx'
 import Panel from './pages/Panel.jsx'
+import Portal from './pages/Portal.jsx'
 import Produccion from './pages/Produccion.jsx'
 import Seguridad from './pages/Seguridad.jsx'
 import Carrito from './pages/tienda/Carrito.jsx'
@@ -33,6 +34,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path="/portal" element={<RutaProtegida paraClientes><Portal /></RutaProtegida>} />
       <Route element={<RutaProtegida><Diseno /></RutaProtegida>}>
         <Route index element={conPermiso('panel', <Panel />)} />
         <Route path="empresa" element={<Empresa />} />

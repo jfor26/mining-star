@@ -24,6 +24,11 @@ class Cliente(models.Model):
     correo = models.EmailField()
     telefono = models.CharField(max_length=20)
     empresa = models.CharField(max_length=150)
+    # Cuenta para el portal de clientes (opcional). El usuario es el NIT o
+    # documento del cliente y pertenece al grupo "Cliente".
+    usuario = models.OneToOneField(
+        "auth.User", on_delete=models.SET_NULL, null=True, blank=True, related_name="cliente",
+    )
 
     class Meta:
         ordering = ["nombre"]
@@ -437,8 +442,11 @@ class Oportunidad(models.Model):
         "Negociacion": 75, "Ganada": 100, "Perdida": 0,
     }
 
+    ORIGENES = [("Interno", "Registrada por el equipo"), ("Portal", "Solicitud desde el portal")]
+
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT, related_name="oportunidades")
     titulo = models.CharField(max_length=150)
+    origen = models.CharField(max_length=8, choices=ORIGENES, default="Interno")
     etapa = models.CharField(max_length=12, choices=ETAPAS, default="Prospecto", db_index=True)
     valor_estimado = models.DecimalField(
         max_digits=14, decimal_places=2, validators=[MinValueValidator(Decimal("0"))],
@@ -477,6 +485,7 @@ class Interaccion(models.Model):
         ("Visita", "Visita"),
         ("Reunion", "Reunión"),
         ("WhatsApp", "WhatsApp"),
+        ("Portal", "Portal de clientes"),
     ]
 
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name="interacciones")

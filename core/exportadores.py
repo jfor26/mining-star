@@ -28,7 +28,7 @@ from reportlab.platypus import Paragraph, SimpleDocTemplate, Table, TableStyle
 AZUL_CORPORATIVO = "1F4E78"
 GRIS_BORDE = "B7B7B7"
 GRIS_FILA = "F3F6F9"
-EMPRESA = "MINING STAR ERP"
+EMPRESA = "MINING STAR SERVICES AND PRODUCTS ERP · INDUSTRIAS MINERAS S.A.S."
 
 MIME_EXCEL = (
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

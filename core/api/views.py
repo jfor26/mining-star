@@ -861,3 +861,35 @@ class DashboardView(APIView):
 
         visibles = {m for m in MODULOS if puede(request.user, m, VER)}
         return Response(construir_dashboard(visibles))
+
+
+@extend_schema(
+    tags=["Notificaciones"],
+    summary="Avisos de la campana",
+    description=(
+        "Avisos calculados del estado del sistema (stock minimo, requisitos "
+        "normativos, pedidos pagados y oportunidades sin contacto), filtrados "
+        "por los modulos que el cargo del usuario puede ver. POST marca avisos "
+        "como leidos: {\"claves\": [...]} o {\"todas\": true}."
+    ),
+)
+class NotificacionesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        from ..notificaciones import avisos_de
+
+        avisos = avisos_de(request.user)
+        return Response({"sin_leer": sum(not a["leida"] for a in avisos), "resultados": avisos})
+
+    def post(self, request):
+        from ..notificaciones import avisos_de, marcar_leidas
+
+        if request.data.get("todas"):
+            claves = [a["clave"] for a in avisos_de(request.user)]
+        else:
+            claves = request.data.get("claves")
+            if not isinstance(claves, list) or not all(isinstance(c, str) and len(c) <= 120 for c in claves):
+                return Response({"claves": ["Envie una lista de claves."]}, status=status.HTTP_400_BAD_REQUEST)
+        marcar_leidas(request.user, claves)
+        return Response(status=status.HTTP_204_NO_CONTENT)

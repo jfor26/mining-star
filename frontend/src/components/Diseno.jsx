@@ -10,6 +10,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 
 import { sesion } from '../api/cliente.js'
 import { BotonVolver, SelectorTema } from './Barra.jsx'
+import Campana from './Campana.jsx'
 import { useCarrito } from '../context/CarritoContext.jsx'
 import { useSesion } from '../context/SesionContext.jsx'
 
@@ -115,6 +116,7 @@ export default function Diseno() {
           <EstadoToken />
           <div className="barra-derecha">
             <SelectorTema />
+            <Campana />
             {puede('pedidos', 'crear') && (
               <Link to="/tienda/carrito" className="boton fantasma carrito-boton" aria-label={`Carrito: ${unidades} unidades`}>
                 🛒 <span className="contador">{unidades}</span>

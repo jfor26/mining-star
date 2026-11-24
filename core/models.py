@@ -708,3 +708,30 @@ class AccionMejora(models.Model):
 
     def __str__(self):
         return self.titulo
+
+
+# ==========================================================
+# NOTIFICACIONES
+# ==========================================================
+
+class NotificacionLeida(models.Model):
+    """Marca que un usuario ya leyo un aviso.
+
+    Los avisos no se guardan: se calculan en cada consulta a partir del estado
+    real del sistema (stock, requisitos, pedidos, CRM) en core/notificaciones.py.
+    Cada aviso tiene una clave estable; aqui solo se registra cuales leyo cada
+    usuario. Si la situacion cambia (por ejemplo, el stock baja otra vez), la
+    clave cambia y el aviso vuelve a aparecer como nuevo.
+    """
+
+    usuario = models.ForeignKey("auth.User", on_delete=models.CASCADE, related_name="notificaciones_leidas")
+    clave = models.CharField(max_length=120)
+    leida_en = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["usuario", "clave"], name="notificacion_leida_unica")]
+        verbose_name = "notificación leída"
+        verbose_name_plural = "notificaciones leídas"
+
+    def __str__(self):
+        return f"{self.usuario} · {self.clave}"

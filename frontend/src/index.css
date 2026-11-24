@@ -404,3 +404,30 @@ td .acciones-fila { flex-wrap: nowrap; }
 @media (prefers-color-scheme: dark) {
   :root[data-tema="auto"] .boton.secundario, :root[data-tema="auto"] .bloque-canvas strong { color: var(--texto); }
 }
+
+/* Campana de notificaciones */
+.campana { position: relative; }
+.boton-campana { position: relative; width: 42px; height: 42px; border: 1px solid var(--borde-control); border-radius: 12px; background: var(--superficie); color: var(--texto); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.contador-campana { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px; box-sizing: border-box; border-radius: 999px; background: #c62828; color: #fff; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; border: 2px solid var(--superficie); }
+.panel-avisos { position: absolute; right: 0; top: 50px; z-index: 50; width: min(420px, calc(100vw - 24px)); max-height: 70vh; display: flex; flex-direction: column; background: var(--superficie); border: 1px solid var(--borde-tarjeta); border-radius: 16px; box-shadow: 0 18px 40px rgba(15, 23, 42, .18); overflow: hidden; }
+.panel-avisos header { padding: 14px 16px 6px; border-bottom: 1px solid var(--borde-tarjeta); }
+.panel-avisos .fila-titulo { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
+.panel-avisos h2 { font-size: 17px; margin: 0; }
+.panel-avisos .enlace { border: 0; background: transparent; color: var(--azul); font: inherit; font-size: 13px; cursor: pointer; padding: 8px 4px; }
+.lista-avisos { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+.aviso-item { width: 100%; display: flex; gap: 12px; text-align: left; padding: 12px 16px; border: 0; border-bottom: 1px solid var(--borde-tarjeta); background: transparent; color: var(--texto); font: inherit; cursor: pointer; }
+.aviso-item.nuevo { background: var(--superficie-2); }
+.aviso-item:hover { background: var(--superficie-hover); }
+.icono-aviso { flex: 0 0 34px; height: 34px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; }
+.tipo-normativa .icono-aviso { background: #fdecec; color: #9b1c1c; }
+.tipo-inventario .icono-aviso { background: #fff6dd; color: #7a5200; }
+.tipo-tienda .icono-aviso { background: #e8f0ff; color: #1d4fb8; }
+.tipo-crm .icono-aviso { background: #efeafd; color: #5b3cc4; }
+.cuerpo-aviso { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.cuerpo-aviso strong { font-size: 14px; }
+.cuerpo-aviso span { font-size: 13px; color: var(--texto-2); line-height: 1.45; }
+.cuerpo-aviso small { font-size: 12px; color: var(--texto-suave); }
+.sin-avisos { padding: 20px 16px; color: var(--texto-suave); font-size: 14px; }
+.panel-avisos footer { padding: 10px 16px; font-size: 12px; color: var(--texto-suave); border-top: 1px solid var(--borde-tarjeta); }
+.panel-avisos .chips { margin-bottom: 6px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

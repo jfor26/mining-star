@@ -19,6 +19,7 @@ from .views import (
     LoginView,
     LogoutView,
     MatrizAccesoView,
+    NotificacionesView,
     OportunidadViewSet,
     PedidoViewSet,
     PerfilView,
@@ -67,6 +68,7 @@ urlpatterns = [
     path("pagos/config/", ConfigPagosView.as_view(), name="api-pagos-config"),
     path("pagos/webhook/", StripeWebhookView.as_view(), name="api-stripe-webhook"),
     path("dashboard/", DashboardView.as_view(), name="api-dashboard"),
+    path("notificaciones/", NotificacionesView.as_view(), name="api-notificaciones"),
 
     # Panel
     path("resumen/", ResumenView.as_view(), name="api-resumen"),

@@ -124,3 +124,26 @@ class PruebasDelPortal(BasePortal):
         self.client.force_authenticate(contador)
         r = self.client.post(reverse("api-clientes-acceso-portal", args=[self.otro.id]), {"clave": CLAVE}, format="json")
         self.assertEqual(r.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class PruebasDeFichaDelCliente(BasePortal):
+    def test_ficha_completa_para_gerente(self):
+        gerente = User.objects.create_user(username="g2", password="Gerente*Mina2026")
+        gerente.groups.add(Group.objects.get(name="Gerente"))
+        self.client.force_authenticate(gerente)
+        Oportunidad.objects.create(cliente=self.cliente, titulo="Recebo", valor_estimado=Decimal("500"))
+        Interaccion.objects.create(cliente=self.cliente, tipo="Llamada", descripcion="Seguimiento")
+        datos = self.client.get(reverse("api-clientes-ficha", args=[self.cliente.id])).data
+        self.assertEqual(datos["compras"]["total"], Decimal("60000"))
+        self.assertEqual(datos["abiertas_valor"], Decimal("500"))
+        self.assertEqual(datos["ultimo_contacto_dias"], 0)
+        self.assertEqual(datos["interacciones"][0]["descripcion"], "Seguimiento")
+        self.assertTrue(datos["cliente"]["acceso_portal"])
+
+    def test_ficha_sin_crm_ni_ventas_para_auxiliar(self):
+        auxiliar = User.objects.create_user(username="a2", password="Auxi*Mina2026")
+        auxiliar.groups.add(Group.objects.get(name="Auxiliar"))
+        self.client.force_authenticate(auxiliar)
+        datos = self.client.get(reverse("api-clientes-ficha", args=[self.cliente.id])).data
+        self.assertNotIn("compras", datos)
+        self.assertNotIn("oportunidades", datos)

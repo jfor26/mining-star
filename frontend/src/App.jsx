@@ -14,6 +14,7 @@ import Clientes from './pages/Clientes.jsx'
 import Crm from './pages/Crm.jsx'
 import Empleados from './pages/Empleados.jsx'
 import Empresa from './pages/Empresa.jsx'
+import FichaCliente from './pages/FichaCliente.jsx'
 import Inventario from './pages/Inventario.jsx'
 import Login from './pages/Login.jsx'
 import Mejora from './pages/Mejora.jsx'
@@ -40,6 +41,7 @@ export default function App() {
         <Route path="empresa" element={<Empresa />} />
         <Route path="inventario" element={conPermiso('productos', <Inventario />)} />
         <Route path="clientes" element={conPermiso('clientes', <Clientes />)} />
+        <Route path="clientes/:id" element={conPermiso('clientes', <FichaCliente />)} />
         <Route path="crm" element={conPermiso('crm', <Crm />)} />
         <Route path="ventas" element={conPermiso('ventas', <Ventas />)} />
         <Route path="tienda" element={conPermiso('pedidos', <Tienda />)} />

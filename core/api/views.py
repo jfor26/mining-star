@@ -366,7 +366,59 @@ class ClienteViewSet(BaseViewSet):
     serializer_class = ClienteSerializer
     search_fields = ["documento", "nombre", "empresa", "correo"]
     ordering_fields = ["nombre", "documento", "empresa"]
-    operaciones_por_accion = {"acceso_portal": EDITAR}
+    operaciones_por_accion = {"acceso_portal": EDITAR, "ficha": VER}
+
+    @extend_schema(
+        summary="Ficha del cliente (vista 360)",
+        description=(
+            "Datos del cliente, totales de compra, oportunidades, ultimas compras y "
+            "linea de tiempo de interacciones. Las secciones de ventas y CRM solo se "
+            "incluyen si el cargo puede ver esos modulos."
+        ),
+    )
+    @action(detail=True, methods=["get"])
+    def ficha(self, request, pk=None):
+        from django.db.models import Count, Sum
+
+        from ..permisos import puede
+
+        cliente = self.get_object()
+        datos = {"cliente": ClienteSerializer(cliente).data, "ultimo_contacto_dias": None}
+        interacciones = cliente.interacciones.select_related("oportunidad", "registrado_por")
+        ultima = interacciones.first()
+        if ultima:
+            datos["ultimo_contacto_dias"] = (timezone.now() - ultima.fecha).days
+
+        if puede(request.user, "ventas", VER):
+            vigentes = cliente.ventas.exclude(estado="Anulada")
+            totales = vigentes.aggregate(total=Sum("total"), cantidad=Count("id"))
+            datos["compras"] = {
+                "total": totales["total"] or 0,
+                "cantidad": totales["cantidad"],
+                "ultimas": [
+                    {"id": v.id, "numero": f"V-{v.id:04d}", "fecha": v.fecha.date().isoformat(), "total": v.total,
+                     "productos": [f"{d.producto.nombre} × {d.cantidad}" for d in v.detalles.all()]}
+                    for v in vigentes.prefetch_related("detalles__producto").order_by("-fecha")[:10]
+                ],
+            }
+        if puede(request.user, "crm", VER):
+            oportunidades = cliente.oportunidades.order_by("-actualizado")
+            datos["oportunidades"] = [
+                {"id": o.id, "titulo": o.titulo, "etapa": o.etapa, "etapa_texto": o.get_etapa_display(),
+                 "valor_estimado": o.valor_estimado, "probabilidad": o.probabilidad, "origen": o.origen}
+                for o in oportunidades
+            ]
+            datos["abiertas_valor"] = sum(
+                (o.valor_estimado for o in oportunidades if o.etapa not in ("Ganada", "Perdida")), 0
+            )
+            datos["interacciones"] = [
+                {"id": i.id, "tipo": i.tipo, "tipo_texto": i.get_tipo_display(), "fecha": i.fecha.isoformat(),
+                 "descripcion": i.descripcion, "proxima_accion": i.proxima_accion,
+                 "oportunidad": i.oportunidad.titulo if i.oportunidad else None,
+                 "registrado_por": i.registrado_por.get_full_name() or i.registrado_por.username if i.registrado_por else None}
+                for i in interacciones[:30]
+            ]
+        return Response(datos)
 
     def get_queryset(self):
         return super().get_queryset().select_related("usuario")

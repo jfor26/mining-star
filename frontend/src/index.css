@@ -497,3 +497,37 @@ td .acciones-fila { flex-wrap: nowrap; }
 }
 .tabla-compras td:nth-child(1), .tabla-compras td:nth-child(2), .tabla-compras td:nth-child(4) { white-space: nowrap; }
 .portal .tarjeta > .descripcion { margin: -4px 0 12px; }
+
+/* ---------- Ficha del cliente ---------- */
+.ficha { display: flex; flex-direction: column; gap: 18px; }
+.ficha-cabecera { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.ficha-identidad { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.ficha-identidad h1 { margin: 0; font-size: 24px; }
+.ficha-identidad p { margin: 4px 0 0; color: var(--texto-suave); font-size: 14px; }
+.avatar-cliente { flex: 0 0 56px; height: 56px; border-radius: 16px; background: var(--azul-claro); color: var(--azul); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 19px; }
+.indicadores-ficha { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+.indicadores-ficha article { display: flex; flex-direction: column; gap: 4px; }
+.indicadores-ficha span { font-size: 12px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--texto-suave); }
+.indicadores-ficha strong { font-size: 24px; }
+.indicadores-ficha small { color: var(--texto-suave); }
+.indicadores-ficha .alerta-contacto { background: #fff8ec; border-color: #f5d595; }
+.indicadores-ficha .alerta-contacto span, .indicadores-ficha .alerta-contacto strong, .indicadores-ficha .alerta-contacto small { color: #7a4a00; }
+.columna-ficha { display: flex; flex-direction: column; gap: 18px; }
+.lista-oportunidades { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.lista-oportunidades li { display: flex; justify-content: space-between; gap: 12px; border: 1px solid var(--borde-tarjeta); border-radius: 12px; padding: 12px 14px; }
+.lista-oportunidades div { display: flex; flex-direction: column; gap: 4px; }
+.lista-oportunidades .derecha { align-items: flex-end; text-align: right; }
+.lista-oportunidades small { color: var(--texto-suave); }
+.form-acceso { display: flex; flex-direction: column; gap: 8px; max-width: 360px; }
+.form-acceso label { font-size: 13px; font-weight: 600; }
+.linea-tiempo { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 2px solid var(--borde-tarjeta); display: flex; flex-direction: column; gap: 18px; }
+.linea-tiempo li { position: relative; display: flex; flex-direction: column; gap: 3px; }
+.linea-tiempo li::before { content: ''; position: absolute; left: -25px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--azul); box-shadow: 0 0 0 3px var(--superficie); }
+.linea-tiempo .evento-llamada::before { background: #e8890c; }
+.linea-tiempo .evento-visita::before, .linea-tiempo .evento-reunion::before { background: #0f9d58; }
+.linea-tiempo .evento-portal::before { background: #5b3cc4; }
+.linea-tiempo span { font-size: 14px; color: var(--texto-2); line-height: 1.45; }
+.linea-tiempo .proxima { font-size: 13px; color: var(--texto-suave); }
+.linea-tiempo small { font-size: 12px; color: var(--texto-suave); }
+.form-acceso input { font: inherit; font-size: 14px; padding: 10px 12px; border: 1px solid var(--borde-control); border-radius: 10px; background: var(--superficie); color: var(--texto); }
+.ficha .tarjeta > .descripcion { margin: -4px 0 10px; }

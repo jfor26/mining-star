@@ -1,11 +1,13 @@
 /**
  * Gestion de clientes: listado con busqueda y registro de clientes nuevos.
+ * El nombre de cada cliente abre su ficha (vista 360 del CRM).
  * Consume GET y POST /api/v1/clientes/.
  */
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 import { peticion } from '../api/cliente.js'
-import { Aviso, Campo, Cargando, Encabezado, Tabla, erroresDeLaAPI } from '../components/Comunes.jsx'
+import { Aviso, Campo, Cargando, Encabezado, Estado, Tabla, erroresDeLaAPI } from '../components/Comunes.jsx'
 import { useSesion } from '../context/SesionContext.jsx'
 import {
   correo, longitudMaxima, requerido, soloDigitos, telefono, validar,
@@ -62,10 +64,11 @@ export default function Clientes() {
 
   const columnas = [
     { clave: 'documento', titulo: 'Documento' },
-    { clave: 'nombre', titulo: 'Nombre' },
+    { clave: 'nombre', titulo: 'Nombre', celda: (c) => <Link to={`/clientes/${c.id}`}>{c.nombre}</Link> },
     { clave: 'empresa', titulo: 'Empresa' },
     { clave: 'correo', titulo: 'Correo' },
     { clave: 'telefono', titulo: 'Teléfono' },
+    { clave: 'acceso_portal', titulo: 'Portal', celda: (c) => (c.acceso_portal ? <Estado tono="bien">Activo</Estado> : 'No') },
   ]
 
   return (

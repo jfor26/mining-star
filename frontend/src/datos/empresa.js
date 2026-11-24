@@ -9,7 +9,7 @@
 
 export const IDENTIDAD = {
   marca: 'Mining Star Services and Products',
-  razonSocial: 'Ortega Espinosa y Compañía S.A.S.',
+  razonSocial: 'Industrias Mineras S.A.S.',
   ubicacion: 'Payandé, San Luis (Tolima) – Contrato de concesión minera 15834',
   mision:
     'Extraer, transformar y comercializar mármol, caliza, recebo y sus derivados de forma legal, segura y trazable, '

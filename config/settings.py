@@ -139,10 +139,10 @@ LOGIN_INTENTOS_MAXIMOS_POR_IP = int(os.getenv("LOGIN_INTENTOS_MAXIMOS_POR_IP", "
 LOGIN_VENTANA_MINUTOS = int(os.getenv("LOGIN_VENTANA_MINUTOS", "15"))
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "API REST de Mining Star",
+    "TITLE": "API REST de Mining Star Services and Products ERP",
     "DESCRIPTION": (
-        "Servicios web del sistema de gestion Mining Star, de Ortega Espinosa "
-        "y Compania S.A.S. Expone la autenticacion y los cinco modulos del "
+        "Servicios web de Mining Star Services and Products ERP, de Industrias "
+        "Mineras S.A.S. Expone la autenticacion y los cinco modulos del "
         "sistema: clientes, proveedores, productos, empleados y ventas."
     ),
     "VERSION": "1.0.0",

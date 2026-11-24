@@ -44,7 +44,7 @@ from core.servicios import confirmar_pago, crear_pedido, registrar_venta
 
 EMPLEADOS = [
     # usuario, documento, nombres, apellidos, cargo, area
-    ("gerente", "1110000001", "Laura", "Ortega", "Gerente", "Gerencia"),
+    ("gerente", "1110000001", "Laura", "Restrepo", "Gerente", "Gerencia"),
     ("admin.ms", "1110000002", "Andrés", "Rojas", "Administrador", "Gerencia"),
     ("supervisor", "1110000003", "Carlos", "Molina", "Supervisor", "Operaciones"),
     ("comercial", "1110000004", "Diana", "Pardo", "Comercial", "Comercial"),
@@ -199,11 +199,16 @@ class Command(BaseCommand):
                 "correo": f"{(usuario or nombres).lower().replace('.', '')}@miningstar.example",
                 "telefono": "3000000000", "fecha_ingreso": hoy - timedelta(days=ANTIGUEDAD_DIAS.get(doc, 400)),
             })
+            # Los nombres de la demo pueden cambiar entre versiones: se actualizan.
+            if (emp.nombres, emp.apellidos) != (nombres, apellidos):
+                emp.nombres, emp.apellidos = nombres, apellidos
+                emp.save(update_fields=["nombres", "apellidos"])
             empleados[doc] = emp
             if usuario:
                 user, creado = User.objects.get_or_create(username=usuario, defaults={
                     "first_name": nombres, "last_name": apellidos, "email": emp.correo,
                 })
+                user.first_name, user.last_name = nombres, apellidos
                 user.set_password(op["clave"])
                 user.is_staff = cargo == "Administrador"
                 user.save()

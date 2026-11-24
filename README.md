@@ -25,8 +25,8 @@ Screenshots: [`docs/capturas/`](docs/capturas/) · Full documentation (Spanish):
 ---
 
 
-Sistema de gestión de **Mining Star Services and Products** (Ortega Espinosa y
-Cía. S.A.S.), cantera de mármol y caliza en Payandé, San Luis (Tolima).
+Sistema de gestión de **Mining Star Services and Products** (Industrias Mineras
+S.A.S.), cantera de mármol y caliza en Payandé, San Luis (Tolima).
 Producto mínimo viable del Tecnólogo en Análisis y Desarrollo de Software — SENA.
 
 Módulos: producción de la mina, inventario, clientes, ventas, **CRM**, **tienda con

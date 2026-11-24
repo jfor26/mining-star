@@ -2,7 +2,7 @@
 
 > Fuente: documentos del proyecto minero del Título 15834 (análisis de mercado, fuerzas de Porter, lienzo Canvas y EDT). Aquí se usa **solo información general**: se excluyeron cifras financieras, datos personales de los titulares y el contenido marcado como confidencial. El mismo contenido se ve en el aplicativo, en **La empresa** (`frontend/src/datos/empresa.js`).
 
-**Marca:** Mining Star Services and Products · **Razón social:** Ortega Espinosa y Compañía S.A.S.
+**Marca:** Mining Star Services and Products · **Razón social:** Industrias Mineras S.A.S.
 **Operación:** cantera de mármol, travertino y caliza en Payandé, San Luis (Tolima).
 
 ## Misión

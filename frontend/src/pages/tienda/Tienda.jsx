@@ -55,7 +55,7 @@ function Catalogo() {
       <div className="solo-imprimir portada-brochure">
         <img src="/logo.png" alt="" width="180" />
         <h1>Portafolio de productos</h1>
-        <p>Mining Star Services and Products · Ortega Espinosa y Cía. S.A.S.<br />
+        <p>Mining Star Services and Products · Industrias Mineras S.A.S.<br />
           Mármol, caliza y derivados desde Payandé, San Luis (Tolima). Fuente legal y trazable, cerca del punto de consumo.</p>
       </div>
 

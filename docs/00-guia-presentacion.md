@@ -7,7 +7,7 @@ Se presenta desde **el navegador** (la aplicación) y **Visual Studio Code** (el
 
 ## 1. Qué se va a presentar
 
-Producto mínimo viable (MVP) de **Mining Star ERP**, el sistema de gestión de *Mining Star Services and Products* (razón social *Ortega Espinosa y Compañía S.A.S.*), cantera de mármol y caliza en Payandé, San Luis (Tolima).
+Producto mínimo viable (MVP) de **Mining Star ERP**, el sistema de gestión de *Mining Star Services and Products* (razón social *Industrias Mineras S.A.S.*), cantera de mármol y caliza en Payandé, San Luis (Tolima).
 
 | Bloque | Qué mostrar | Dónde |
 |---|---|---|

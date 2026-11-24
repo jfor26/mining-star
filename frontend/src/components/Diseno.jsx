@@ -76,9 +76,8 @@ export default function Diseno() {
       <aside className={`menu-lateral${menuAbierto ? ' abierto' : ''}`}>
         <div className="marca">
           <img src="/logo.png" alt="" width="132" height="88" />
-          <strong>Mining Star ERP</strong>
-          <small>Mining Star Services and Products</small>
-          <small className="razon-social">Ortega Espinosa y Cía. S.A.S.</small>
+          <strong>Mining Star Services and Products ERP</strong>
+          <small className="razon-social">Industrias Mineras S.A.S.</small>
         </div>
         <nav aria-label="Menú principal" onClick={() => setMenuAbierto(false)}>
           {SECCIONES.map((seccion) => {
